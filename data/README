@@ -1,0 +1,15 @@
+Sources of the data set used in this work:
+
+- `vanquickelberghe2018`: repeated measures - LFQ - protein level -
+  mouse. Data repo:
+  https://www.ebi.ac.uk/pride/archive/projects/PXD008726. Ref: Van
+  Quickelberghe E, Martens A, Goeminne LJE, Clement L, van Loo G,
+  Gevaert K. Identification of Immune-Responsive Gene 1 (IRG1) as a
+  Target of A20. J Proteome Res. 2018;17(6):2182-2191.
+  
+. 
+
+
+- Spike-in: LFQ (e.g. CPTAC or Adriaan's example), for TMT (MSstatsTMT
+  data set), DIA (Ann Staes's data)
+- Case study: mouse TMT, LFQ (data set of Emmy), DIA (??)
