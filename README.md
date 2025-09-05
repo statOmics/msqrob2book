@@ -81,3 +81,21 @@ volcano plot. Remaining issue:
 - overdispersionPlot()
 - detailPlot()
 - Dimension reduction: is scater functionality not sufficient? 
+
+#### Messages/ideas for paper
+
+- The package is versatile and can fullfill a great demand for 
+  proteomics data analysis, which is both technically complex and
+  varied in design. Using the msqrob2 ecosystem require programming
+  and data analysis skills. This paper aims to lower the learning
+  curve by providing clear and thorough hands-on tutorial that users
+  can easily reuse for their purposes.
+- Defining a model is difficult, but we will not automatize so that 
+  the user keeps full control of what they are doing.
+- The preprocessing workflow is not contained in a single function, 
+  it allows for flexibility as shown by its application in a wide
+  variety of use cases, such as LFQ, TMT, PTM, SCP.
+- Next steps: build a GUI
+- Include SDRF and sample annotations in the discussion
+- Highlight the recent change of readQFeatures for any input format
+  (bring Laurent in the loop?).

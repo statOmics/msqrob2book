@@ -20,6 +20,7 @@
 
 # RStudio files
 .Rproj.user/
+*.Rproj
 
 # produced vignettes
 vignettes/*.html
@@ -47,3 +48,10 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Temporary data
+data/
+
+# Bookdown files
+_bookdown_files/
+msqrob2_book*

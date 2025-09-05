@@ -1,0 +1,207 @@
+@ARTICLE{Huang2020-lu,
+  title    = "{MSstatsTMT}: Statistical Detection of Differentially Abundant
+              Proteins in Experiments with Isobaric Labeling and Multiple
+              Mixtures",
+  author   = "Huang, Ting and Choi, Meena and Tzouros, Manuel and Golling,
+              Sabrina and Pandya, Nikhil Janak and Banfai, Balazs and Dunkley,
+              Tom and Vitek, Olga",
+  journal  = "Mol. Cell. Proteomics",
+  volume   =  19,
+  number   =  10,
+  pages    = "1706--1723",
+  abstract = "Tandem mass tag (TMT) is a multiplexing technology widely-used in
+              proteomic research. It enables relative quantification of proteins
+              from multiple biological samples in a single MS run with high
+              efficiency and high throughput. However, experiments often require
+              more biological replicates or conditions than can be accommodated
+              by a single run, and involve multiple TMT mixtures and multiple
+              runs. Such larger-scale experiments combine sources of biological
+              and technical variation in patterns that are complex, unique to
+              TMT-based workflows, and challenging for the downstream
+              statistical analysis. These patterns cannot be adequately
+              characterized by statistical methods designed for other
+              technologies, such as label-free proteomics or transcriptomics.
+              This manuscript proposes a general statistical approach for
+              relative protein quantification in MS- based experiments with TMT
+              labeling. It is applicable to experiments with multiple
+              conditions, multiple biological replicate runs and multiple
+              technical replicate runs, and unbalanced designs. It is based on a
+              flexible family of linear mixed-effects models that handle complex
+              patterns of technical artifacts and missing values. The approach
+              is implemented in MSstatsTMT, a freely available open-source
+              R/Bioconductor package compatible with data processing tools such
+              as Proteome Discoverer, MaxQuant, OpenMS, and SpectroMine.
+              Evaluation on a controlled mixture, simulated datasets, and three
+              biological investigations with diverse designs demonstrated that
+              MSstatsTMT balanced the sensitivity and the specificity of
+              detecting differentially abundant proteins, in large-scale
+              experiments with multiple biological mixtures.",
+  month    =  oct,
+  year     =  2020,
+  keywords = "Mass spectrometry; TMT; bioinformatics software; hypothesis
+              testing; mathematical modeling; multiple mixtures; protein
+              quantification; quantification; statistics",
+  language = "en"
+}
+
+@ARTICLE{Goeminne2016-tr,
+  title    = "Peptide-level Robust Ridge Regression Improves Estimation,
+              Sensitivity, and Specificity in Data-dependent Quantitative
+              Label-free Shotgun Proteomics",
+  author   = "Goeminne, Ludger J E and Gevaert, Kris and Clement, Lieven",
+  journal  = "Mol. Cell. Proteomics",
+  volume   =  15,
+  number   =  2,
+  pages    = "657--668",
+  abstract = "Peptide intensities from mass spectra are increasingly used for
+              relative quantitation of proteins in complex samples. However,
+              numerous issues inherent to the mass spectrometry workflow turn
+              quantitative proteomic data analysis into a crucial challenge. We
+              and others have shown that modeling at the peptide level
+              outperforms classical summarization-based approaches, which
+              typically also discard a lot of proteins at the data preprocessing
+              step. Peptide-based linear regression models, however, still
+              suffer from unbalanced datasets due to missing peptide
+              intensities, outlying peptide intensities and overfitting. Here,
+              we further improve upon peptide-based models by three modular
+              extensions: ridge regression, improved variance estimation by
+              borrowing information across proteins with empirical Bayes and
+              M-estimation with Huber weights. We illustrate our method on the
+              CPTAC spike-in study and on a study comparing wild-type and ArgP
+              knock-out Francisella tularensis proteomes. We show that the fold
+              change estimates of our robust approach are more precise and more
+              accurate than those from state-of-the-art summarization-based
+              methods and peptide-based regression models, which leads to an
+              improved sensitivity and specificity. We also demonstrate that
+              ionization competition effects come already into play at very low
+              spike-in concentrations and confirm that analyses with
+              peptide-based regression methods on peptide intensity values
+              aggregated by charge state and modification status (e.g.
+              MaxQuant's peptides.txt file) are slightly superior to analyses on
+              raw peptide intensity values (e.g. MaxQuant's evidence.txt file).",
+  month    =  feb,
+  year     =  2016,
+  language = "en"
+}
+
+@ARTICLE{Sticker2020-rl,
+  title    = "Robust Summarization and Inference in Proteome-wide Label-free
+              Quantification",
+  author   = "Sticker, Adriaan and Goeminne, Ludger and Martens, Lennart and
+              Clement, Lieven",
+  journal  = "Mol. Cell. Proteomics",
+  volume   =  19,
+  number   =  7,
+  pages    = "1209--1219",
+  abstract = "Label-Free Quantitative mass spectrometry based workflows for
+              differential expression (DE) analysis of proteins impose important
+              challenges on the data analysis because of peptide-specific
+              effects and context dependent missingness of peptide intensities.
+              Peptide-based workflows, like MSqRob, test for DE directly from
+              peptide intensities and outperform summarization methods which
+              first aggregate MS1 peptide intensities to protein intensities
+              before DE analysis. However, these methods are computationally
+              expensive, often hard to understand for the non-specialized
+              end-user, and do not provide protein summaries, which are
+              important for visualization or downstream processing. In this
+              work, we therefore evaluate state-of-the-art summarization
+              strategies using a benchmark spike-in dataset and discuss why and
+              when these fail compared with the state-of-the-art peptide based
+              model, MSqRob. Based on this evaluation, we propose a novel
+              summarization strategy, MSqRobSum, which estimates MSqRob's model
+              parameters in a two-stage procedure circumventing the drawbacks of
+              peptide-based workflows. MSqRobSum maintains MSqRob's superior
+              performance, while providing useful protein expression summaries
+              for plotting and downstream analysis. Summarizing peptide to
+              protein intensities considerably reduces the computational
+              complexity, the memory footprint and the model complexity, and
+              makes it easier to disseminate DE inferred on protein summaries.
+              Moreover, MSqRobSum provides a highly modular analysis framework,
+              which provides researchers with full flexibility to develop data
+              analysis workflows tailored toward their specific applications.",
+  month    =  jul,
+  year     =  2020,
+  keywords = "Biostatistics; bioinformatics; bioinformatics software;
+              differential expression; label-free quantification; mass
+              spectrometry; ridge regression; shotgun proteomics; summarization",
+  language = "en"
+}
+
+@ARTICLE{Vandenbulcke2025-sj,
+  title     = "{Msqrob2TMT}: Robust linear mixed models for inferring
+               differential abundant proteins in labeled experiments with
+               arbitrarily complex design",
+  author    = "Vandenbulcke, Stijn and Vanderaa, Christophe and Crook, Oliver
+               and Martens, Lennart and Clement, Lieven",
+  journal   = "Mol. Cell. Proteomics",
+  publisher = "Elsevier BV",
+  volume    =  24,
+  number    =  7,
+  pages     =  101002,
+  abstract  = "Labeling strategies in mass spectrometry-based proteomics enhance
+               sample throughput by enabling the acquisition of multiplexed
+               samples within a single run. However, contemporary experiments
+               often involve increasingly complex designs, where the number of
+               samples exceeds the capacity of a single run, resulting in a
+               complex correlation structure that must be addressed for accurate
+               statistical inference and reliable biomarker discovery. To this
+               end, we introduce msqrob2TMT, a suite of mixed model-based
+               workflows specifically designed for differential abundance
+               analysis in labeled mass spectrometry-based proteomics data.
+               msqrob2TMT accommodates both sample-specific and feature-specific
+               (e.g., peptide or protein) covariates, facilitating inference in
+               experiments with arbitrarily complex designs and allowing for
+               explicit correction of feature-specific covariates. We benchmark
+               our innovative workflows against state-of-the-art tools,
+               including DEqMS, MSstatsTMT, and msTrawler, using two spike-in
+               studies. Our findings demonstrate that msqrob2TMT offers greater
+               flexibility, improved modularity, and enhanced performance,
+               particularly through the application of robust ridge regression.
+               Finally, we demonstrate the practical relevance of msqrob2TMT in
+               a real mouse study, highlighting its capacity to effectively
+               account for the complex correlation structure in the data.",
+  month     =  may,
+  year      =  2025,
+  keywords  = "TMT labeling; differential proteomics; mass spectrometry; mixed
+               models; statistics",
+  language  = "en"
+}
+
+
+@ARTICLE{Savitski2011-qi,
+  title     = "Delayed fragmentation and optimized isolation width settings for
+               improvement of protein identification and accuracy of isobaric
+               mass tag quantification on Orbitrap-type mass spectrometers",
+  author    = "Savitski, Mikhail M and Sweetman, Gavain and Askenazi, Manor and
+               Marto, Jarrod A and Lang, Manja and Zinn, Nico and Bantscheff,
+               Marcus",
+  journal   = "Anal. Chem.",
+  publisher = "American Chemical Society (ACS)",
+  volume    =  83,
+  number    =  23,
+  pages     = "8959--8967",
+  abstract  = "Fragmentation of multiple peptides in a single tandem mass scan
+               impairs accuracy of isobaric mass tag based quantification.
+               Consequently, practitioners aim at fragmenting peptide ions with
+               the highest possible purity without compromising on sensitivity
+               and coverage achieved in the experiment. Here we report the first
+               systematic study optimizing delayed fragmentation options on
+               Orbitrap instruments. We demonstrate that by delaying peptide
+               fragmentation to occur closer to the apex of the chromatographic
+               peak in liquid chromatography-tandem mass spectrometry (LC-MS/MS)
+               experiments cofragmentation is reduced by 2-fold and peptides are
+               fragmented with 2.8-fold better signal-to-noise ratios. This
+               results in significantly improved accuracy of isobaric mass tag
+               quantification. Further, we measured cofragmentation dependence
+               on isolation width. In comparison to Orbitrap XL instruments the
+               reduced space charging in the Orbitrap Velos enables isolation
+               widths as narrow as 1 Th without impairing coverage, thus
+               substantially reducing cofragmentation. When delayed peptide
+               fragmentation and narrow isolation width settings were both
+               applied, cofragmentation-induced ratio compression could be
+               reduced by 32\% on a log2 scale under otherwise identical
+               conditions.",
+  month     =  dec,
+  year      =  2011,
+  language  = "en"
+}
