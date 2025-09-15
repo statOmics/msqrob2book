@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 5 Data preprocessing | Statistical analysis for proteomics data" />
+<meta property="og:type" content="book" />
+
+
+
+
+<meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
+
+<meta name="date" content="2025-09-03" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="Chapter 5 Data preprocessing | Statistical analysis for proteomics data">
+
+<title>Chapter 5 Data preprocessing | Statistical analysis for proteomics data</title>
+
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/envisioned.css" rel="stylesheet" />
+<link href="libs/msmb-css-0/msmb.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+
+if(f.classList.contains('fa-plus-square')) {
+    f.classList.add('fa-minus-square')
+    f.classList.remove('fa-plus-square')
+} else {
+    f.classList.add('fa-plus-square')
+    f.classList.remove('fa-minus-square')
+}
+
+}
+</script>
+<script>
+function copy_link(id) {
+  var dummy = document.createElement('input'),
+  text = window.location.href.split(/[?#]/)[0] + '#' + id;
+  document.body.appendChild(dummy);
+  dummy.value = text;
+  dummy.select();
+  document.execCommand('copy');
+  document.body.removeChild(dummy);
+  
+  var tooltip = document.getElementById(id + '-tooltip');
+  tooltip.innerHTML = 'Copied!';
+}
+
+function reset_tooltip(id) {
+  var tooltip = document.getElementById(id);
+  tooltip.innerHTML = 'Copy link';
+}
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul class="navbar">
+<li class="msmb"><p class="title">Statistical analysis for proteomics data<p><p class="author">Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement</p>
+<li class="dropdown" style="float:right">
+<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>
+<div class="dropdown-content">
+<a href="index.html" id="toc-preamble"><span class="toc-section-number">1</span> Preamble</a>
+<a href="statistical-analysis-with-msqrob2.html" id="toc-statistical-analysis-with-msqrob2"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
+<a href="load-packages.html" id="toc-load-packages"><span class="toc-section-number">3</span> Load packages</a>
+<a href="load-data.html" id="toc-load-data"><span class="toc-section-number">4</span> Load data</a>
+<a id="active-page" href="data-preprocessing.html" id="toc-data-preprocessing"><span class="toc-section-number">5</span> Data preprocessing</a><ul class="toc-sections">
+<li class="toc"><a href="#sample-filtering"> Sample filtering</a></li>
+<li class="toc"><a href="#psm-filtering"> PSM filtering</a></li>
+<li class="toc"><a href="#missing-data-management"> Missing data management</a></li>
+<li class="toc"><a href="#log2-transformation"> Log2 transformation</a></li>
+<li class="toc"><a href="#normalisation"> Normalisation</a></li>
+<li class="toc"><a href="#summarisation"> Summarisation</a></li>
+<li class="toc"><a href="#join-assays"> Join assays</a></li>
+</ul>
+<a href="modelling-sources-of-variation.html" id="toc-modelling-sources-of-variation"><span class="toc-section-number">6</span> Modelling sources of variation</a>
+<a href="statistical-inference.html" id="toc-statistical-inference"><span class="toc-section-number">7</span> Statistical inference</a>
+<a href="dealing-with-fiterrors.html" id="toc-dealing-with-fiterrors"><span class="toc-section-number">8</span> Dealing with <code>fitErrors</code></a>
+<a href="conclusion.html" id="toc-conclusion"><span class="toc-section-number">9</span> Conclusion</a>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="data-preprocessing" class="section level1" number="5">
+<h1>
+<span class="header-section-number">Chapter 5</span> Data preprocessing</h1>
+<p><code>msqrob2</code> relies on the <code>QFeatures</code> data structure, meaning that we
+can directly make use of <code>QFeatures</code>’ data preprocessing
+functionality. We will not detail the usage of each function below, but
+instead refer to the <code>QFeatures</code>
+<a href="https://rformassspectrometry.github.io/QFeatures/articles/Processing.html">documentation</a>.</p>
+<div id="sample-filtering" class="section level2" number="5.1">
+<h2>
+<span class="header-section-number">5.1</span> Sample filtering<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('sample-filtering')" onmouseout="reset_tooltip('sample-filtering-tooltip')"><span class="tooltiptext" id="sample-filtering-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We first remove the reference channels. These channels were used by
+the MSstatsTMT authors to obtain normalisation factors. However, this
+approach ignores the uncertainty associated with the measurement with
+these channels, potentially inflating the noise in the samples of
+interest. Hence, msqrob2TMT workflows do not use the reference
+channels. In practice, we found no impact of reference channel
+normalisation on model performance. The information is available from
+the <code>colData</code>, under the <code>Condition</code> column. We remove any sample that
+is marked as <code>Norm</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="data-preprocessing.html#cb10-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">subsetByColData</span>(spikein, spikein<span class="sc">$</span>Condition <span class="sc">!=</span> <span class="st">"Norm"</span>)</span></code></pre></div>
+</div>
+<div id="psm-filtering" class="section level2" number="5.2">
+<h2>
+<span class="header-section-number">5.2</span> PSM filtering<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('psm-filtering')" onmouseout="reset_tooltip('psm-filtering-tooltip')"><span class="tooltiptext" id="psm-filtering-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>The background proteins originate from HeLa cells, which also contain
+UPS proteins. The background UPS proteins and the spiked-in UPS
+proteins differ in metabolic labelling, so we should be able to
+distinguish them. We used the PSM-level data searched with mascot, as
+provided by the MSstatsTMT authors who used two mascot identification
+nodes. In one node they searched the SwissProt database for proteins
+with static modifications related to the metabolic labelling, in the
+other node they searched the Sigma_UPS protein database without these
+static modifications. Ideally, this should separate the spiked-in UPS
+proteins and the UPS proteins from the HeLa cells, however, this is
+not always the case. The SwissProt search is expected to return
+peptide-spectrum matches (PSMs) for all proteins, including non-UPS
+HeLa, UPS HeLa, and spike-in UPS proteins. Conversely, the Sigma_UPS
+search is expected to return PSMs exclusively for spike-in UPS
+proteins. However, a PSM that matches a UPS protein in the SwissProt
+search but is not identified as such in the Sigma_UPS search could
+either correctly originate from a HeLa protein or represent a
+spiked-in UPS protein that was not recognised as such in the Sigma_UPS
+search. Additionally, there are ambiguous PSMs that are not matched to
+a UPS protein in the HeLa search but are matched to a UPS protein in
+the SwissProt search. To address this, we exclude these ambiguous
+proteins from the analysis.</p>
+<p>To define amibiguous PSMs, we retrieve the PSM annotations from the
+<code>rowData</code> and create a new colum indicating whether a PSM belongs to a
+UPS protein or not, based on the protein SwissProt identifiers.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="data-preprocessing.html#cb11-1" tabindex="-1"></a>rowdata <span class="ot">&lt;-</span> <span class="fu">rbindRowData</span>(spikein, <span class="fu">names</span>(spikein))</span>
+<span id="cb11-2"><a href="data-preprocessing.html#cb11-2" tabindex="-1"></a>rowdata<span class="sc">$</span>isUps <span class="ot">&lt;-</span> <span class="st">"no"</span></span>
+<span id="cb11-3"><a href="data-preprocessing.html#cb11-3" tabindex="-1"></a>isUpsProtein <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"ups"</span>, rowdata<span class="sc">$</span>Protein.Accessions)</span>
+<span id="cb11-4"><a href="data-preprocessing.html#cb11-4" tabindex="-1"></a>rowdata<span class="sc">$</span>isUps[isUpsProtein] <span class="ot">&lt;-</span> <span class="st">"yes"</span></span></code></pre></div>
+<p>Then, we define an ambiguous PSM as a PSM that is marked as UPS by the
+SwissProt identifier but not by the Sigma_UPS node (<code>Marked.as</code>
+column), and inversely. Ambiguous PSMs are removed.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="data-preprocessing.html#cb12-1" tabindex="-1"></a>rowdata<span class="sc">$</span>isUps[<span class="sc">!</span>isUpsProtein <span class="sc">&amp;</span> <span class="fu">grepl</span>(<span class="st">"UPS"</span>, rowdata<span class="sc">$</span>Marked.as)] <span class="ot">&lt;-</span> <span class="st">"amb"</span></span>
+<span id="cb12-2"><a href="data-preprocessing.html#cb12-2" tabindex="-1"></a>rowdata<span class="sc">$</span>isUps[isUpsProtein <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"UPS"</span>, rowdata<span class="sc">$</span>Marked.as)] <span class="ot">&lt;-</span> <span class="st">"amb"</span></span>
+<span id="cb12-3"><a href="data-preprocessing.html#cb12-3" tabindex="-1"></a><span class="fu">rowData</span>(spikein) <span class="ot">&lt;-</span> <span class="fu">split</span>(rowdata, rowdata<span class="sc">$</span>assay)</span>
+<span id="cb12-4"><a href="data-preprocessing.html#cb12-4" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(spikein, <span class="sc">~</span> isUps <span class="sc">!=</span> <span class="st">"amb"</span>)</span></code></pre></div>
+<p>Next, we remove PSMs that could not be mapped to a protein or that map
+to multiple proteins (the protein identifier contains multiple
+identifiers separated by a <code>;</code>).</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="data-preprocessing.html#cb13-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(</span>
+<span id="cb13-2"><a href="data-preprocessing.html#cb13-2" tabindex="-1"></a>    spikein, <span class="sc">~</span> Protein.Accessions <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
+<span id="cb13-3"><a href="data-preprocessing.html#cb13-3" tabindex="-1"></a>        <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Protein.Accessions)) <span class="do">## Remove protein groups</span></span></code></pre></div>
+<p>We also remove peptide ions that map to a different protein depending
+on the run.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="data-preprocessing.html#cb14-1" tabindex="-1"></a>rowdata <span class="ot">&lt;-</span> <span class="fu">rbindRowData</span>(spikein, <span class="fu">names</span>(spikein))</span>
+<span id="cb14-2"><a href="data-preprocessing.html#cb14-2" tabindex="-1"></a>rowdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(rowdata) <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="data-preprocessing.html#cb14-3" tabindex="-1"></a>    <span class="fu">group_by</span>(Annotated.Sequence, Charge) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="data-preprocessing.html#cb14-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">nProtsMapped =</span> <span class="fu">length</span>(<span class="fu">unique</span>(Protein.Accessions)))</span>
+<span id="cb14-5"><a href="data-preprocessing.html#cb14-5" tabindex="-1"></a><span class="fu">rowData</span>(spikein) <span class="ot">&lt;-</span> <span class="fu">split</span>(rowdata, rowdata<span class="sc">$</span>assay)</span>
+<span id="cb14-6"><a href="data-preprocessing.html#cb14-6" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(spikein, <span class="sc">~</span> nProtsMapped <span class="sc">==</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>We also remove proteins that can only be found in one run as such
+proteins may not be trustworthy.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="data-preprocessing.html#cb15-1" tabindex="-1"></a>idProteins <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">rowData</span>(spikein), <span class="cf">function</span>(x) <span class="fu">unique</span>(x<span class="sc">$</span>Protein.Accessions))</span>
+<span id="cb15-2"><a href="data-preprocessing.html#cb15-2" tabindex="-1"></a>idInNRuns <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="fu">unlist</span>(idProteins))</span>
+<span id="cb15-3"><a href="data-preprocessing.html#cb15-3" tabindex="-1"></a>oneRunWonders <span class="ot">&lt;-</span> <span class="fu">names</span>(idInNRuns)[idInNRuns <span class="sc">==</span> <span class="dv">1</span>]</span>
+<span id="cb15-4"><a href="data-preprocessing.html#cb15-4" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(spikein, <span class="sc">~</span> <span class="sc">!</span>Protein.Accessions <span class="sc">%in%</span> oneRunWonders)</span></code></pre></div>
+<p>Finally, peptide ions that were identified with multiple PSMs in a run are
+collapsed to the PSM with the highest summed intensity over the
+channels, a strategy that is also used by MSstats.</p>
+<p>We therefore</p>
+<ol style="list-style-type: decimal">
+<li>Make a new variable for ionID in the rowData.</li>
+<li>We calculate the <code>rowSums</code> for each ion.</li>
+<li>Make a new variable <code>psmRank</code> that ranks the PSMs for each ionID
+based on the summed intensity.</li>
+<li>We store the new information back in the <code>rowData</code>.</li>
+<li>For each ion that maps to multiple PSMs, only keep the PSM with the
+highest summed intensity, that is that ranks first.</li>
+<li>Filter ions for which the rowSum equals 0.</li>
+</ol>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="data-preprocessing.html#cb16-1" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">names</span>(spikein)) {</span>
+<span id="cb16-2"><a href="data-preprocessing.html#cb16-2" tabindex="-1"></a>    rowdata <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[i]])</span>
+<span id="cb16-3"><a href="data-preprocessing.html#cb16-3" tabindex="-1"></a>    rowdata<span class="sc">$</span>ionID <span class="ot">&lt;-</span> <span class="fu">paste0</span>(rowdata<span class="sc">$</span>Annotated.Sequence, rowdata<span class="sc">$</span>Charge) <span class="do">## 1.</span></span>
+<span id="cb16-4"><a href="data-preprocessing.html#cb16-4" tabindex="-1"></a>    rowdata<span class="sc">$</span>rowSums <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">assay</span>(spikein[[i]]), <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="do">## 2.</span></span>
+<span id="cb16-5"><a href="data-preprocessing.html#cb16-5" tabindex="-1"></a>    rowdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(rowdata) <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a href="data-preprocessing.html#cb16-6" tabindex="-1"></a>        <span class="fu">group_by</span>(ionID) <span class="sc">|&gt;</span></span>
+<span id="cb16-7"><a href="data-preprocessing.html#cb16-7" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">psmRank =</span> <span class="fu">rank</span>(<span class="sc">-</span>rowSums)) <span class="do">## 3.</span></span>
+<span id="cb16-8"><a href="data-preprocessing.html#cb16-8" tabindex="-1"></a>    <span class="fu">rowData</span>(spikein[[i]]) <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(rowdata) <span class="do">## 4.</span></span>
+<span id="cb16-9"><a href="data-preprocessing.html#cb16-9" tabindex="-1"></a>}</span>
+<span id="cb16-10"><a href="data-preprocessing.html#cb16-10" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(spikein, <span class="sc">~</span> psmRank <span class="sc">==</span> <span class="dv">1</span>) <span class="do">## 5.</span></span>
+<span id="cb16-11"><a href="data-preprocessing.html#cb16-11" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(spikein, <span class="sc">~</span> rowSums <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="do">## 6.</span></span></code></pre></div>
+</div>
+<div id="missing-data-management" class="section level2" number="5.3">
+<h2>
+<span class="header-section-number">5.3</span> Missing data management<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('missing-data-management')" onmouseout="reset_tooltip('missing-data-management-tooltip')"><span class="tooltiptext" id="missing-data-management-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We ensure missing values are properly encoded. Zero values and missing
+values have different interpretations. However, zeros may artificially
+occur when the quantification threshold lies above the noise level. We
+therefore replace any zero by a missing value. We then remove PSMs
+with 5 or more missing values out of 10 TMT channels (&gt;= 50%). This is
+an arbitrary value that may need to be adjusted depending on the
+experiment and the data set.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="data-preprocessing.html#cb17-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(spikein, <span class="fu">names</span>(spikein))</span>
+<span id="cb17-2"><a href="data-preprocessing.html#cb17-2" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(spikein, <span class="fu">names</span>(spikein), <span class="at">pNA =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+</div>
+<div id="log2-transformation" class="section level2" number="5.4">
+<h2>
+<span class="header-section-number">5.4</span> Log2 transformation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('log2-transformation')" onmouseout="reset_tooltip('log2-transformation-tooltip')"><span class="tooltiptext" id="log2-transformation-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>Next, we log2 transform the intensities.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="data-preprocessing.html#cb18-1" tabindex="-1"></a>sNames <span class="ot">&lt;-</span> <span class="fu">names</span>(spikein)</span>
+<span id="cb18-2"><a href="data-preprocessing.html#cb18-2" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(</span>
+<span id="cb18-3"><a href="data-preprocessing.html#cb18-3" tabindex="-1"></a>    spikein, sNames, <span class="at">name =</span> <span class="fu">paste0</span>(sNames, <span class="st">"_log"</span>), <span class="at">base =</span> <span class="dv">2</span></span>
+<span id="cb18-4"><a href="data-preprocessing.html#cb18-4" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="normalisation" class="section level2" number="5.5">
+<h2>
+<span class="header-section-number">5.5</span> Normalisation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('normalisation')" onmouseout="reset_tooltip('normalisation-tooltip')"><span class="tooltiptext" id="normalisation-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We normalise each TMT channel by subtracting the median intensity
+within each run.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="data-preprocessing.html#cb19-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">normalize</span>(</span>
+<span id="cb19-2"><a href="data-preprocessing.html#cb19-2" tabindex="-1"></a>    spikein, <span class="fu">paste0</span>(sNames, <span class="st">"_log"</span>), <span class="at">name =</span> <span class="fu">paste0</span>(sNames, <span class="st">"_norm"</span>),</span>
+<span id="cb19-3"><a href="data-preprocessing.html#cb19-3" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"center.median"</span></span>
+<span id="cb19-4"><a href="data-preprocessing.html#cb19-4" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="summarisation" class="section level2" number="5.6">
+<h2>
+<span class="header-section-number">5.6</span> Summarisation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('summarisation')" onmouseout="reset_tooltip('summarisation-tooltip')"><span class="tooltiptext" id="summarisation-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>In case of the proteins models, we summarise (also referred to as
+aggregation) the PSM-level data into protein intensities through
+median polish.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="data-preprocessing.html#cb20-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
+<span id="cb20-2"><a href="data-preprocessing.html#cb20-2" tabindex="-1"></a>    spikein, <span class="at">i =</span> <span class="fu">paste0</span>(sNames, <span class="st">"_norm"</span>), <span class="at">name =</span> <span class="fu">paste0</span>(sNames, <span class="st">"_proteins"</span>),</span>
+<span id="cb20-3"><a href="data-preprocessing.html#cb20-3" tabindex="-1"></a>    <span class="at">fcol =</span> <span class="st">"Protein.Accessions"</span>, <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>medianPolish,</span>
+<span id="cb20-4"><a href="data-preprocessing.html#cb20-4" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb20-5"><a href="data-preprocessing.html#cb20-5" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="join-assays" class="section level2" number="5.7">
+<h2>
+<span class="header-section-number">5.7</span> Join assays<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('join-assays')" onmouseout="reset_tooltip('join-assays-tooltip')"><span class="tooltiptext" id="join-assays-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>Finally, we join the different runs into a single set for ions and for
+proteins. Sets are joined by stacking the columns (samples) in a
+matrix and rows (features) are matched by the row names. We will join
+all log2-normalised ion data in one set and all protein data in
+another. First, we need to redefine the rownames for the ion data
+using the ion identifier.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="data-preprocessing.html#cb21-1" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">paste0</span>(sNames, <span class="st">"_norm"</span>)) {</span>
+<span id="cb21-2"><a href="data-preprocessing.html#cb21-2" tabindex="-1"></a>    <span class="fu">rownames</span>(spikein[[i]]) <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[i]])<span class="sc">$</span>ionID</span>
+<span id="cb21-3"><a href="data-preprocessing.html#cb21-3" tabindex="-1"></a>}</span></code></pre></div>
+<p>We can now join the sets together.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="data-preprocessing.html#cb22-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">joinAssays</span>(spikein, <span class="fu">paste0</span>(sNames, <span class="st">"_norm"</span>), <span class="st">"ions"</span>)</span>
+<span id="cb22-2"><a href="data-preprocessing.html#cb22-2" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">joinAssays</span>(spikein, <span class="fu">paste0</span>(sNames, <span class="st">"_proteins"</span>), <span class="st">"proteins"</span>)</span></code></pre></div>
+</div>
+</div>
+<p style="text-align: center;">
+<a href="load-data.html"><button class="btn btn-default">Previous</button></a>
+<a href="modelling-sources-of-variation.html"><button class="btn btn-default">Next</button></a>
+</p>
+<p class="build-date">Page built: 
+2025-09-03
+ using 
+R version 4.5.1 (2025-06-13)
+</p>
+</div>
+</div>
+
+
+
+</body>
+</html>

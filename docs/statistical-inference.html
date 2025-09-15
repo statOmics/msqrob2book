@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 7 Statistical inference | Statistical analysis for proteomics data" />
+<meta property="og:type" content="book" />
+
+
+
+
+<meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
+
+<meta name="date" content="2025-09-03" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="Chapter 7 Statistical inference | Statistical analysis for proteomics data">
+
+<title>Chapter 7 Statistical inference | Statistical analysis for proteomics data</title>
+
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/envisioned.css" rel="stylesheet" />
+<link href="libs/msmb-css-0/msmb.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+
+if(f.classList.contains('fa-plus-square')) {
+    f.classList.add('fa-minus-square')
+    f.classList.remove('fa-plus-square')
+} else {
+    f.classList.add('fa-plus-square')
+    f.classList.remove('fa-minus-square')
+}
+
+}
+</script>
+<script>
+function copy_link(id) {
+  var dummy = document.createElement('input'),
+  text = window.location.href.split(/[?#]/)[0] + '#' + id;
+  document.body.appendChild(dummy);
+  dummy.value = text;
+  dummy.select();
+  document.execCommand('copy');
+  document.body.removeChild(dummy);
+  
+  var tooltip = document.getElementById(id + '-tooltip');
+  tooltip.innerHTML = 'Copied!';
+}
+
+function reset_tooltip(id) {
+  var tooltip = document.getElementById(id);
+  tooltip.innerHTML = 'Copy link';
+}
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul class="navbar">
+<li class="msmb"><p class="title">Statistical analysis for proteomics data<p><p class="author">Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement</p>
+<li class="dropdown" style="float:right">
+<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>
+<div class="dropdown-content">
+<a href="index.html" id="toc-preamble"><span class="toc-section-number">1</span> Preamble</a>
+<a href="statistical-analysis-with-msqrob2.html" id="toc-statistical-analysis-with-msqrob2"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
+<a href="load-packages.html" id="toc-load-packages"><span class="toc-section-number">3</span> Load packages</a>
+<a href="load-data.html" id="toc-load-data"><span class="toc-section-number">4</span> Load data</a>
+<a href="data-preprocessing.html" id="toc-data-preprocessing"><span class="toc-section-number">5</span> Data preprocessing</a>
+<a href="modelling-sources-of-variation.html" id="toc-modelling-sources-of-variation"><span class="toc-section-number">6</span> Modelling sources of variation</a>
+<a id="active-page" href="statistical-inference.html" id="toc-statistical-inference"><span class="toc-section-number">7</span> Statistical inference</a><ul class="toc-sections">
+<li class="toc"><a href="#retrieving-results"> Retrieving results</a></li>
+<li class="toc"><a href="#volcano-plots"> Volcano plots</a></li>
+<li class="toc"><a href="#fold-change-distributions"> Fold change distributions</a></li>
+<li class="toc"><a href="#visual-validation"> Visual validation</a></li>
+<li class="toc"><a href="#protein-level-models"> Protein-level models</a></li>
+<li class="toc"><a href="#inference-for-all-pairwise-comparisons-between-conditions"> Inference for all pairwise comparisons between conditions</a></li>
+</ul>
+<a href="dealing-with-fiterrors.html" id="toc-dealing-with-fiterrors"><span class="toc-section-number">8</span> Dealing with <code>fitErrors</code></a>
+<a href="conclusion.html" id="toc-conclusion"><span class="toc-section-number">9</span> Conclusion</a>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="statistical-inference" class="section level1" number="7">
+<h1>
+<span class="header-section-number">Chapter 7</span> Statistical inference</h1>
+<p>Now we have modelled our data, we can use the model output to assess
+the amplitude of an effect of interest and its statistical
+significance.</p>
+<div id="retrieving-results" class="section level2" number="7.1">
+<h2>
+<span class="header-section-number">7.1</span> Retrieving results<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('retrieving-results')" onmouseout="reset_tooltip('retrieving-results-tooltip')"><span class="tooltiptext" id="retrieving-results-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>With <code>getCoef()</code>, we can retrieve the estimated model parameters. We
+will focus on the last model as an illustration, but the same approach
+applies for any model estimated by <code>msqrob()</code> or <code>msqrobAggregate()</code>.
+We start with extracting the model output, stored as <code>StatModel</code>
+objects, from the <code>rowData</code>. Next, <code>getCoef()</code> retrieves the estimated
+model parameters:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="statistical-inference.html#cb29-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins_msqrob"</span>]])<span class="sc">$</span>msqrob_psm_rrilmm</span>
+<span id="cb29-2"><a href="statistical-inference.html#cb29-2" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">getCoef</span>(models[[<span class="dv">1</span>]])</span>
+<span id="cb29-3"><a href="statistical-inference.html#cb29-3" tabindex="-1"></a><span class="fu">head</span>(params)</span></code></pre></div>
+<p>The PSM model estimated 1 parameters to model the
+fixed and random effects. However, we are interested, for this data
+set, in the parameters that model the effect of <code>Condition</code>.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="statistical-inference.html#cb30-1" tabindex="-1"></a>params[<span class="fu">grep</span>(<span class="st">"Condition"</span>, <span class="fu">names</span>(params))]</span></code></pre></div>
+<p>Note the <code>"ridge"</code> tag in front of the parameter names that indicates
+the parameters have been estimated using ridge penalisation. For this
+protein we can see that the effects of condition are very close to
+zero, as expected since the protein is part of the HeLa background.
+However, we can explore the parameters for one of the UPS proteins.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="statistical-inference.html#cb31-1" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">getCoef</span>(models[[<span class="st">"O00762ups"</span>]])</span>
+<span id="cb31-2"><a href="statistical-inference.html#cb31-2" tabindex="-1"></a>params[<span class="fu">grep</span>(<span class="st">"Condition"</span>, <span class="fu">names</span>(params))]</span></code></pre></div>
+<p>Let’s know verify the result provide the expected fold change. To do
+so we define a contrast, that is a parameter combination that provide
+an answer to the research question, for instance for the average
+log2 difference in intensity between condition 1x and condition 0.5x.
+Since this is a benchmark study, the obvious answer is <span class="math inline">\(log_2(1) -
+log_2(0.5) = 1\)</span>.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="statistical-inference.html#cb32-1" tabindex="-1"></a><span class="fu">unname</span>(params[<span class="st">"ridgeCondition1"</span>] <span class="sc">-</span> params[<span class="st">"ridgeCondition0.5"</span>])</span></code></pre></div>
+<p>This value is close to the expected value. Now, the question is how
+statistically significant is the estimated log2 fold change. <code>msqrob2</code> provides
+a user friendly interface to allow computing contrast of interest and
+performing statistical inference. We first define the contrast using
+<code>makeContrast()</code>. The first argument is the null hypothesis to test,
+here that the average difference between condition 1x and 0.5x is 0.
+The second argument points to the parameters that are involved to
+perform the test.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="statistical-inference.html#cb33-1" tabindex="-1"></a>(L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
+<span id="cb33-2"><a href="statistical-inference.html#cb33-2" tabindex="-1"></a>    <span class="st">"ridgeCondition1 - ridgeCondition0.5 = 0"</span>,</span>
+<span id="cb33-3"><a href="statistical-inference.html#cb33-3" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"ridgeCondition1"</span>, <span class="st">"ridgeCondition0.5"</span>)</span>
+<span id="cb33-4"><a href="statistical-inference.html#cb33-4" tabindex="-1"></a>))</span></code></pre></div>
+<p>We can now test our null hypothesis using <code>hypothesisTest()</code> which
+takes the <code>QFeatures</code> object with the fitted model and the contrast we
+just built. Again, the results are stored in the set containing the
+model, here <code>proteins_msqrob</code></p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="statistical-inference.html#cb34-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(</span>
+<span id="cb34-2"><a href="statistical-inference.html#cb34-2" tabindex="-1"></a>    spikein, <span class="at">i =</span> <span class="st">"proteins_msqrob"</span>, <span class="at">contrast =</span> L,</span>
+<span id="cb34-3"><a href="statistical-inference.html#cb34-3" tabindex="-1"></a>    <span class="at">modelColumn =</span> <span class="st">"msqrob_psm_rrilmm"</span></span>
+<span id="cb34-4"><a href="statistical-inference.html#cb34-4" tabindex="-1"></a>)</span></code></pre></div>
+<p>Let’s retrieve the results from the <code>rowData</code>.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="statistical-inference.html#cb35-1" tabindex="-1"></a>htest <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins_msqrob"</span>]])<span class="sc">$</span><span class="st">"ridgeCondition1 - ridgeCondition0.5"</span></span>
+<span id="cb35-2"><a href="statistical-inference.html#cb35-2" tabindex="-1"></a><span class="fu">head</span>(htest)</span></code></pre></div>
+<p>The last row is filled with missing values because data modelling
+resulted in a <code>fitError</code>. We will explore in a later section how we
+can deal with proteins that could not be fit.</p>
+</div>
+<div id="volcano-plots" class="section level2" number="7.2">
+<h2>
+<span class="header-section-number">7.2</span> Volcano plots<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('volcano-plots')" onmouseout="reset_tooltip('volcano-plots-tooltip')"><span class="tooltiptext" id="volcano-plots-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We can use the table above directly to build a volcano plot using
+<code>ggplot2</code> functionality. We also highlight which proteins are UPS
+standards, known from the experimental design to be differentially
+abundant.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="statistical-inference.html#cb36-1" tabindex="-1"></a>htest<span class="sc">$</span>protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(htest)</span>
+<span id="cb36-2"><a href="statistical-inference.html#cb36-2" tabindex="-1"></a>htest<span class="sc">$</span>isUps <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"ups"</span>, htest<span class="sc">$</span>protein)</span>
+<span id="cb36-3"><a href="statistical-inference.html#cb36-3" tabindex="-1"></a><span class="fu">ggplot</span>(htest) <span class="sc">+</span></span>
+<span id="cb36-4"><a href="statistical-inference.html#cb36-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
+<span id="cb36-5"><a href="statistical-inference.html#cb36-5" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(adjPval),</span>
+<span id="cb36-6"><a href="statistical-inference.html#cb36-6" tabindex="-1"></a>        <span class="at">color =</span> isUps) <span class="sc">+</span></span>
+<span id="cb36-7"><a href="statistical-inference.html#cb36-7" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>)) <span class="sc">+</span></span>
+<span id="cb36-8"><a href="statistical-inference.html#cb36-8" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb36-9"><a href="statistical-inference.html#cb36-9" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(</span>
+<span id="cb36-10"><a href="statistical-inference.html#cb36-10" tabindex="-1"></a>        <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb36-11"><a href="statistical-inference.html#cb36-11" tabindex="-1"></a>        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"HeLA background"</span>, <span class="st">"UPS standard"</span>)</span>
+<span id="cb36-12"><a href="statistical-inference.html#cb36-12" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb36-13"><a href="statistical-inference.html#cb36-13" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"msqrob_psm_rrilm model"</span>,</span>
+<span id="cb36-14"><a href="statistical-inference.html#cb36-14" tabindex="-1"></a>            <span class="st">"Hypothesis test: Condition 1x - 0.5x = 0"</span>)</span></code></pre></div>
+</div>
+<div id="fold-change-distributions" class="section level2" number="7.3">
+<h2>
+<span class="header-section-number">7.3</span> Fold change distributions<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('fold-change-distributions')" onmouseout="reset_tooltip('fold-change-distributions-tooltip')"><span class="tooltiptext" id="fold-change-distributions-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>As this is a spike-in study with known ground truth, we can also plot
+the log2 fold change distributions against the expected values, in
+this case 0 for the HeLa proteins and 1 for the UPS standards.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="statistical-inference.html#cb37-1" tabindex="-1"></a><span class="fu">ggplot</span>(htest) <span class="sc">+</span></span>
+<span id="cb37-2"><a href="statistical-inference.html#cb37-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
+<span id="cb37-3"><a href="statistical-inference.html#cb37-3" tabindex="-1"></a>        <span class="at">x =</span> isUps,</span>
+<span id="cb37-4"><a href="statistical-inference.html#cb37-4" tabindex="-1"></a>        <span class="at">colour =</span> isUps) <span class="sc">+</span></span>
+<span id="cb37-5"><a href="statistical-inference.html#cb37-5" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb37-6"><a href="statistical-inference.html#cb37-6" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">colour =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>)) <span class="sc">+</span></span>
+<span id="cb37-7"><a href="statistical-inference.html#cb37-7" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(</span>
+<span id="cb37-8"><a href="statistical-inference.html#cb37-8" tabindex="-1"></a>        <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb37-9"><a href="statistical-inference.html#cb37-9" tabindex="-1"></a>        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"HeLA background"</span>, <span class="st">"UPS standard"</span>)</span>
+<span id="cb37-10"><a href="statistical-inference.html#cb37-10" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb37-11"><a href="statistical-inference.html#cb37-11" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Distribution of the log2 fold changes"</span>,</span>
+<span id="cb37-12"><a href="statistical-inference.html#cb37-12" tabindex="-1"></a>            <span class="st">"Hypothesis test: Condition 1x - 0.5x = 0"</span>)</span></code></pre></div>
+<p>Estimated log2 fold change for HeLa proteins are closely distributed
+around 0, as expected. log2 fold changes for UPS standard proteins are
+distributed toward 1, although it is underestimated as reported
+previously (<a href="https://doi.org/10.1021/ac201760x">Savitski et al.
+2011</a>).</p>
+</div>
+<div id="visual-validation" class="section level2" number="7.4">
+<h2>
+<span class="header-section-number">7.4</span> Visual validation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('visual-validation')" onmouseout="reset_tooltip('visual-validation-tooltip')"><span class="tooltiptext" id="visual-validation-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We can explore the PSM intensities for a protein to validate the
+statistical inference results. For example, let’s explore the
+intensities for the protein with the most significant difference.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="statistical-inference.html#cb38-1" tabindex="-1"></a>(targetProtein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(htest)[<span class="fu">which.min</span>(htest<span class="sc">$</span>adjPval)])</span></code></pre></div>
+<p>To obtain the required data, we perform a little data manipulation
+pipeline:</p>
+<ol style="list-style-type: decimal">
+<li>We use the <code>QFeatures</code> subsetting functionality to retrieve all data
+related to and focusing on the <code>ions</code> set that
+contains the peptide ion data used for model fitting.</li>
+<li>We use <code>longFormat()</code> to convert the object into a table suitable for
+plotting.</li>
+<li>We remove missing values for plotting.</li>
+<li>We reorder the sample identifiers to improve visualisation.</li>
+</ol>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="statistical-inference.html#cb39-1" tabindex="-1"></a>ionData <span class="ot">&lt;-</span> spikein[targetProtein, , <span class="st">"ions"</span>] <span class="sc">|&gt;</span> <span class="co">#1</span></span>
+<span id="cb39-2"><a href="statistical-inference.html#cb39-2" tabindex="-1"></a>    <span class="fu">longFormat</span>(<span class="at">colvars =</span> <span class="fu">colnames</span>(<span class="fu">colData</span>(spikein)), <span class="co">#2</span></span>
+<span id="cb39-3"><a href="statistical-inference.html#cb39-3" tabindex="-1"></a>               <span class="at">rowvars =</span> <span class="fu">c</span>(<span class="st">"Protein.Accessions"</span>, <span class="st">"ionID"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb39-4"><a href="statistical-inference.html#cb39-4" tabindex="-1"></a>    <span class="fu">data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb39-5"><a href="statistical-inference.html#cb39-5" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(value)) <span class="sc">|&gt;</span> <span class="co">#3</span></span>
+<span id="cb39-6"><a href="statistical-inference.html#cb39-6" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">colname =</span> <span class="fu">factor</span>(colname, <span class="at">levels =</span> <span class="fu">unique</span>(colname[<span class="fu">order</span>(Condition)]))) <span class="co">#4</span></span></code></pre></div>
+<p>Finally, we plot the log2 normalised intensities for each sample.
+Since the protein is modelled at the peptide ion level, multiple ion
+intensities are recorded in each sample. Each ion is linked across
+samples using a grey line. Samples are colored according to UPS
+spike-in condition. Finally, we split the plot in facets, one for each
+mixture, to visualise the heterogeneity induced by sample preparation.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="statistical-inference.html#cb40-1" tabindex="-1"></a><span class="fu">ggplot</span>(ionData) <span class="sc">+</span></span>
+<span id="cb40-2"><a href="statistical-inference.html#cb40-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> colname,</span>
+<span id="cb40-3"><a href="statistical-inference.html#cb40-3" tabindex="-1"></a>        <span class="at">y =</span> value) <span class="sc">+</span></span>
+<span id="cb40-4"><a href="statistical-inference.html#cb40-4" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> ionID), <span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb40-5"><a href="statistical-inference.html#cb40-5" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> Condition)) <span class="sc">+</span></span>
+<span id="cb40-6"><a href="statistical-inference.html#cb40-6" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span> Mixture, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb40-7"><a href="statistical-inference.html#cb40-7" tabindex="-1"></a>    <span class="fu">ggtitle</span>(targetProtein) <span class="sc">+</span></span>
+<span id="cb40-8"><a href="statistical-inference.html#cb40-8" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb40-9"><a href="statistical-inference.html#cb40-9" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+</div>
+<div id="protein-level-models" class="section level2" number="7.5">
+<h2>
+<span class="header-section-number">7.5</span> Protein-level models<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('protein-level-models')" onmouseout="reset_tooltip('protein-level-models-tooltip')"><span class="tooltiptext" id="protein-level-models-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>Performing the statistical inference for summarisation-based models,
+hence modelling protein-level data, is very similar as for the
+PSM-based models shown above. Let’s apply the same statistical
+inference pipeline for the <code>msqrob_rrilmm</code> model stored in the
+<code>QFeatures</code> object.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="statistical-inference.html#cb41-1" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
+<span id="cb41-2"><a href="statistical-inference.html#cb41-2" tabindex="-1"></a>    <span class="st">"ridgeCondition1 - ridgeCondition0.5 = 0"</span>,</span>
+<span id="cb41-3"><a href="statistical-inference.html#cb41-3" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"ridgeCondition1"</span>, <span class="st">"ridgeCondition0.5"</span>)</span>
+<span id="cb41-4"><a href="statistical-inference.html#cb41-4" tabindex="-1"></a>)</span>
+<span id="cb41-5"><a href="statistical-inference.html#cb41-5" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(</span>
+<span id="cb41-6"><a href="statistical-inference.html#cb41-6" tabindex="-1"></a>    spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">contrast =</span> L,</span>
+<span id="cb41-7"><a href="statistical-inference.html#cb41-7" tabindex="-1"></a>    <span class="at">modelColumn =</span> <span class="st">"msqrob_rrilmm"</span></span>
+<span id="cb41-8"><a href="statistical-inference.html#cb41-8" tabindex="-1"></a>)</span>
+<span id="cb41-9"><a href="statistical-inference.html#cb41-9" tabindex="-1"></a>htestProt <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])<span class="sc">$</span><span class="st">"ridgeCondition1 - ridgeCondition0.5"</span></span></code></pre></div>
+<p>We build the volcano using the same code:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="statistical-inference.html#cb42-1" tabindex="-1"></a>htestProt<span class="sc">$</span>protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(htestProt)</span>
+<span id="cb42-2"><a href="statistical-inference.html#cb42-2" tabindex="-1"></a>htestProt<span class="sc">$</span>isUps <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"ups"</span>, htestProt<span class="sc">$</span>protein)</span>
+<span id="cb42-3"><a href="statistical-inference.html#cb42-3" tabindex="-1"></a><span class="fu">ggplot</span>(htestProt) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="statistical-inference.html#cb42-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
+<span id="cb42-5"><a href="statistical-inference.html#cb42-5" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(adjPval),</span>
+<span id="cb42-6"><a href="statistical-inference.html#cb42-6" tabindex="-1"></a>        <span class="at">color =</span> isUps) <span class="sc">+</span></span>
+<span id="cb42-7"><a href="statistical-inference.html#cb42-7" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>)) <span class="sc">+</span></span>
+<span id="cb42-8"><a href="statistical-inference.html#cb42-8" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb42-9"><a href="statistical-inference.html#cb42-9" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(</span>
+<span id="cb42-10"><a href="statistical-inference.html#cb42-10" tabindex="-1"></a>        <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb42-11"><a href="statistical-inference.html#cb42-11" tabindex="-1"></a>        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"HeLA background"</span>, <span class="st">"UPS standard"</span>)</span>
+<span id="cb42-12"><a href="statistical-inference.html#cb42-12" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb42-13"><a href="statistical-inference.html#cb42-13" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"msqrob_rrilm model"</span>,</span>
+<span id="cb42-14"><a href="statistical-inference.html#cb42-14" tabindex="-1"></a>            <span class="st">"Hypothesis test: Condition 1x - 0.5x = 0</span><span class="sc">\n</span><span class="st">Protein-level modelling"</span>)</span></code></pre></div>
+<p>We plot the fold change distributions:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="statistical-inference.html#cb43-1" tabindex="-1"></a><span class="fu">ggplot</span>(htestProt) <span class="sc">+</span></span>
+<span id="cb43-2"><a href="statistical-inference.html#cb43-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
+<span id="cb43-3"><a href="statistical-inference.html#cb43-3" tabindex="-1"></a>        <span class="at">x =</span> isUps,</span>
+<span id="cb43-4"><a href="statistical-inference.html#cb43-4" tabindex="-1"></a>        <span class="at">colour =</span> isUps) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="statistical-inference.html#cb43-5" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb43-6"><a href="statistical-inference.html#cb43-6" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">colour =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>)) <span class="sc">+</span></span>
+<span id="cb43-7"><a href="statistical-inference.html#cb43-7" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(</span>
+<span id="cb43-8"><a href="statistical-inference.html#cb43-8" tabindex="-1"></a>        <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb43-9"><a href="statistical-inference.html#cb43-9" tabindex="-1"></a>        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"HeLA background"</span>, <span class="st">"UPS standard"</span>)</span>
+<span id="cb43-10"><a href="statistical-inference.html#cb43-10" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb43-11"><a href="statistical-inference.html#cb43-11" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Distribution of the log2 fold changes"</span>,</span>
+<span id="cb43-12"><a href="statistical-inference.html#cb43-12" tabindex="-1"></a>            <span class="st">"Hypothesis test: Condition 1x - 0.5x = 0</span><span class="sc">\n</span><span class="st">Protein-level modelling"</span>)</span></code></pre></div>
+<p>Exploring the intensities at the protein level is simplified compared
+to PSM-level exploration since every sample now contains a single
+observation, the protein intensity.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="statistical-inference.html#cb44-1" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">intensity =</span> <span class="fu">assay</span>(spikein[[<span class="st">"proteins"</span>]])[targetProtein, ],</span>
+<span id="cb44-2"><a href="statistical-inference.html#cb44-2" tabindex="-1"></a>           <span class="fu">colData</span>(spikein),</span>
+<span id="cb44-3"><a href="statistical-inference.html#cb44-3" tabindex="-1"></a>           <span class="at">colname =</span> <span class="fu">colnames</span>(spikein[[<span class="st">"proteins"</span>]])) <span class="sc">|&gt;</span></span>
+<span id="cb44-4"><a href="statistical-inference.html#cb44-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">colname =</span> <span class="fu">factor</span>(colname, <span class="at">levels =</span> <span class="fu">unique</span>(colname[<span class="fu">order</span>(Condition)]))) <span class="sc">|&gt;</span></span>
+<span id="cb44-5"><a href="statistical-inference.html#cb44-5" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb44-6"><a href="statistical-inference.html#cb44-6" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> colname,</span>
+<span id="cb44-7"><a href="statistical-inference.html#cb44-7" tabindex="-1"></a>        <span class="at">y =</span> intensity) <span class="sc">+</span></span>
+<span id="cb44-8"><a href="statistical-inference.html#cb44-8" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> Condition)) <span class="sc">+</span></span>
+<span id="cb44-9"><a href="statistical-inference.html#cb44-9" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span> Mixture, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb44-10"><a href="statistical-inference.html#cb44-10" tabindex="-1"></a>    <span class="fu">ggtitle</span>(targetProtein) <span class="sc">+</span></span>
+<span id="cb44-11"><a href="statistical-inference.html#cb44-11" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb44-12"><a href="statistical-inference.html#cb44-12" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p>Notice how the summarisation-based approach hides the variation
+associated with the measurement of different peptide ions within the
+same protein, as well as discrepancies between peptide identification
+rates across mixtures.</p>
+</div>
+<div id="inference-for-all-pairwise-comparisons-between-conditions" class="section level2" number="7.6">
+<h2>
+<span class="header-section-number">7.6</span> Inference for all pairwise comparisons between conditions<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('inference-for-all-pairwise-comparisons-between-conditions')" onmouseout="reset_tooltip('inference-for-all-pairwise-comparisons-between-conditions-tooltip')"><span class="tooltiptext" id="inference-for-all-pairwise-comparisons-between-conditions-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>For a factor variable, we often want to infer on all pairwise
+comparisons between the groups. Note, that our models have a fixed
+effect component that consist of a single factor and that we have
+chosen to suppress the intercept. <code>msqrob2</code> therefore returned models
+with a separate model parameter to estimate the mean for every group.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="statistical-inference.html#cb45-1" tabindex="-1"></a>design_fixed  <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> Condition, <span class="fu">colData</span>(spikein))</span>
+<span id="cb45-2"><a href="statistical-inference.html#cb45-2" tabindex="-1"></a>(param_names_fixed <span class="ot">&lt;-</span> <span class="fu">colnames</span>(design_fixed))</span></code></pre></div>
+<p>If we use ridge regression, <code>msqrob2</code> by default will put the prefix
+<code>ridge</code> to the parameter names of the fixed effects.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="statistical-inference.html#cb46-1" tabindex="-1"></a>(param_names_fixed <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"ridge"</span>, param_names_fixed))</span></code></pre></div>
+<p>We now make all pairwise contrasts. The function <code>combn()</code> can make all
+combinations of a vector and we apply the function <code>paste()</code> with the
+argument <code>collapse = " - "</code> to these combinations. This makes a vector
+of strings specifying all contrasts of interest. Upon pasting “= 0”
+to each of the contrasts, all null hypotheses corresponding to the
+pairwise comparisons are specified.</p>
+<p>Note, that we first sort the parameter names in decreasing order to
+ensure that a positive log2 fold change estimate refers to an
+upregulation in the highest spike-in condition involved in the
+comparison.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="statistical-inference.html#cb47-1" tabindex="-1"></a>(hypotheses <span class="ot">&lt;-</span> param_names_fixed <span class="sc">|&gt;</span></span>
+<span id="cb47-2"><a href="statistical-inference.html#cb47-2" tabindex="-1"></a>     <span class="fu">sort</span>(<span class="at">decreasing =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-3"><a href="statistical-inference.html#cb47-3" tabindex="-1"></a>     <span class="fu">combn</span>(<span class="dv">2</span>, paste, <span class="at">collapse=</span><span class="st">" - "</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-4"><a href="statistical-inference.html#cb47-4" tabindex="-1"></a>     <span class="fu">paste</span>(<span class="st">"= 0"</span>))</span></code></pre></div>
+<p>We now have specified the null hypotheses for all pairwise contrasts
+of interest. Below, we will generate the contrast matrix for these six
+contrasts.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="statistical-inference.html#cb48-1" tabindex="-1"></a>(L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(hypotheses, <span class="at">parameterNames =</span> param_names_fixed))</span></code></pre></div>
+<p>The next step is to perform hypothesis tests for each contrast</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="statistical-inference.html#cb49-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(</span>
+<span id="cb49-2"><a href="statistical-inference.html#cb49-2" tabindex="-1"></a>    spikein, <span class="at">i =</span> <span class="st">"proteins_msqrob"</span>,</span>
+<span id="cb49-3"><a href="statistical-inference.html#cb49-3" tabindex="-1"></a>    <span class="at">contrast =</span> L,</span>
+<span id="cb49-4"><a href="statistical-inference.html#cb49-4" tabindex="-1"></a>    <span class="at">modelColumn =</span> <span class="st">"msqrob_psm_rrilmm"</span>,</span>
+<span id="cb49-5"><a href="statistical-inference.html#cb49-5" tabindex="-1"></a>    <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb49-6"><a href="statistical-inference.html#cb49-6" tabindex="-1"></a>)</span></code></pre></div>
+<p>Six columns have been added to the row data, one for each contrast.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="statistical-inference.html#cb50-1" tabindex="-1"></a><span class="fu">colnames</span>(<span class="fu">rowData</span>(spikein[[<span class="st">"proteins_msqrob"</span>]]))</span></code></pre></div>
+<p>The results of contrast <code>"ridgeCondition1 - ridgeCondition0.5"</code> can be
+retrieved as follows.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="statistical-inference.html#cb51-1" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">rowData</span>(spikein[[<span class="st">"proteins_msqrob"</span>]])[,<span class="st">"ridgeCondition1 - ridgeCondition0.5"</span>])</span></code></pre></div>
+<p>Note, the we can use the same code to perform the hypothesis tests and
+extract the results for the protein-level model.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="statistical-inference.html#cb52-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(</span>
+<span id="cb52-2"><a href="statistical-inference.html#cb52-2" tabindex="-1"></a>    spikein, <span class="at">i =</span> <span class="st">"proteins"</span>,</span>
+<span id="cb52-3"><a href="statistical-inference.html#cb52-3" tabindex="-1"></a>    <span class="at">contrast =</span> L,</span>
+<span id="cb52-4"><a href="statistical-inference.html#cb52-4" tabindex="-1"></a>    <span class="at">modelColumn =</span> <span class="st">"msqrob_rrilmm"</span>,</span>
+<span id="cb52-5"><a href="statistical-inference.html#cb52-5" tabindex="-1"></a>    <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb52-6"><a href="statistical-inference.html#cb52-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="statistical-inference.html#cb53-1" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])[,<span class="st">"ridgeCondition1 - ridgeCondition0.5"</span>])</span></code></pre></div>
+</div>
+</div>
+<p style="text-align: center;">
+<a href="modelling-sources-of-variation.html"><button class="btn btn-default">Previous</button></a>
+<a href="dealing-with-fiterrors.html"><button class="btn btn-default">Next</button></a>
+</p>
+<p class="build-date">Page built: 
+2025-09-03
+ using 
+R version 4.5.1 (2025-06-13)
+</p>
+</div>
+</div>
+
+
+
+</body>
+</html>
