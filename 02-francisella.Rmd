@@ -1,39 +1,30 @@
-# The francisella use case: a MaxQuant LFQ dataset {#sec-francisella}
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-    warning = FALSE,
-    message = FALSE
-)
-```
+# The francisella use case: a MaxQuant LFQ DDA dataset {#sec-francisella}
 
 ## Introduction
 
-TODO write section
+**TODO** write section
+**TODO** describe the general experimental design, and mention 
+         that this design is also applicable when having multiple
+         samples from patients
 
 In this vignette,...
 
+If you never used `msqrob2`, we suggest to familiarise yourself
+with the [concept chapter](#sec-concepts) first.
+
 ## Load packages
 
-First, we load the `msqrob2` package.
+First, we load the `msqrob2` package and additional packages for data
+manipulation and visualisation.
 
 ```{r}
 library("msqrob2")
-```
-
-We also load 4 additional packages for data manipulation and
-visualisation.
-
-```{r}
 library("ggplot2")
 library("ggrepel")
 library("dplyr")
 ```
 
-`msqrob2` relies on parallelisation to improve computational speed.
-To ensure this vignette can be run regardless of hardware, we will
-disable parallelisation. Parallelisation is controlled using the
-`BiocParallel` package.
+We also configure the [parallelisation](#sec-parallel) framework.
 
 ```{r}
 library("BiocParallel")
@@ -55,10 +46,8 @@ compartment, where it can actively multiply. In their study, they
 compared the proteome of wild type F. tularensis (WT) to ArgP-gene
 deleted F. tularensis (knock-out, D8). For this exercise, we use a
 subset of the F. tularensis dataset where bacterial cultures were
-grown in biological quadruplicate and each biorep was run in technical
+grown in biological triplicate and each biorep was run in technical
 triplicate on a nanoRSLC-Q Exactive PLUS instrument. 
-
-**TODO** the design mentions quadruplicates, but the vignette has triplicates
 
 ### Getting the data
 
@@ -68,14 +57,16 @@ repository:
 [PXD001584](https://www.ebi.ac.uk/pride/archive/projects/PXD001584).
 
 **TODO** put on Zenodo and use BiocFileCache
+
 ```{r}
-pepFile <- "../data/francisella/peptides.txt"
+pepFile <- "./data/francisella/peptides.txt"
 ```
 
-Now the files are downloaded, we can load the psm table. Each row in
-the psm data table contains information for one PSM (the table below
-shows the first 6 rows). Note that columns that start with
-`"Abundance."` contain the quantitative values for each TMT label.
+After downloading the files, we can load the peptide table. Contrarily
+a [PSM table](#sec-psm_table), the peptide table is provided in a
+"wide format", meaning that each row represents a single peptide and
+that each quantification column (that starts with `"Intensity"`)
+represents a single sample.
 
 ```{r, warning=FALSE, message=FALSE}
 peps <- read.delim(pepFile)
@@ -85,12 +76,10 @@ quantcols <- grep("Intensity\\.", names(peps), value = TRUE)
 knitr::kable(head(peps))
 ```
 
-We now extract the sample annotations. We will build a table where
-each row in the annotation table contains information for one sample
-(the table below shows the first 6 rows). This information is
-extracted from the sample names.
-
-**TODO** work on full data (20 and 100) or on subset?
+We now extract the [sample annotations](#sec-annotation_table). We
+will build a table where each row in the annotation table contains
+information for one sample (the table below shows the first 6 rows).
+This information is extracted from the sample names.
 
 ```{r}
 coldata <- data.frame(quantCols = quantcols) |> 
@@ -104,25 +93,33 @@ knitr::kable(head(coldata))
 
 ### The `QFeatures` data class
 
-Finally, we combine the data into a `QFeatures` object. The
-`QFeatures` package provides infrastructure to manage and analyse
-quantitative features from mass spectrometry experiments. The
-`readQFeatures()` allows for seamless conversion of tabular data into
-a `QFeatures` object. The `quantCols` column in the annotation will be
-used to link the annotations with the quantitative columns of the
-peptide data. See `?readQFeatures()` for more details.
+We combine the two tables into a [`QFeatures` object](#sec-qfeatures).
 
 ```{r}
-pe <- readQFeatures(
+(pe <- readQFeatures(
   peps, colData = coldata, fnames = "Sequence", name = "peptides"
-)
+))
 ```
 
+We now have a `QFeatures` object with 1 set, containing `r
+nrows(pe)[[1]]` rows (peptides) and `r ncols(pe)[[1]]` columns
+(samples). 
+
+## Data preprocessing
+
+`msqrob2` relies on the `QFeatures` data structure, meaning that we
+can directly make use of `QFeatures`' data preprocessing functionality
+(see also the `QFeatures`
+[documentation](https://rformassspectrometry.github.io/QFeatures/articles/Processing.html)).
+
+### Encoding missing values
+
 Peptides with zero intensities are missing peptides and should be
-represent with a `NA` value rather than `0`.
+represent with a `NA` value rather than `0` (see [Encoding missing
+values]).
 
 ```{r}
-pe <- zeroIsNA(pe, "peptides") # convert 0 to NA
+pe <- zeroIsNA(pe, "peptides")
 ```
 
 We calculate how many non zero intensities we have per peptide and
@@ -150,28 +147,15 @@ rowData(pe[["peptides"]])$nNonZeroBiorep <- apply(
 )
 ```
 
-## Data preprocessing
-
-`msqrob2` relies on the `QFeatures` data structure, meaning that we
-can directly make use of `QFeatures`' data preprocessing functionality
-(see also the `QFeatures`
-[documentation](https://rformassspectrometry.github.io/QFeatures/articles/Processing.html)).
 
 ### PSM filtering
 
-We filter features based on 3 criteria.
+We filter features based on 3 criteria (see [PSM filtering]).
 
 1. Handling overlapping protein groups
 
 In our approach a peptide can map to multiple proteins, as long as
-there is none of these proteins present in a smaller subgroup. We use
-`filterFeatures()` to perform the filtering. It uses information from
-the `rowData` (here the `Proteins` column) and a formula to generate a
-filter for each feature (row) in each set across the object. If the
-filter returns `TRUE`, the corresponding row is retained, otherwise it
-is removed. In this case, we build a filter that only keeps the
-protein groups for which none of its member proteins is present in a
-smaller protein group.
+there is none of these proteins present in a smaller subgroup. 
 
 ```{r}
 pe <- filterFeatures(pe,
@@ -204,21 +188,19 @@ of biorepeats that contain at least one observed value).
 
 We keep `r nrow(pe[["peptides"]])` peptides upon filtering.
 
-### Preprocessing workflow
+### Standard preprocessing workflow
 
 We can now prepare the data for modelling. The workflow ensures the
 data complies to `msqrob2`'s requirements:
 
-1. Intensities are log-transformed.
+1. Intensities are [log-transformed](#sec-log2).
 
 ```{r}
 pe <- logTransform(pe, base = 2, i = "peptides", name = "peptides_log")
 ```
 
-2. Samples are normalised by substracting the sample median from every
-   intensity for peptide $p$  in a sample $i$. $y_{ip}^\text{norm} =
-   y_{ip} - \hat\mu_i$, with $\hat\mu_i$ the median intensity over all
-   observed peptides in sample $i$.
+2. Samples are normalised by substracting the sample median (see 
+   [Normalisation])
 
 ```{r}
 pe <- normalize(
@@ -240,14 +222,10 @@ longForm(pe[, , c("peptides_log", "peptides_norm")], colvar = "biorep") |>
   facet_wrap(~ assay, scale = "free")
 ```
 
-3. Summarisation to protein level. We use the robust summary approach 
+3. [Summarisation] to protein level. We use the [robust summary] approach 
    to infer protein-level data from peptide-level data, accounting for
    the fact that different peptides have ionisation efficiencies hence
-   leading to different intensity baselines. This effect can be
-   ignored if the same set of peptides were measured across all
-   samples, but this is often not the case, leading to biased
-   estimates. Moreover, our approach also uses a robust estimation to
-   avoid that outliers distort the summaries.
+   leading to different intensity baselines. 
 
 ```{r,warning=FALSE}
 pe <- aggregateFeatures(
@@ -256,44 +234,27 @@ pe <- aggregateFeatures(
 )
 ```
 
-## Statistical modelling
+## Data exploration
 
-The preprocessed data can now be modelled to answer biologically
-relevant questions. First, we will explore the data. 
-
-### Data exploration
-
-Data exploration aims to highlight the sources of variation in the
-data prior to data modelling and can pinpoint to outlying or
-off-behaving samples. A common approach for data exploration is to
-perform Multi Dimensional Scaling (MDS). We will first extract the set
-to explore using `getWithColData()`. This function extracts the set of
-interest along with all the associated sample annotations (used for
-plot colouring).
-
-```{r}
-se <- getWithColData(pe, "proteins")
-```
-
-We then use the `scater` package to compute and plot the PCA. For
-technical reasons, it requires `SingleCellExperiment` class object,
-but these can easily be generated from a `SummarizedExperiment`
-object.
+We will explore the main sources of variation in the
+data using (see [Data exploration]). 
 
 ```{r}
 library("scater")
-se <- runMDS(as(se, "SingleCellExperiment"), exprs_values = 1)
-plotMDS(se, colour_by = "genotype")
+getWithColData(pe, "proteins") |> 
+  as("SingleCellExperiment") |> 
+  runMDS(exprs_values = 1) |> 
+  plotMDS(colour_by = "genotype")
 ```
+
 Note that the samples upon robust summarisation show a clear
 separation according to the genotype in the first dimension of the MDS
 plot.
 
-### Model definition
+## Data modelling
 
-#### Experimental design
-
-As described above, samples (bacterial cultures) originate from either
+The preprocessed data can now be modelled to answer biologically
+relevant questions. As described above, samples (bacterial cultures) originate from either
 a wildtype (WT) or a ArgP knockout (D8). Each genotype was cultured in
 biological triplicate. Each biological triplicate was acquired in
 technical triplicate, leading to $2 \times 3 \times 3 = 18$ samples.
@@ -309,7 +270,7 @@ table(genotype = pe$genotype, biorep = pe$biorep)
 
 ### Sources of variation
 
-We will model two sources of variation:
+We will model two [sources of variation](#sec-modelling):
 
 1. **Genotype**: we model the source of variation induced by the
    experimental group of interest as a **fixed effect**. Fixed effects
@@ -348,45 +309,32 @@ model <- ~ genotype + ## (1) fixed effect for genotype
   (1 | biorep)  ## (2) random effect for biological replicate (culture)
 ```
 
-We can run the `msqrob2` statistical workflow.
+### Estimate the model
 
-### Run the model
-
-The statistical workflow starts with `msqrob()`. The function takes
-the `QFeatures` object, extracts the quantitative values from the
-`proteins` set generated after preprocessing, and fits `model`. The
+We estimate the model with `msqrob()` (see [the modelling
+section](#sec-run_model)). Recall that
 variables defined in `model` are automatically retrieved from the
-`colData` (i.e. `"genotype"`, and `"biorep"`). Upon modelling, the
-function return the `Qfeatures` object containing the modelling
-output, stored in the `rowData` (by default, the new column is called
-`msqrobModels`). More specifically, the modelling output is stored in
-the `rowData` as a `statModel` object, one model per row (protein). We
-also enable M-estimation (`robust = TRUE`) for improved robustness
-against outliers. Note, that `msqrob2` also features ridge regression
-for fixed effects. Ridge regression stabilises the parameter
-estimation in case where the number of parameters are close to the
-number of available samples. In this case, the genotype factor only
-has 2 levels (WT and D8), so ridge regression is irrelevant in this
-context. We will therefore leave the ridge regression disabled
-(default).
+`colData` (i.e. `"genotype"`, and `"biorep"`). Note, that `msqrob2`
+also features ridge regression for stabilising the parameter
+estimation, but it is irrelevant in this context as the genotype
+factor only has 2 levels (WT and D8), so ridge regression . We will
+therefore leave the ridge regression disabled (default).
 
-```{r}
+```{r run_msqrob, cache=TRUE}
 pe <- msqrob(pe, i = "proteins", formula = model, robust = TRUE)
 ```
 
+## Statistical inference
+
 Once the models are estimated, we can start answering biological
-questions.
-
-### Hypothesis testing
-
-We must now convert the biological question "does the bacterial
-genotype affect the protein intensities?" into a statistical
-hypothesis. In other words, we must convert
-this question in a combination of the model parameters, also referred
-to as a contrast. To aid defining contrasts, we will visualise the
-experimental design using the `ExploreModelMatrix` package. Since we
-are not interested in technical effects, we will only focus on the
-variable of interest, here `genotype`.
+questions by performing [Statistical inference]. We must convert the
+biological question "does the bacterial genotype affect the protein
+intensities?" into a statistical hypothesis. In other words, we must
+convert this question in a combination of the model parameters, also
+referred to as a contrast. To aid defining contrasts, we will
+visualise the experimental design using the `ExploreModelMatrix`
+package. Since we are not interested in technical effects, we will
+only focus on the variable of interest, here `genotype`.
 
 ```{r}
 library("ExploreModelMatrix")
@@ -400,54 +348,36 @@ vd$plotlist
 
 This plot shows that the average protein intensity for the D8 group is
 estimated by `(Intercept)`, and the the average protein intensity for
-the WT group is estimated by `(Intercept) + genotypeWT`. These values
-can get be retrieved from the `rowData`, here showing an example for
-the first protein:
+the WT group is estimated by `(Intercept) + genotypeWT`. 
 
-```{r}
-getCoef(rowData(pe)[["proteins"]]$msqrobModels[[1]])
-```
+### Hypothesis testing
 
-Note that additionnal intercepts are printed, one for each level of
-the random effect.
-
-Assessing the difference between the WT and D8 groups boils down to 
+Assessing the difference between the WT and D8 groups boils down to
 `(Intercept) + genotypeWT - (Intercept)`, which simplifies to the
-`genotypeWT` parameters:
+`genotypeWT` parameter. The null hypothesis is that the differences
+between the two groups is zero, hence the estimated parameter is zero.
 
 ```{r}
-contrast <- "genotypeWT"
+hypothesis <- "genotypeWT = 0"
 ```
 
-We can further specify the null hypothesis, that is we are interest
-whether the differences between the two groups is different from zero.
-
-```{r}
-(hypothesis <- paste(contrast, "= 0"))
-```
-
-We next use `makeContrast()` to build a contrast matrix.
+We next use `makeContrast()` to build the contrast matrix.
 
 ```{r}
 (L <- makeContrast(hypothesis, parameterNames = "genotypeWT"))
 ```
 
-In this case, the contrast matrix is trivial, but for more complex
-design, it becomes a matrix with parameter names as rows and
-hypotheses in columns (you can specify multiple hypotheses).
-
-We can now test our null hypothesis using `hypothesisTest()` which
-takes the `QFeatures` object with the fitted model and the contrast
-matrix we just built. Again, the results are stored in the set
-containing the model, here `proteins`.
+In this case, the contrast matrix is trivial, but it becomes a matrix
+but for [more complex designs](#sec-multiple_contrasts). We can now
+test our null hypothesis:
 
 ```{r}
 pe <- hypothesisTest(pe, i = "proteins", contrast = L)
 ```
 
 Let us retrieve the result table from the `rowData`. Note that the
-model column is named after the column name (here `genotypeWT`) of the
-contrast matrix `L`.
+hypothesis testing results are stored in `rowData` columns named after
+the column names (here `genotypeWT`) of the contrast matrix `L`.
 
 ```{r}
 inference <- rowData(pe[["proteins"]])[[colnames(L)]]
@@ -455,19 +385,13 @@ inference$Protein <- rownames(inference)
 head(inference)
 ```
 
-`msqrob2` automatically applied the hypothesis testing to all proteins
-in the data. Notice that some rows contain missing values. Notice that
-some rows contain missing values. This is because data modelling
-resulted in a `fitError` for some proteins, probably because not
-enough data was available for model fitting due to missing values in
-the quantitative data.
-
-### Plots
-
-We will now demonstrate how to visualise the results upon modelling
-and hypothesis testing.
-
-#### Volcano-plot
+Notice that some rows contain missing values. This is because data
+modelling resulted in a `fitError` for some proteins, probably because
+not enough data was available for model fitting due to missing values
+in the quantitative data (see [how to deal with
+`fitError`s](#sec-fiterror)).
+ 
+### Volcano-plot
 
 Volcano plots are straightforward to generate from the inference table
 above. We also use `ggrepel` to annotate the 20 most significant 
@@ -487,7 +411,7 @@ ggplot(inference) +
 Note, that `r sum(inference$adjPval < 0.05, na.rm = TRUE)` proteins
 are found to be differentially abundant.
 
-#### Heatmap
+### Heatmap
 
 We can also build a heatmap for the significant proteins which are
 obtained by filtering the inference table.
@@ -501,7 +425,7 @@ sigNames <- inference |>
 heatmap(assay(pe[["proteins"]])[sigNames, ])
 ```
 
-#### Detail plots
+### Detail plots
 
 Let us visualise the most significant protein. We perform this with a
 little data manipulation pipeline:
@@ -530,22 +454,10 @@ pe[targetProtein, , "proteins"] |> #2
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 
-**TODO** include peptide workflow as well? add one line that quickly shows how to perform it.
-
 ## Conclusion
 
-**TODO**
+**TODO** mention peptide workflows exist as well and link to first 
+chapter?
 
-## License
+**TODO** write conclusion
 
-This vignette is distributed under a
-[Artistic-2.0](https://opensource.org/license/artistic-2-0) license.
-
-## Session Info
-
-```{r}
-sessionInfo()
-```
-
-
-## References

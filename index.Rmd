@@ -17,9 +17,12 @@ link-citations: yes
 
 # Preamble
 
-```{r, echo = FALSE}
+```{r setup, echo = FALSE}
 options(bitmapType = "cairo")
-
+knitr::opts_chunk$set(
+    warning = FALSE,
+    message = FALSE
+)
 ```
 
 The aim of this book is to provide thorough documentation of the
@@ -33,7 +36,7 @@ that were obtained using different acquisition strategies, different
 instruments, and different search engines to answers different
 biological questions. We hope that this book will help proteomics
 researchers tailoring their statistical analysis workflow to their
-specific dataset and research question.
+specific datasets and research questions.
 
 ## Outline
 
@@ -43,17 +46,19 @@ specific dataset and research question.
 
 The course material is targeted to either proteomics practitioners or
 data analysts/bioinformaticians that would like to learn how to
-analyse proteomics data. Familiarity with MS or proteomics in general
-is recommended, this would allow for a better understanding of the
-modelling assumptions taken throughout this book.
+analyse proteomics data. 
 
 A working knowledge of R (R syntax, commonly used functions, basic
 data structures such as data frames, vectors, matrices, ... and their
-manipulation) is required. Familiarity with other Bioconductor omics
-data classes and the tidyverse syntax is useful, and we highly
-recommend reading [Chapter
+manipulation) is required. Familiarity with MS or proteomics in
+general is recommended, this would allow for a better understanding of
+the modelling assumptions taken throughout this book. Familiarity with
+other Bioconductor omics data classes and the tidyverse syntax is
+useful, but not necessary.
+
+We **highly recommend** reading [Chapter
 5](https://rformassspectrometry.github.io/book/sec-quant.html) of the
-R for mass spectrometry book.
+R for mass spectrometry book. 
 
 ## Setup
 
@@ -63,10 +68,13 @@ R and execute:
 **TODO** install dependencies
 **TODO** provide a Docker image
 
-```{r set, eval = FALSE}
+```{r, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 ```
+
+All software versions used to generate this document are recorded at
+the end of the book in chapter\@ref(sec-end).
 
 ## Citation
 
@@ -74,13 +82,17 @@ If you need to cite this book, please use the following reference:
 
 **TODO** add citation when available on Zenodo (and paper)
 
+**TODO** add citation when available on Zenodo (and paper)
+
 ## Acknowledgments
 
 We thank the [R for Mass
-Spectrometry](https://www.rformassspectrometry.org/) initiative for
-openly sharing their
-[book](https://rformassspectrometry.github.io/book), which we used as
-a template when writing this book.
+Spectrometry](https://www.rformassspectrometry.org/) initiative: 
+
+- For developing the `QFeatures` package on which `msqrob2` depends
+- For openly sharing their
+  [book](https://rformassspectrometry.github.io/book), which we used
+  as a template.
 
 ## License
 

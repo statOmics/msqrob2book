@@ -1,0 +1,27 @@
+# Usefull links and session information{#sec-end}
+
+## License
+
+This book is distributed under a
+[Artistic-2.0](https://opensource.org/license/artistic-2-0) license.
+
+**TODO**: add logo and explicit how people can access and modify this work
+
+## Citation
+
+> Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L.
+msqrob2TMT: robust linear mixed models for inferring differential
+abundant proteins in labelled experiments with arbitrarily complex
+design. bioRxiv. Published online March 29, 2024:2024.03.29.587218.
+doi:10.1101/2024.03.29.587218
+
+**TODO**: populate the citation section and 
+
+## Session Info
+
+The following packages have been used to generate this document.
+
+```{r}
+sessionInfo()
+```
+
