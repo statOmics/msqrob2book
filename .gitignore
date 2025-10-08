@@ -33,6 +33,9 @@ vignettes/*.pdf
 *_cache/
 /cache/
 
+# knitr file directory (created when kniting a single vignette)
+*_files/
+
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
@@ -41,7 +44,7 @@ vignettes/*.pdf
 .Renviron
 
 # pkgdown site
-docs/
+# docs/
 
 # translation temp files
 po/*~

@@ -38,6 +38,36 @@ biological questions. We hope that this book will help proteomics
 researchers tailoring their statistical analysis workflow to their
 specific datasets and research questions.
 
+## Why msqrob2?
+
+Mass spectrometry (MS)-based proteomics experiments often imposes a
+complex correlation structure among observations. Addressing this
+correlation is key for correct statistical inference and reliable
+biomarker discovery. msqrob2TMT is a set of mixed model-based
+workflows tailored toward differential abundance analysis for labelled
+MS-based proteomics data. The key features of `msqrob2TMT` workflows
+are:
+
+1. Modularity: all core functions rely on the `QFeatures` class, a
+   standardised data structure, meaning that output of a function can
+   be fed as input to any other function. Hence, different functions
+   are assembled as modular blocks into a complete data analysis
+   workflows that can be easily adapted to the peculiarities of any
+   MS-based proteomics data set. Therefore, the approach extends well
+   beyond the use case presented in this chapter
+2. Flexibility: the `msqrob2` modelling approach relies on the
+   `lme4::lmer()` model specification syntax, meaning that any linear
+   model can be specified. For fixed effects, this includes modelling
+   categorical and numerical variables, as well as their interaction.
+   Moreover, `msqrob2` can model both sample-specific and
+   feature-specific (e.g. peptide or protein) covariates, which
+   unlocks the inference to experiments with arbitrarily complex
+   designs as well as to correct explicitly for feature-specific
+   properties.
+3. Performance: thanks to the inclusion of robust ridge regression, we
+   demonstrated improved performance of `msqrob2` workflows upon the
+   competing software [@Goeminne2016-tr;@Sticker2020-rl;@Vandenbulcke2025-sj].
+
 ## Outline
 
 **TODO** write outline of the different chapters
@@ -74,7 +104,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 ```
 
 All software versions used to generate this document are recorded at
-the end of the book in chapter\@ref(sec-end).
+the end of the book in chapter \@ref(sec-end).
 
 ## Citation
 

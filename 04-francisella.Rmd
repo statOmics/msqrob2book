@@ -10,7 +10,7 @@
 In this vignette,...
 
 If you never used `msqrob2`, we suggest to familiarise yourself
-with the [concept chapter](#sec-concepts) first.
+with the [concepts chapter](#sec-basics) first.
 
 ## Load packages
 
@@ -147,7 +147,6 @@ rowData(pe[["peptides"]])$nNonZeroBiorep <- apply(
 )
 ```
 
-
 ### PSM filtering
 
 We filter features based on 3 criteria (see [PSM filtering]).
@@ -254,12 +253,12 @@ plot.
 ## Data modelling
 
 The preprocessed data can now be modelled to answer biologically
-relevant questions. As described above, samples (bacterial cultures) originate from either
-a wildtype (WT) or a ArgP knockout (D8). Each genotype was cultured in
-biological triplicate. Each biological triplicate was acquired in
-technical triplicate, leading to $2 \times 3 \times 3 = 18$ samples.
-In this context, we are interested in the effects of genotype on the
-protein abundances. 
+relevant questions. As described above, samples (bacterial cultures)
+originate from either a wildtype (WT) or a ArgP knockout (D8). Each
+genotype was cultured in biological triplicate. Each biological
+triplicate was acquired in technical triplicate, leading to $2 \times
+3 \times 3 = 18$ samples. In this context, we are interested in the
+effects of genotype on the protein abundances.
 
 The table below confirms we have a balanced design
 for each condition and biological triplicate.

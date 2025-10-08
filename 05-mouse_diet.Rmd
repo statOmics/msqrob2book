@@ -2,8 +2,10 @@
 
 ## Introduction
 
-If you never used `msqrob2`, we suggest to familiarise yourself
-with the [concept chapter](#sec-concepts) first.
+If you never used `msqrob2`, we suggest to familiarise yourself with
+the [basic concepts chapter](#sec-basics) first. Note that TMT
+experiments imposes complex designs, hence we also suggest reading the
+[advanced concepts chapter](#sec-advanced).
 
 We will demonstrate the msqrob2TMT workflow, a data processing and
 modelling workflow dedicated to the analysis of TMT-based proteomics
@@ -12,8 +14,8 @@ by @Plubell2017-th, illustrating the statistical concepts using a
 real-life use case.
 
 Since this chapter uses a real-life study, we cannot objectively
-assess the results. For an msqrob2TMT analysis with ground truth
-information, we refer to our [concept chapter](#sec-concepts).
+assess the results. The [advanced concepts chapter](#sec-advances)
+demonstrates an msqrob2TMT analysis with ground truth information.
 
 Before delving further into the use case, let us prepare our
 computational environment.
@@ -40,23 +42,27 @@ register(SerialParam())
 
 ## Load data
 
-### Experimental context
+### Experimental context{#sec-exp_design_mouse}
 
-The data used in this vignette has been published by @Plubell2017-th (PXD005953). The
-objective of the experiment was to explore the impact of low-fat and
-high-fat diets on the proteomic content of adipose tissue in mice. It
-also assesses whether the duration of the diet may impact the results.
-The authors assigned twenty mice into four groups (5 mice per group)
-based on their diet, either low-fat (LF) or high-fat (HF), and the
-duration of the diet, which was classified as short (8 weeks) or long
-(18 weeks). Samples from the epididymal adipose tissue were extracted
-from each mice. The samples were then randomly distributed across
-three TMT 10-plex mixtures for analysis. In each mixture, two
-reference labels were used, each containing pooled samples that
-included a range of peptides from all the samples. Not all labels
-were used, leading to an unbalanced design. Each TMT 10-plex mixture
-was fractionated into nine parts and subjected to synchronous
-precursor selection, resulting in a total of 27 MS runs.
+The data used in this vignette has been published by @Plubell2017-th
+(PXD005953). The objective of the experiment was to explore the impact
+of low-fat and high-fat diets on the proteomic content of adipose
+tissue in mice. It also assesses whether the duration of the diet may
+impact the results. The authors assigned twenty mice into four groups
+(5 mice per group) based on their diet, either low-fat (LF) or
+high-fat (HF), and the duration of the diet, which was classified as
+short (8 weeks) or long (18 weeks). Samples from the epididymal
+adipose tissue were extracted from each mice. The samples were then
+randomly distributed across three TMT 10-plex mixtures for analysis.
+In each mixture, two reference labels were used, each containing
+pooled samples that included a range of peptides from all the samples.
+Not all labels were used, leading to an unbalanced design. Each TMT
+10-plex mixture was fractionated into nine parts, resulting in a total
+of 27 MS runs.
+
+```{r, echo = FALSE, fig.cap="Overview of the experimental design. Taken from Plubell et al. 2017."}
+knitr::include_graphics("figs/mouse_experiment.png")
+```
 
 ### Getting the data
 
@@ -206,21 +212,23 @@ mouse <- filterFeatures(
         !grepl(";", Protein.Accessions)) ## Remove protein groups
 ```
 
-Precursor ions that were identified with multiple PSMs in a run are
+Peptide ions that were identified with multiple PSMs in a run are
 collapsed to the PSM with the highest summed intensity over the
 labels, a strategy that is also used by MSstats. We will again use
-`filterFeatures()`, but the highest summed intensity PSM information 
-is not available in the `rowData` so we need to create it manually.
+`filterFeatures()`, but the highest summed intensity for each PSM 
+is not available in the `rowData`, so we need to create it manually.
 
-We therefore
+We therefore loop over each set:
 
-1. Make a new variable for ionID in the rowData.
+1. Make a new variable for ionID in the `rowData`, which is defined as
+   the peptide sequence and its charge.
 2. We calculate the `rowSums` for each ion.
-3. Make a new variable `psmRank` that ranks the PSMs for each ionID
+3. Make a new variable `psmRank` that ranks the PSMs for each ion
    based on the summed intensity.
 4. We store the new information back in the `rowData`.
-5. For each ion that maps to multiple PSMs, only keep the PSM with the
-   highest summed intensity, that is that ranks first.
+5. We keep the PSM with the highest summed intensity, that is that
+   ranks first (note that PSM unique to an ion will always rank 
+   first).
 
 ```{r}
 for (i in names(mouse)) {
@@ -235,10 +243,9 @@ for (i in names(mouse)) {
 mouse <- filterFeatures(mouse, ~ psmRank == 1) ## 5.
 ```
 
-Note that we now implicitly collapsed the PSM-level data into
-precursor ion data, where each row represents a PSM, but also a unique
-precursor ion within a run. So we will refer to the data as
-"PSM-level" or "precursor-level" interchangeably.
+So, we implicitly collapsed the PSM-level data into **peptide-ion**
+data, where each row represents a PSM, but also a unique ion within a
+run. So we will refer to the data as  "ion-level".
 
 ### Standard preprocessing workflow
 
@@ -267,16 +274,15 @@ mouse <- aggregateFeatures( ## 3.
 ```
 
 We conclude the preprocessing by joining the assays of the different
-runs in a single PSM set for PSM-level models. In order to correctly
-match precursor ions across rus, we use `ionID` as a row identifier.
+runs in a single ion set for ion-level models. In order to correctly
+match peptide ions across rus, we use `ionID` as a row identifier.
 
 ```{r}
 mouse <- joinAssays(mouse, paste0(sNames, "_norm"), fcol = "ionID", "ions_norm")
 ```
 
-We do the same for joining the protein sets into a single set for
-protein-level models. We omit `fcol` and will merge rows based on 
-their row name (protein identifier).
+We also join the protein sets for protein-level models. We omit `fcol`
+and will merge rows based on their row name (protein identifier).
 
 ```{r}
 mouse <- joinAssays(mouse, paste0(sNames, "_proteins"), "proteins")
@@ -284,15 +290,34 @@ mouse <- joinAssays(mouse, paste0(sNames, "_proteins"), "proteins")
 
 ## Data exploration
 
+As [described above](#sec-exp_design_mouse), the samples originate from mice
+that were either subject to a low-fat (`LF`) or high-fat (`HF`) diet.
+Moreover, each of the diet was maintained for a short duration
+(`Short`) or a long duration (`Long`). Note that each group contains 5
+mice but the peptides from each sample have been fractionated in 9
+fractions, leading to 45 units per group.
+
+In this case, we are interested in the effects of diet type and the
+effect of diet duration. The table below confirms we have a balanced
+design for each condition.
+
+```{r}
+table(Diet = mouse$Diet, Duration = mouse$Duration)
+```
+
+Furthermore, there are potential unwanted sources of variation: the
+experimental unit (i.e. the mouse, `BioReplicate`), the fraction
+(`Fraction`), the run (`Run`), the TMT mixture (`Mixture`).
+
 We will explore the main sources of variation in the
-data using (see [Data exploration]). Unfortunately, the precursor ion
+data using (see [Data exploration]). Unfortunately, the peptide ion
 data contains too many missing values and cannot be explored using
 standard dimension reduction approaches. `omicsGMF` [@Segers2025-ce]
 provides an interesting alternative, but is still in its early stage
 and will not be included here. We will therefore run a MDS analysis on
 the protein-level data instead, which contains less missing values.
 
-**TODO** include omicsGM        F?
+**TODO** include omicsGMF?
 
 ```{r}
 library("scater")
@@ -307,40 +332,41 @@ potential sources of variation.
 ```{r}
 plotMDS(se, colour_by = "Run") + ggtitle("Coloured by Run") +
   scale_colour_manual(values = rainbow(27)) +
+  plotMDS(se, colour_by = "Fraction") + ggtitle("Coloured by Fraction") +
   plotMDS(se, colour_by = "BioReplicate") + ggtitle("Coloured by BioReplicate") +
-  plotMDS(se, colour_by = "Condition") + ggtitle("Coloured by Condition") &
+  plotMDS(se, colour_by = "Mixture") + ggtitle("Coloured by Mixture") +
+  plotMDS(se, colour_by = "Diet") + ggtitle("Coloured by Diet") +
+  plotMDS(se, colour_by = "Duration") + ggtitle("Coloured by Duration") &
   theme(legend.position = "none") 
 ```
 
-The data exploration shows that the strongest source of variation is
-associated with the MS acquisition run.
+The data exploration leads to several observations: 
+
+- The strongest source of variation is associated with the MS 
+  acquisition run. 
+- Part of this run effect is influenced by which fraction it contains
+  since samples from the same fraction tend to be closer than samples from different
+  fractions. 
+- It is difficult to identify an effect of mouse (biological
+  replicate) because every run contains distinct mice. However, this
+  does not exclude an effect of mice which has been identified as a
+  potential source of variation and hence should still be modelled.
+- There is potentially also an effect of TMT mixture since samples
+  from the same mixtures tend to cluster together (in the center of
+  the plot). However, this effect are more subtle to detect and
+  difficult to disentangle from the run and fraction effects.
+- Although again very subtle, we can see within each run that samples
+  from the mice with the same diet tends to group together. However,
+  these effects are overwhelmed by the run effects. An effect of
+  duration is to subtle to pinpoint from the current data exploration.
+
+Data modelling disentangles the different sources of variation, given
+their are properly defined in the model, hence the next section. 
 
 ## Data modelling
 
 The preprocessed data can now be modelled to answer biologically
-relevant questions. First, we will explore the data. 
-
-### Experimental design
-
-As described above, samples (adipose tissue) originate from mice that
-were either subject to a low-fat (`LF`) or high-fat (`HF`) diet.
-Moreover, each of the diet was maintained for a short duration
-(`Short`) or a long duration (`Long`). Note that each group contains 5
-mice but the peptides from each sample have been fractionated in 9
-fractions, leading to 45 units per group.
-
-```{r, echo = FALSE, fig.cap="Overview of the experimental design. Taken from Plubell et al. 2017."}
-knitr::include_graphics("figs/mouse_experiment.png")
-```
-
-So first, we need to identify the experimental factors of interest. In
-this case, we are interested in the effects of diet type and the
-effect of diet duration. The table below confirms we have a balanced
-design for each condition.
-
-```{r}
-table(Diet = mouse$Diet, Duration = mouse$Duration)
-```
+relevant questions. 
 
 ### Sources of variation
 
@@ -416,23 +442,23 @@ length(unique(mouse$Run))
 ```
 
 6. **Spectrum effects**: we will directly estimate the treatment effect
-   at the protein-level from PSM-level data. This will again induce
+   at the protein-level from ion-level data. This will again induce
    additional levels of correlation. The intensities for the different
-   reporter ions in a TMT run within the same spectrum (PSM) will be
+   TMT labels in the same spectrum (PSM) within a run will be
    more similar than the intensities between spectra. We therefore
-   need to add a random effect term to account for the within PSM
+   need to add a random effect term to account for the within specrum
    correlation structure. Note that a spectrum here contains the data
    from one peptide ion within a run. Hence, modelling a random effect
    for spectrum boils down to modelling a random effect for peptide
    ion nested within run.
 
 7. **Labelling effects nested in run**: modelling the data at the
-   PSM-level also implies that a label in a run contains multiple
-   PSM intensities for each protein. Hence, intensities from different
-   PSMs for a protein with the same label within a run will be more alike than
-   intensities of different PSMs for the same protein with different
-   labels and/or runs, and we will address this correlation with a random
-   effect for label nested in run.
+   ion-level also implies that a label in a run contains multiple
+   ion intensities for each protein. Hence, intensities from different
+   peptide ions for a protein with the same label within a run will be
+   more alike than intensities of different PSMs for the same protein
+   with different labels and/or runs, and we will address this
+   correlation with a random effect for label nested in run.
 
 `msqrob2` workflows rely on linear mixed models, which are models that
 can estimate and predict fixed and random effects, respectively.
@@ -457,9 +483,9 @@ model <- ~ Diet * Duration + ## (1) fixed effect for Diet and Duration with inte
 
 We can run the `msqrob2` statistical workflow.
 
-### Estimate the model
+### Model estimation
 
-We estimate the precursor-level model with `msqrobAggregate()` 
+We estimate the peptide-ion-level model with `msqrobAggregate()` 
 (see [the modelling section](#sec-run_model)). Recall that
 variables defined in `model` are automatically retrieved from the
 `colData` (`"Diet"`, `"Duration"`, `"Label"`, `"Mixture"`) and
@@ -467,12 +493,12 @@ from the `rowData` (`"ionID"`). We also enable M-estimation
 (`robust = TRUE`) for improved robustness against outliers and ridge
 penalisation (`ridge = TRUE`) to stabilise the parameter estimation.
 
-```{r run_msqrob_precursor, cache=TRUE}
+```{r run_msqrob_ion, cache=TRUE}
 mouse <- msqrobAggregate(
     mouse, i = "ions_norm",
     formula = model,
     fcol = "Protein.Accessions",
-    modelColumnName = "msqrob_psm",
+    modelColumnName = "msqrob_ion",
     name = "proteins_msqrob",
     ridge = TRUE, robust = TRUE
 )
@@ -503,7 +529,7 @@ vd <- VisualizeDesign(
     designFormula = ~ Diet * Duration,
     textSizeFitted = 4
 )
-vd$plotlist
+vd$plotlist[[1]]
 ```
 
 Assessing the difference between low-fat and high-fat diets for short
@@ -540,7 +566,7 @@ We can now test our null hypothesis.
 
 ```{r}
 mouse <- hypothesisTest(
-    mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_psm"
+    mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_ion"
 )
 ```
 
@@ -550,14 +576,16 @@ model column is named after the column names of the contrast matrix `L`.
 ```{r}
 inference <- rowData(mouse[["proteins_msqrob"]])[[colnames(L)]]
 inference$Protein <- rownames(inference)
-head(inference)
+head(inference, 10)
 ```
 
 The table contains the hypothesis testing results for every protein.
-Notice that some rows contain missing values. This is because data
-modelling resulted in a `fitError` for some proteins, probably because
-not enough data was available for model fitting due to missing values
-in the quantitative data (see [how to deal with
+Notice that several rows contain missing values. This is because data
+modelling resulted in a `fitError`. The model cannot be estimated for
+some proteins either because of patterns in missing values, for
+instance a protein was not measured only in one of the groups of
+interest, or because a protein was measured from a single peptide ion
+alleviating the estimation of spectrum effects (see [how to deal with
 `fitError`s](#sec-fiterror)).
 
 We can use the table above directly to build a volcano plot using
@@ -605,7 +633,7 @@ ionData <- mouse[targetProtein, , "ions_norm"] |> #1
 ```
 
 We can now plot the log normalised intensities. Since the protein is
-modelled at the precursor ion level, multiple ion intensities are
+modelled at the peptide ion level, multiple ion intensities are
 recorded in each sample. Each ion is linked across samples using a
 grey line. Samples are coloured according to the diet type. Finally,
 we split the plot in facets, one for each mixture, to visualise the
@@ -649,7 +677,7 @@ L <- makeContrast(
     parameterNames = c("ridgeDietLF","ridgeDurationShort","ridgeDietLF:DurationShort")
 )
 mouse <- hypothesisTest(
-    mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_psm"
+    mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_ion"
 )
 inference <- rowData(mouse[["proteins_msqrob"]])[[colnames(L)]]
 inference$Protein <- rownames(inference)
@@ -702,7 +730,7 @@ L <- makeContrast(
     parameterNames = c("ridgeDietLF","ridgeDurationShort","ridgeDietLF:DurationShort")
 )
 mouse <- hypothesisTest(
-    mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_psm"
+    mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_ion"
 )
 inference <- rowData(mouse[["proteins_msqrob"]])[[colnames(L)]]
 inference$Protein <- rownames(inference)
@@ -747,7 +775,7 @@ L <- makeContrast(
     parameterNames = c("ridgeDietLF","ridgeDurationShort","ridgeDietLF:DurationShort")
 )
 mouse <- hypothesisTest(
-    mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_psm"
+    mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_ion"
 )
 inference <- rowData(mouse[["proteins_msqrob"]])[[colnames(L)]]
 inference$Protein <- rownames(inference)
@@ -785,24 +813,23 @@ ionData <- mouse[targetProtein, , "ions_norm"] |> #1
     mutate(colname = factor(colname, levels = unique(colname[order(Condition)]))) #4
 ```
 
-And explore the peptide ion data, this time also facetting for
-duration in order to highlight changes in direction of the
-difference between low-fat and high-fat diets.
+And we explore the peptide ion data by visualising the differences
+between LF and HF separately for each mixture and diet duration in
+order to highlight changes in direction between these differences
+according to duration. We link data points belonging to the same
+peptide ion using a grey line.
 
 ```{r}
 ggplot(ionData) +
-    aes(x = Run, #colname,
+    aes(x = colname,
         y = value) +
-   # geom_line(aes(group = ionID), linewidth = 0.1) +
-    #geom_point(aes(colour = Condition)) +
-    # geom_boxplot(aes(colour = Condition)) +
-    geom_point(aes(shape = rowname, colour = Diet)) +
-    facet_wrap(Duration ~ Mixture, scales = "free_x", labeller = label_both) +
-    #labs(x = "Sample", y = "log2 intensity") +
-    labs(x = "Run", y = "log2 intensity") +
+    geom_line(aes(group = ionID), linewidth = 0.1) +
+    geom_point(aes(colour = Diet)) +
+    facet_grid(Mixture ~ Duration, scales = "free") +
+    labs(x = "Sample", y = "log2 intensity") +
     ggtitle(targetProtein) +
     theme_minimal() +
-    theme(axis.text.x = element_blank(),legend.position = "none")
+    theme(axis.text.x = element_blank())
 ```
 
 The graph hints towards a slight increase in protein abundance in the
@@ -822,7 +849,7 @@ L <- makeContrast(
 )
 mouse <- hypothesisTest(
     mouse, i = "proteins_msqrob", L,
-    modelColumn = "msqrob_psm", overwrite = TRUE
+    modelColumn = "msqrob_ion", overwrite = TRUE
 )
 ```
 
@@ -864,14 +891,13 @@ wrap_plots(volcanoPlots)
 
 ### Protein-level model
 
-This section illustrate data modelling at the protein level instead of
-the PSM level as shown in the previous sections.
+This section illustrates data modelling starting from protein data 
+instead of ion data.
 
-Here, we work with a workflow where the peptide ion intensities are
-summarised within each run. This has already been done in the
-preprocessing. Note, that we no longer have multiple abundance values
-for a protein in the same label of a run. Hence, we can omit the
-nested effects for label and ionID in run.
+Here, the workflow will use the summarised peptide ion intensities, as
+performed during the preprocessing. Note, that we no longer have
+multiple quantitative values for a protein in the same label of a run.
+Hence, we can omit the nested effects for label and ionID in run.
 
 ```{r}
 modelSum <- ~ Diet * Duration + ## fixed effect for Diet and Duration with interaction
@@ -884,7 +910,7 @@ modelSum <- ~ Diet * Duration + ## fixed effect for Diet and Duration with inter
 For protein-level modelling, we use `msqrob()` instead of
 `msqrobAggregate()`, but their function arguments closely overlap.
 
-```{r run_msqrob_protein, cache=TRUE}
+```{r, cache=TRUE}
 mouse <- msqrob(
     mouse, i = "proteins",
     formula = modelSum,
@@ -894,8 +920,7 @@ mouse <- msqrob(
 ```
 
 We perform hypothesis tests for the early, late, average and
-interaction effects. Note, that the specification of contrasts for the
-fixed effects remains the same.
+interaction effects. Note that the contrasts remain unchanged.
 
 ```{r}
 mouse <- hypothesisTest(
@@ -951,7 +976,7 @@ validated by data exploration): effect of diet and duration, effect of
 the MS acquisition run, effect of TMT mixture, effect of spectrum, and
 effect of sample. Modelling these different sources of variability
 allows to correctly infer changes in protein abundances between groups
-of interest while using PSM-level data, although we also illustrate
+of interest while using ion-level data, although we also illustrate
 how to model the data at the protein level.
 
 The experiment aims to understand the proteomic changes in mouse

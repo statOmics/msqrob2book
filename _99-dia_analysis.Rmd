@@ -1,0 +1,754 @@
+
+# Benchmarking an analysis pipeline {#sec-benchmark}
+
+## Introduction
+
+In this chapter we will evaluate the impact of median normalisation
+and robust ridge regression on a DIA-NN dataset, using a spike-in
+dataset as ground truth. The goal is to determine which data
+processing workflow provides the best performance in correctly
+identifying differentially abundant proteins.
+
+We will use the precursor.quantity column as this has the least amount
+of preprocessing from DIA-NN.
+
+```{r load_libraries}
+# This chunk loads all necessary libraries for the analysis.
+library("QFeatures")   # For handling and processing quantitative mass spectrometry data.
+library("dplyr")  
+library("ggplot2")
+library("msqrob2")     # The core package for robust statistical modeling of proteomics data.
+library("stringr")
+library("ExploreModelMatrix") # A helper tool for visualizing statistical design matrices.
+```
+
+## Import Data
+
+In this section, we load the output from DIA-NN. We then parse the
+file names to create a metadata table (colData) and construct a
+`QFeatures` object, which is the central data structure for our
+analysis.
+
+```{r import_data}
+library("BiocParallel")
+register(SerialParam())
+# Define the path to the data directory.
+dataDir <- "data/spikein_dia/LibFree/"
+
+# Read the main report file from DIA-NN
+report <- data.table::fread(paste0(dataDir, "report_libfree2023.tsv"))
+```
+
+
+```{r create_metadata}
+## Create the sample annotation table (colData).
+# This contains the experimental design metadata. Each row corresponds
+# to a sample (MS run), and columns describe its properties (condition, replicate, etc.).
+annot <- DataFrame(runCol = unique(report$Run))
+
+# Parse the run names to extract experimental variables like condition and replicate.
+# This step relies on a consistent file naming convention.
+annot$sampleId <- sapply(str_split(annot$runCol,"UPS2_"),`[`,2) %>%
+    gsub("_DIA","",.)
+
+# The 'condition' variable represents the different spike-in concentrations of the UPS1 standard.
+# This is the primary variable of interest for our differential abundance analysis.
+    
+
+annot$condition <- annot$sampleId %>%
+    gsub("ratio","",.) %>%
+    str_split("_") %>%
+    sapply(`[`,1) %>%
+    as.numeric() %>%
+    as.factor()
+
+# The 'rep' variable identifies the biological or technical replicate.
+annot$rep <- sapply(str_split(annot$sampleId,"_" ),`[`,2)
+annot$rep <- as.factor(ifelse(is.na(annot$rep), "1",annot$rep))
+
+## Format data into a QFeatures object, creating separate assays for different quantification types.
+# This dataset contains multiple quantification strategies from DIA-NN which we want to evaluate.
+quantCols <- c("Precursor.Quantity")
+
+# Use lapply to efficiently create a list of QFeatures objects, one for each quantification type.
+# The `readQFeatures` function parses the long-format report from DIA-NN.
+meurisSam <- lapply(quantCols, readQFeatures, assayData = report, colData = annot, runCol = "Run")
+names(meurisSam) <- quantCols # Name the list elements for easy access.
+
+# Append the quantification type to each assay name to prevent clashes when combining.
+for (i in quantCols){
+  names(meurisSam[[i]]) <- paste(names(meurisSam[[i]]), i, sep = "_")
+}
+
+```
+
+# Filtering
+
+To ensure the reliability of our results, we filtered protein identifications based on identification confidence scores (q-values). A q-value threshold of 0.01 was applied, corresponding to a maximum False Discovery Rate (FDR) of 1%. Although this dataset was already filtered at this level by the DIA-NN software, it is good practice to verify and adjust this threshold depending on the analysis.
+
+```{r}
+
+## Combine the list of QFeatures objects into a single, comprehensive object.
+meurisSam <- Reduce(c, meurisSam) %>%
+  # Apply initial filtering based on identification confidence scores (q-value).
+  # A q-value of 0.01 means we accept a 1% False Discovery Rate at that level.
+  QFeatures::filterFeatures(~ PG.Q.Value <= 0.01) %>% # Filter at the Protein Group-level.
+  QFeatures::filterFeatures(~ Q.Value <= 0.01) %>%      # Filter at the Precursor-level.
+  QFeatures::filterFeatures(~ Precursor.Id != "")       # Ensure the feature has a valid precursor identifier.
+
+# Assign precursor IDs as rownames for unique and consistent feature identification across assays.
+for (i in names(meurisSam)) {
+  rownames(meurisSam[[i]]) <- rowData(meurisSam[[i]])$Precursor.Id
+}
+
+# In label-free proteomics, zeros typically represent signals below the limit of detection (left-censored data).
+# Treating them as missing values (NA) is statistically more appropriate than treating them as true zeros.
+meurisSam <- zeroIsNA(meurisSam, names(meurisSam))
+
+# Join the assays for each run into a single matrix per quantification type.
+# This reshapes the data from one-assay-per-run to one-assay-per-quant-method.
+for (i in quantCols) meurisSam <- joinAssays(
+  meurisSam,
+  names(meurisSam) %>% grep(pattern = i), # Select all assays for the current quantification type.
+  i) # Name the newly created, joined assay.
+```
+
+
+```{r filtering}
+## 1. Filter based on missing values.
+# Features with too many missing values are uninformative and can bias statistical models.
+# First, we calculate and store the number (nNA) of missing values for each precursor.
+for (i in quantCols){
+    rowData(meurisSam[[i]])[, c("pNA", "nNA")] <- nNA(meurisSam, i)$nNArows[, c("pNA", "nNA")]
+}
+  
+# Heuristic: keep precursors that are quantified in at least 2 samples.
+# Since there are 15 samples total, this means we allow a maximum of 13 NAs.
+meurisSam <- filterFeatures(meurisSam, ~ nNA <= 13, i = quantCols)
+
+## 2. Filter for proteotypic peptides.
+# A proteotypic peptide maps uniquely to a single protein group, resolving ambiguity in protein inference.
+# This simplifies aggregation and makes protein-level quantification more reliable.
+meurisSam <- filterFeatures(meurisSam, ~ Proteotypic == 1, i = quantCols)
+
+## 3. Filter for proteins identified by at least 2 peptides.
+# Protein quantification is more robust when based on multiple peptides.
+# This filter increases confidence in the final protein-level results.
+for (i in quantCols){
+  # Count the number of unique peptide sequences for each protein ID.
+  pepsPerProtDf <- rowData(meurisSam[[i]])[, c("Stripped.Sequence", "Protein.Ids")] |>
+    data.frame() |>
+    group_by(Protein.Ids) |>
+    mutate(pepsPerProt = length(unique(Stripped.Sequence)))
+  # Store this count in the feature metadata (rowData).
+  rowData(meurisSam[[i]])$pepsPerProt <- pepsPerProtDf$pepsPerProt
+}
+
+# Apply the filter to keep only precursors belonging to proteins with >= 2 peptides.
+#Removing 265 peptides, including 4 ups proteins
+meurisSam <- filterFeatures(
+  meurisSam, ~ pepsPerProt >= 2, keep = TRUE, i = quantCols
+)
+
+# Display the QFeatures object to review the effects of filtering.
+meurisSam
+```
+
+# log-transformation and Normalisation
+
+We log2 transform the data and perform median centering.
+
+```{r transformation_normalization}
+# Loop through the five primary quantification assays.
+for (i in quantCols) {
+  # This helps to stabilize variance and makes fold-changes additive.
+  meurisSam <- logTransform(meurisSam, base = 2, i = i, name = paste0(i, "Log")) %>%
+    # Normalize the log-transformed data using median centering.
+    # This aligns the median of all sample distributions at zero, assuming the overall
+    # protein content is similar across samples (a reasonable assumption for most experiments).
+    normalize(method = "center.median", i = paste0(i, "Log"), name = paste0(i, "Norm"))
+}
+```
+
+# Aggregation
+
+Here, we summarize the precursor-level data to the protein level. This is essential as our biological interest is in protein abundance.
+
+## Setup for Aggregation
+
+```{r aggregation_setup}
+# We will create two sets of protein-level data for each original quant type:
+# 1. Log-transformed only (for evaluating performance without explicit normalization).
+# 2. Log-transformed AND normalized.
+quantColsForSum <- c(paste0(quantCols, "Log"), paste0(quantCols, "Norm"))
+sumNames <- c(paste0(quantCols, "NoNormSum"), paste0(quantCols, "NormSum"))
+
+# Initialize a list to store the aggregation function for each assay.
+sumMethods <- list()
+
+# For most assays, we use `robustSummary` (median polishing), which is robust to outliers.
+# It fits an additive model (protein_effect + sample_effect), making it less sensitive
+# to extreme peptide values than a simple mean.
+for (i in sumNames) {
+    sumMethods[[i]] <- MsCoreUtils::robustSummary
+}
+
+# The PG.MaxLFQ assay is a special case, as it's already a protein-level quantification.
+# The protein-level value is simply copied to all precursor rows for that protein.
+# Therefore, a simple mean is sufficient to retrieve the correct protein-level quantity.
+for (i in sumNames[grep("LFQ", sumNames)]){
+  sumMethods[[i]] <- base::colMeans  
+}
+```
+
+## Aggregate from Precursor to Protein Level
+
+```{r aggregate_features}
+# Loop through the 10 precursor-level assays (5 quant types x 2 normalization strategies).
+for (i in 1:length(quantColsForSum)){
+  # The `aggregateFeatures` function performs the summarization from precursor to protein.
+  meurisSam <- aggregateFeatures(meurisSam,
+                                 i = quantColsForSum[i],      # The input precursor-level assay.
+                                 fcol = "Protein.Ids",        # Group features by protein ID.
+                                 name = sumNames[i],          # Name for the new protein-level assay.
+                                 fun = sumMethods[[i]],       # Use the summarization function defined above.
+                                 na.rm = TRUE)                # Ignore missing values during aggregation.
+
+  ### Annotate ground truth using the spike-in information.
+  # The Universal Proteomics Standard (UPS) proteins were spiked in at known concentrations.
+  # We identify them by the "UPS" string in their protein IDs.
+  rowData(meurisSam[[sumNames[i]]])$ups <- meurisSam[[sumNames[i]]] %>%
+    rownames %>%
+    grepl(pattern = "UPS") %>% # Returns TRUE for UPS proteins, FALSE for background yeast proteins.
+    as.factor()
+  # Label the factor for clarity in plots.
+  levels(rowData(meurisSam[[sumNames[i]]])$ups) <- c("yeast", "ups")
+}
+```
+
+# msqrob2 analysis
+
+This is the core statistical modeling part of the workflow. We use `msqrob2` to fit a robust linear model for each protein and test for differential abundance. As the dataset contains replicates we use a random effect to take these into account.
+
+```{r msqrob_model}
+# For each of the 10 protein-level assays, we fit a statistical model.
+for (i in sumNames){
+    print(i)
+    print(1)
+    meurisSam <- msqrob(
+        object = meurisSam,
+        modelColumnName = "msqrobModels",
+        i = i,
+        robust = FALSE,
+        ridge = FALSE,
+        formula = ~ condition + (1|rep))
+    print(2)
+    meurisSam <- msqrob(
+        object = meurisSam,
+        modelColumnName = "msqrobModelsRidge",
+        i = i,
+        robust = FALSE,
+        ridge = TRUE,
+        formula = ~ condition + (1|rep))
+    print(3)
+    meurisSam <- msqrob(
+        object = meurisSam,
+        modelColumnName = "msqrobModelsRobust",
+        i = i,
+        robust = TRUE,
+        ridge = FALSE,
+        formula = ~ condition + (1|rep))
+    print(4)
+    meurisSam <- msqrob(
+        object = meurisSam,
+        modelColumnName = "msqrobModelsRobustRidge",
+        i = i,
+        robust = TRUE,
+        ridge = TRUE,
+        formula = ~ condition + (1|rep))
+}
+
+
+#todo: add psm aggregatie modellen
+```
+
+## Inference
+
+After fitting the models, we define contrasts to perform hypothesis tests. For each contrast we get p-value and log fold changes per protein.
+
+```{r explore_design}
+# Visualizing the design matrix helps confirm that the model correctly captures the experimental structure.
+VisualizeDesign(colData(meurisSam), ~condition)$plotlist
+```
+
+
+```{r hypothesis_testing}
+# The design matrix is the numerical representation of our model formula `~ condition`.
+design <- model.matrix(~ condition, data = colData(meurisSam))
+
+# We want to perform all pairwise comparisons between the different spike-in concentrations.
+ 
+
+# A contrast is a linear combination of model parameters. We create a contrast matrix `L`
+# where each column defines a specific hypothesis to be tested (e.g., "is the abundance in condition4
+# different from condition2?").
+combs <- combn(colnames(design)[-1], 2) # Generate all pairs of condition
+L <- makeContrast(
+  paste0(c(colnames(design)[-1], paste(combs[2, ], combs[1, ], sep = "-")), "=0"),
+  parameterNames = colnames(design)
+)
+
+combs_ridge <- combn(paste("ridge",colnames(design),sep="")[-1], 2) # Generate all pairs of condition
+L_ridge <- makeContrast(
+  paste0(c(paste("ridge",colnames(design),sep="")[-1], paste(combs_ridge[2, ], combs_ridge[1, ], sep = "-")), "=0"),
+  parameterNames = paste("ridge",colnames(design),sep="")
+)
+
+# As this is a spike-in experiment, we can calculate the exact theoretical log2 fold changes.
+# This serves as our ground truth to evaluate the accuracy of each method.
+realLogFC <- apply(combn(log2(as.double(levels(colData(meurisSam)$condition))), 2), 2, diff)
+names(realLogFC) <- colnames(L) # Name them to match the contrasts.
+
+# Finally, perform the hypothesis tests for each contrast on each modeled assay.
+# This calculates the log fold change, standard error, t-statistic, and p-value for each protein.
+model_methods <- c("msqrobModels","msqrobModelsRidge","msqrobModelsRobust","msqrobModelsRobustRidge")
+
+
+for (i in sumNames){
+    print(i)
+    for (j in model_methods){
+        print(j)
+        if(grepl("Ridge",j)){
+            meurisSam <- hypothesisTest(object = meurisSam,
+                                  i = i,
+                                  modelColumn = j,
+                                  resultsColumnNamePrefix= gsub("msqrobModels","",j),
+                                  contrast = L_ridge,
+                                  overwrite = TRUE)  
+        } else {
+            meurisSam <- hypothesisTest(object = meurisSam,
+                                  i = i,
+                                  modelColumn = j,
+                                  resultsColumnNamePrefix= gsub("msqrobModels","",j),
+                                  contrast = L,
+                                  overwrite = TRUE)  
+        }
+    }
+}
+
+saveRDS(meurisSam,"~/Documents/PhD/MsqrobUniversePaper/PrecursorQuantityNormRobustRidge.rds")
+```
+
+# Volcano-plot
+
+
+```{r consolidate_results}
+contrasts <- c(colnames(L),
+         paste("Robust",colnames(L),sep=""),
+         paste("RobustRidge",colnames(L_ridge),sep=""),
+         paste("Ridge",colnames(L_ridge),sep=""))
+
+all_results <- bind_rows(
+  lapply(contrasts, function(contrast) {
+    bind_rows(
+      lapply(sumNames, function(method) {
+        # Extract the results for the current contrast and method
+        result_df <- as.data.frame(rowData(meurisSam[[method]])[[contrast]])
+        
+        # Check if essential columns exist before proceeding
+        if (!all(c("logFC", "pval", "adjPval") %in% names(result_df))) {
+          return(NULL)
+        }
+        
+        # Add identifying columns for method, contrast, spike-in status, and significance
+        modelling_method <- str_split(contrast, "ridgecondition") %>%
+            sapply('[',1) %>%
+            str_split("condition") %>%
+            sapply(`[`,1) %>%
+            ifelse(.=="","Normal",.)
+        
+        contrast <- gsub("ridgecondition","condition",contrast) 
+        contrast <- gsub("RobustRidge","",contrast) 
+        contrast <- gsub("Robust","",contrast) 
+        contrast <- gsub("Ridge","",contrast) 
+        
+        
+        ups <- rowData(meurisSam[[method]])$ups
+        result_df %>%
+          mutate(
+            method = method,
+            contrast = contrast,
+            modelling_method = modelling_method,
+            ups = ups,
+            significant = adjPval < 0.05
+          )%>%
+            na.omit() # Remove rows with missing values that can't be plotted
+      })
+    )
+  })
+)
+```
+
+
+```{r plot_volcano}
+#| label: fig-volcano-main
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: "Faceted volcano plots for the contrast 'condition8 - condition4'.  Each panel represents a different modelling method, with and without normalization or robust ridge regression. Red points are statistically significant (adj. p-value < 0.05). Triangles denote UPS spike-in proteins."
+
+# Define the specific contrast to display.
+primary_contrast <- c("condition8 - condition4")
+
+# Filter the consolidated data for only this primary contrast.
+primary_plot_data <- dplyr::filter(all_results, contrast  ==  primary_contrast)
+
+# Build the faceted volcano plot with a 2-column layout.
+main_volcano_plot <- ggplot(primary_plot_data, aes(x = logFC, y = -log10(pval), color = significant, shape = ups)) +
+  geom_point(alpha = 0.7, size = 2.5) +
+  facet_wrap(method ~modelling_method  , ncol = 4) +
+  scale_color_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
+  labs(
+    title = paste("Volcano Plots for:", primary_contrast),
+    subtitle = paste0("Theoretical Fold Change (FC) = ", round(realLogFC[primary_contrast], 2)),
+    x = "log2 Fold Change",
+    y = "-log10 p-value",
+    color = "Adjusted P-val < 0.05",
+    shape = "Protein Type"
+  ) +
+  theme_bw(base_size = 14) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    strip.text = element_text(face = "bold", size = 10),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.background = element_rect(fill = "grey90", color = "black")
+  )
+
+print(main_volcano_plot)
+```
+
+```{r plot_volcano2}
+#| label: fig-volcano-main2
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: "Faceted volcano plots for the contrast 'condition10 - condition8'. Each panel represents a different modelling method, with and without normalization or robust ridge regression. Red points are statistically significant (adj. p-value < 0.05). Triangles denote UPS spike-in proteins."
+
+# Define the specific contrast to display.
+primary_contrast <- "condition10 - condition8"
+
+# Filter the consolidated data for only this primary contrast.
+primary_plot_data <- dplyr::filter(all_results, contrast  ==  primary_contrast)
+
+# Build the faceted volcano plot with a 2-column layout.
+main_volcano_plot <- ggplot(primary_plot_data, aes(x = logFC, y = -log10(pval), color = significant, shape = ups)) +
+  geom_point(alpha = 0.7, size = 2.5) +
+  facet_wrap(method ~modelling_method  , ncol = 4) +
+  scale_color_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
+  labs(
+    title = paste("Volcano Plots for:", primary_contrast),
+    subtitle = paste0("Theoretical Fold Change (FC) = ", round(realLogFC[primary_contrast], 2)),
+    x = "log2 Fold Change",
+    y = "-log10 p-value",
+    color = "Adjusted P-val < 0.05",
+    shape = "Protein Type"
+  ) +
+  theme_bw(base_size = 14) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    strip.text = element_text(face = "bold", size = 10),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.background = element_rect(fill = "grey90", color = "black")
+  )
+
+print(main_volcano_plot)
+```
+
+### Figure 1: Volcano Plots 
+
+The volcano plots visualize the results for contrast with a theoretical fold change of 1 (condition8 vs condition4) and 0.32 (condition10 vs condition8).
+
+*   **Effect of Normalization:** Comparing the `NoNormSum` (left column) and `NormSum` (right column) plots, normalization generally leads to a tighter, more defined volcano shape. In the condition8 vs condition4 comparison, the p-values are higher for the spiked-in proteins than without normalization. However, when looking at a more difficult comparison, with a smaller theoretical difference, the p-values are also smaller, but not enough to be significant. 
+
+*   **Impact of Robust Ridge regression:**
+The difference within the (non) normalized group is not that large, however we can see that using robust ridge regression reduces the estimated log2 fold changes. Leading to a tighter volcano plot. We can see this on the left most protein in the normalized group. In this dataset it does not change if it is significant or not however the estimated log fold change is reduced and closer to the real theoretical value of 0.
+
+
+
+```{r boxplots}
+#| label: fig-boxplot-main
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: "Faceted boxplots of log2 fold changes for the contrast 'condition8 - condition4'. The distribution of fold changes for yeast (non-changing) and UPS (changing) proteins are shown. The red dashed line indicates the theoretical log2 FC for UPS proteins."
+
+# Define the specific contrast to display.
+primary_contrast <- "condition8 - condition4"
+
+# Filter the main results for the primary contrast.
+primary_plot_data <- filter(all_results, contrast == primary_contrast)
+
+# Create a small data frame for the theoretical fold change reference line.
+reference_line_data <- data.frame(
+  contrast = primary_contrast,
+  y_intercept = realLogFC[primary_contrast]
+)
+
+# Build the faceted boxplot.
+main_boxplot <- ggplot(primary_plot_data, aes(x = ups, y = logFC, color = ups)) +
+  geom_boxplot() +
+  # Add a reference line for Yeast proteins (expected logFC = 0).
+  geom_hline(yintercept = 0, color = "black", linetype = "dashed") +
+  # Add a reference line for UPS spike-in proteins (expected logFC = 1).
+  geom_hline(data = reference_line_data, aes(yintercept = y_intercept), color = "red", linetype = "dashed") +
+  facet_wrap(method ~modelling_method  , ncol = 4) +
+  scale_color_manual(values = c("yeast" = "black", "UPS" = "red")) +
+  labs(
+    title = paste("Boxplots of log2 Fold Change for:", primary_contrast),
+    subtitle = paste("Red line indicates expected UPS logFC:", round(realLogFC[primary_contrast], 2)),
+    x = "Organism",
+    y = "log2 Fold Change (logFC)"
+  ) +
+  theme_bw(base_size = 14) +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    strip.text = element_text(face = "bold", size = 10),
+    strip.background = element_rect(fill = "grey90", color = "black")
+  )
+
+print(main_boxplot)
+```
+
+```{r boxplots2}
+#| label: fig-boxplot-main2
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: "Faceted boxplots of log2 fold changes for the contrast 'condition10 - condition8'. The distribution of fold changes for yeast (non-changing) and UPS (changing) proteins are shown. The red dashed line indicates the theoretical log2 FC for UPS proteins."
+
+# Define the specific contrast to display.
+primary_contrast <- "condition10 - condition8"
+
+# Filter the main results for the primary contrast.
+primary_plot_data <- filter(all_results, contrast == primary_contrast)
+
+# Create a small data frame for the theoretical fold change reference line.
+reference_line_data <- data.frame(
+  contrast = primary_contrast,
+  y_intercept = realLogFC[primary_contrast]
+)
+
+# Build the faceted boxplot.
+main_boxplot <- ggplot(primary_plot_data, aes(x = ups, y = logFC, color = ups)) +
+  geom_boxplot() +
+  # Add a reference line for Yeast proteins (expected logFC = 0).
+  geom_hline(yintercept = 0, color = "black", linetype = "dashed") +
+  # Add a reference line for UPS spike-in proteins (expected logFC = 1).
+  geom_hline(data = reference_line_data, aes(yintercept = y_intercept), color = "red", linetype = "dashed") +
+  facet_wrap(method ~modelling_method  , ncol = 4) +
+  scale_color_manual(values = c("yeast" = "black", "UPS" = "red")) +
+  labs(
+    title = paste("Boxplots of log2 Fold Change for:", primary_contrast),
+    subtitle = paste("Red line indicates expected UPS logFC:", round(realLogFC[primary_contrast], 2)),
+    x = "Organism",
+    y = "log2 Fold Change (logFC)"
+  ) +
+  theme_bw(base_size = 14) +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    strip.text = element_text(face = "bold", size = 10),
+    strip.background = element_rect(fill = "grey90", color = "black")
+  )
+
+print(main_boxplot)
+```
+
+### Figure 3-4: Boxplots of log2 Fold Change
+
+These plots assess the accuracy and precision of fold-change estimation. The ideal method will have the "yeast" boxplot centered tightly on 0 and the "ups" boxplot centered tightly on the theoretical log2FC of 1 and 0.32 (red dashed line).
+
+*   **Normalization:** All models with normalization show better accuracy for the non spiked-in yeast proteins, with medians very close to 0. Without normalization, the spiked-in values are shifted further from the ground truth. 
+For the spiked-in UPS proteins, the normalized models are closer to the ground truth, however they are still biased slightly upwards. 
+
+*   **Robust Ridge Regression:** Performing ridge regression reduces the spread of the estimated log2 fold changes, the spread of the boxplots are much smaller for all models with ridge regression. Using Robust does not have much of an effect, in this dataset, as we already used robust summarization. 
+
+
+
+```{r tpr_fdp_function}
+# This function calculates the TPR and FDP for a given set of p-values and ground truth labels.
+# tp: A logical vector indicating the true positives (here, the UPS proteins).
+tprFdp <- function(pval, tp) {
+  ord <- order(pval) # Rank all proteins from most to least significant.
+  return(data.frame(
+    # True Positive Rate (TPR): Fraction of true positives correctly identified.
+    tpr = cumsum(tp[ord]) / sum(tp),
+    # False Discovery Proportion (FDP): Proportion of incorrect identifications in the list of discoveries.
+    fdp = cumsum(!tp[ord]) / 1:length(tp)
+  ))
+}
+```
+
+
+```{r prepare_tpr_fdp_data}
+# Consolidate all TPR-FDP curve data into one data frame.
+
+contrasts <- c(colnames(L),
+         paste("Robust",colnames(L),sep=""),
+         paste("RobustRidge",colnames(L_ridge),sep=""),
+         paste("Ridge",colnames(L_ridge),sep=""))
+
+all_tpr_fdp_data <- bind_rows(
+  lapply(contrasts, function(contrast) {
+    bind_rows(
+      lapply(sumNames, function(method) {
+        
+        # Calculate the curve data using the tprFdp function.
+        curve_data <- tprFdp(
+          pval = rowData(meurisSam[[method]])[[contrast]]$pval,
+          # We must explicitly create a logical vector for 'tp' based on the ground truth.
+          tp = rowData(meurisSam[[method]])$ups == "ups"
+        )
+        
+        modelling_method <- str_split(contrast, "ridgecondition") %>%
+            sapply('[',1) %>%
+            str_split("condition") %>%
+            sapply(`[`,1) %>%
+            ifelse(.=="","Normal",.)
+        
+        contrast <- gsub("ridgecondition","condition",contrast) 
+        contrast <- gsub("RobustRidge","",contrast) 
+        contrast <- gsub("Robust","",contrast) 
+        contrast <- gsub("Ridge","",contrast) 
+        
+        # Add identifying columns and return.
+        mutate(
+          curve_data,
+          method = method,
+          modelling_method = modelling_method,
+          contrast = contrast
+        )
+      })
+    )
+  })
+)
+#> dim(curve_data)
+#> 3387
+
+# Add descriptive columns for faceting and coloring.
+all_tpr_fdp_data <- all_tpr_fdp_data %>%
+  mutate(
+    normalization_type = if_else(str_detect(method, "NoNorm"), "No-Normalisation", "Normalised"),
+    quant_method = str_remove(method, "(NoNormSum|NormSum)")
+  )
+```
+
+
+### TPR-FDP Performance Curves
+
+The following plots evaluate the performance of different quantification and normalization strategies. An ideal curve quickly rises to the top-left corner, indicating a high True Positive Rate (TPR) is achieved with a low False Discovery Proportion (FDP). The dotted diagonal line represents the performance of a random classifier.
+
+```{r plot_tpr_fdp_1}
+#| label: fig-tpr-fdp-main
+#| fig-width: 12
+#| fig-height: 10
+#| fig-cap: "TPR-FDP curves comparing Normalised vs. No-Normalisation methods across five quantification strategies for the contrast 'condition8 vs condition4'. An ideal curve is in the top-left corner."
+
+# 1. Define the contrast to focus on.
+primary_contrast <- "condition8 - condition4"
+
+# 2. Filter the data for this contrast.
+plot_data <- filter(all_tpr_fdp_data, contrast == primary_contrast)
+
+# 3. Build the plot, faceting by quantification method.
+tpr_fdp_plot <- ggplot(plot_data, aes(x = fdp, y = tpr, color = normalization_type)) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "grey50") +
+  geom_path(linewidth = 0.5, alpha = 0.8) +
+  facet_wrap(modelling_method ~ quant_method) +
+  labs(
+    title = paste("TPR-FDP Performance for:", primary_contrast),
+    x = "False Discovery Proportion (FDP)",
+    y = "True Positive Rate (TPR) / Sensitivity",
+    color = "Normalization Strategy"
+  ) +
+  scale_color_brewer(palette = "Set1") +
+  theme_bw(base_size = 14) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    strip.text = element_text(face = "bold"),
+    strip.background = element_rect(fill = "grey90", color = "black")
+  )
+
+# 4. Print the final plot.
+print(tpr_fdp_plot)
+```
+
+
+
+```{r plot_tpr_fdp_2}
+#| label: fig-tpr-fdp-otherfocus
+#| fig-width: 12
+#| fig-height: 10
+#| fig-cap: "TPR-FDP curves comparing the five quantification strategies, faceted by Normalisation vs. No-Normalisation for the contrast 'condition8 vs condition4'."
+
+# 1. Define the contrast.
+primary_contrast <- c("condition8 - condition4","condition10 - condition8","condition2")
+
+# 2. Filter the data.
+plot_data <- filter(all_tpr_fdp_data, contrast %in% primary_contrast)
+
+# 3. Build the plot, this time faceting by normalization type.
+tpr_fdp_plot <- ggplot(plot_data, aes(x = fdp, y = tpr, color = modelling_method)) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "grey50") +
+  geom_path(linewidth = 0.5, alpha = 0.8) +
+  facet_wrap( contrast~ normalization_type, ncol =2) +
+  labs(
+    title = paste("TPR-FDP Performance"),
+    x = "False Discovery Proportion (FDP)",
+    y = "True Positive Rate (TPR) / Sensitivity",
+    color = "Quantification Method"
+  ) +
+  scale_color_brewer(palette = "Set1") +
+  theme_bw(base_size = 14) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    strip.text = element_text(face = "bold"),
+    strip.background = element_rect(fill = "grey90", color = "black")
+  )
+
+# 4. Print the final plot.
+print(tpr_fdp_plot)
+```
+
+### Figures 5 & 6: TPR-FDP Performance Curves
+
+These curves provide the most rigorous evaluation of performance by assessing the trade-off between identifying true positives (sensitivity) and controlling for false positives. An ideal curve rises steeply to the top-left corner.
+
+*   **Figure 5 (Effect of Normalization):** This view clearly demonstrates the benefit of median normalization. the "Normalised" curve (blue) is consistently above and to the left of the "No-Normalisation" curve (red). This means that for any given False Discovery Proportion, normalization allows you to identify a higher fraction of the true positives.
+
+*   **Figure 6 (Model Comparison):** This plot directly compares the modelling methods.
+    *   **With Normalization (Right Panel):** It can be clearly seen in the condition10 vs condition8 comparison that normalization is absolutely crucial.
+    *   **Without Normalization (Left Panel):** The performance of the models is fairly similar, however the ridge only model seems to perform the best. This could be due to the robsut summary, leading to no need for another robust procedure. 
+    
+    
+### Summary and Conclusion
+
+Based on this comprehensive analysis, we can draw the following
+conclusions:
+
+1. **Normalization is Crucial:** Median-centering normalization
+   consistently and significantly improves performance across all
+   quantification methods. It increases accuracy and precision in
+   fold-change estimation and leads to better sensitivity and error
+   control in differential abundance testing.
+
+2. **Robust ridge improves performance** Log2 fold changes closer to 
+   the ground truth with lower variance. Leading to fewer false
+   positives and more true positives and properly controlling the FDR.

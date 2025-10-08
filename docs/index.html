@@ -13,7 +13,7 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-09-12" />
+<meta name="date" content="2025-10-07" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -175,6 +175,7 @@ div.csl-indent {
 <a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>
 <div class="dropdown-content">
 <a id="active-page" href="index.html" id="toc-preamble"><span class="toc-section-number">1</span> Preamble</a><ul class="toc-sections">
+<li class="toc"><a href="#why-msqrob2"> Why msqrob2?</a></li>
 <li class="toc"><a href="#outline"> Outline</a></li>
 <li class="toc"><a href="#targeted-audience-and-assumed-background"> Targeted audience and assumed background</a></li>
 <li class="toc"><a href="#setup"> Setup</a></li>
@@ -182,10 +183,12 @@ div.csl-indent {
 <li class="toc"><a href="#acknowledgments"> Acknowledgments</a></li>
 <li class="toc"><a href="#license"> License</a></li>
 </ul>
-<a href="sec-concepts.html" id="toc-sec-concepts"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
-<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">3</span> The francisella use case: a MaxQuant LFQ DDA dataset</a>
-<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">4</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
-<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">5</span> Usefull links and session information</a>
+<a href="sec-basics.html" id="toc-sec-basics"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
+<a href="sec-advanced.html" id="toc-sec-advanced"><span class="toc-section-number">3</span> Advanced statistical analysis with msqrob2</a>
+<a href="sec-data_levels.html#sec-data_levels" id="toc-sec-data_levels"><span class="toc-section-number">4</span> PSM, peptide or protein-level modelling?</a>
+<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">5</span> The francisella use case: a MaxQuant LFQ DDA dataset</a>
+<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">6</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
+<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">7</span> Usefull links and session information</a>
 </div>
 </li>
 </ul>
@@ -209,15 +212,48 @@ instruments, and different search engines to answers different
 biological questions. We hope that this book will help proteomics
 researchers tailoring their statistical analysis workflow to their
 specific datasets and research questions.</p>
-<div id="outline" class="section level2" number="1.1">
+<div id="why-msqrob2" class="section level2" number="1.1">
 <h2>
-<span class="header-section-number">1.1</span> Outline<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('outline')" onmouseout="reset_tooltip('outline-tooltip')"><span class="tooltiptext" id="outline-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">1.1</span> Why msqrob2?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('why-msqrob2')" onmouseout="reset_tooltip('why-msqrob2-tooltip')"><span class="tooltiptext" id="why-msqrob2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>Mass spectrometry (MS)-based proteomics experiments often imposes a
+complex correlation structure among observations. Addressing this
+correlation is key for correct statistical inference and reliable
+biomarker discovery. msqrob2TMT is a set of mixed model-based
+workflows tailored toward differential abundance analysis for labelled
+MS-based proteomics data. The key features of <code>msqrob2TMT</code> workflows
+are:</p>
+<ol style="list-style-type: decimal">
+<li>Modularity: all core functions rely on the <code>QFeatures</code> class, a
+standardised data structure, meaning that output of a function can
+be fed as input to any other function. Hence, different functions
+are assembled as modular blocks into a complete data analysis
+workflows that can be easily adapted to the peculiarities of any
+MS-based proteomics data set. Therefore, the approach extends well
+beyond the use case presented in this chapter</li>
+<li>Flexibility: the <code>msqrob2</code> modelling approach relies on the
+<code>lme4::lmer()</code> model specification syntax, meaning that any linear
+model can be specified. For fixed effects, this includes modelling
+categorical and numerical variables, as well as their interaction.
+Moreover, <code>msqrob2</code> can model both sample-specific and
+feature-specific (e.g. peptide or protein) covariates, which
+unlocks the inference to experiments with arbitrarily complex
+designs as well as to correct explicitly for feature-specific
+properties.</li>
+<li>Performance: thanks to the inclusion of robust ridge regression, we
+demonstrated improved performance of <code>msqrob2</code> workflows upon the
+competing software <span class="citation">(<label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle">Goeminne, Gevaert, and Clement 2016<span class="marginnote">Goeminne, Ludger J E, Kris Gevaert, and Lieven Clement. 2016. <span>“Peptide-Level Robust Ridge Regression Improves Estimation, Sensitivity, and Specificity in Data-Dependent Quantitative Label-Free Shotgun Proteomics.”</span> <em>Mol. Cell. Proteomics</em> 15 (2): 657–68.</span>; <label for="tufte-mn-2" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle">Sticker et al. 2020<span class="marginnote">Sticker, Adriaan, Ludger Goeminne, Lennart Martens, and Lieven Clement. 2020. <span>“Robust Summarization and Inference in Proteome-Wide Label-Free Quantification.”</span> <em>Mol. Cell. Proteomics</em> 19 (7): 1209–19.</span>; <label for="tufte-mn-3" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">Vandenbulcke et al. 2025<span class="marginnote">Vandenbulcke, Stijn, Christophe Vanderaa, Oliver Crook, Lennart Martens, and Lieven Clement. 2025. <span>“<span>Msqrob2TMT</span>: Robust Linear Mixed Models for Inferring Differential Abundant Proteins in Labeled Experiments with Arbitrarily Complex Design.”</span> <em>Mol. Cell. Proteomics</em> 24 (7): 101002.</span>)</span>.</li>
+</ol>
+</div>
+<div id="outline" class="section level2" number="1.2">
+<h2>
+<span class="header-section-number">1.2</span> Outline<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('outline')" onmouseout="reset_tooltip('outline-tooltip')"><span class="tooltiptext" id="outline-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p><strong>TODO</strong> write outline of the different chapters</p>
 </div>
-<div id="targeted-audience-and-assumed-background" class="section level2" number="1.2">
+<div id="targeted-audience-and-assumed-background" class="section level2" number="1.3">
 <h2>
-<span class="header-section-number">1.2</span> Targeted audience and assumed background<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('targeted-audience-and-assumed-background')" onmouseout="reset_tooltip('targeted-audience-and-assumed-background-tooltip')"><span class="tooltiptext" id="targeted-audience-and-assumed-background-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">1.3</span> Targeted audience and assumed background<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('targeted-audience-and-assumed-background')" onmouseout="reset_tooltip('targeted-audience-and-assumed-background-tooltip')"><span class="tooltiptext" id="targeted-audience-and-assumed-background-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>The course material is targeted to either proteomics practitioners or
 data analysts/bioinformaticians that would like to learn how to
@@ -233,9 +269,9 @@ useful, but not necessary.</p>
 5</a> of the
 R for mass spectrometry book.</p>
 </div>
-<div id="setup" class="section level2" number="1.3">
+<div id="setup" class="section level2" number="1.4">
 <h2>
-<span class="header-section-number">1.3</span> Setup<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('setup')" onmouseout="reset_tooltip('setup-tooltip')"><span class="tooltiptext" id="setup-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">1.4</span> Setup<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('setup')" onmouseout="reset_tooltip('setup-tooltip')"><span class="tooltiptext" id="setup-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>To install all the necessary package, please use the latest release of
 R and execute:</p>
@@ -244,19 +280,19 @@ R and execute:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb1-2"><a href="index.html#cb1-2" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span></code></pre></div>
 <p>All software versions used to generate this document are recorded at
-the end of the book in chapter<a href="sec-end.html#sec-end">5</a>.</p>
+the end of the book in chapter <a href="sec-end.html#sec-end">7</a>.</p>
 </div>
-<div id="citation" class="section level2" number="1.4">
+<div id="citation" class="section level2" number="1.5">
 <h2>
-<span class="header-section-number">1.4</span> Citation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('citation')" onmouseout="reset_tooltip('citation-tooltip')"><span class="tooltiptext" id="citation-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">1.5</span> Citation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('citation')" onmouseout="reset_tooltip('citation-tooltip')"><span class="tooltiptext" id="citation-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>If you need to cite this book, please use the following reference:</p>
 <p><strong>TODO</strong> add citation when available on Zenodo (and paper)</p>
 <p><strong>TODO</strong> add citation when available on Zenodo (and paper)</p>
 </div>
-<div id="acknowledgments" class="section level2" number="1.5">
+<div id="acknowledgments" class="section level2" number="1.6">
 <h2>
-<span class="header-section-number">1.5</span> Acknowledgments<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('acknowledgments')" onmouseout="reset_tooltip('acknowledgments-tooltip')"><span class="tooltiptext" id="acknowledgments-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">1.6</span> Acknowledgments<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('acknowledgments')" onmouseout="reset_tooltip('acknowledgments-tooltip')"><span class="tooltiptext" id="acknowledgments-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>We thank the <a href="https://www.rformassspectrometry.org/">R for Mass
 Spectrometry</a> initiative:</p>
@@ -267,9 +303,9 @@ Spectrometry</a> initiative:</p>
 as a template.</li>
 </ul>
 </div>
-<div id="license" class="section level2" number="1.6">
+<div id="license" class="section level2" number="1.7">
 <h2>
-<span class="header-section-number">1.6</span> License<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('license')" onmouseout="reset_tooltip('license-tooltip')"><span class="tooltiptext" id="license-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">1.7</span> License<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('license')" onmouseout="reset_tooltip('license-tooltip')"><span class="tooltiptext" id="license-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"></a><br>This material is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
 Attribution-ShareAlike 4.0 International License</a>. You are free to
@@ -281,10 +317,10 @@ distribute your contributions under the same license as the original.</p>
 </div>
 </div>
 <p style="text-align: center;">
-<a href="sec-concepts.html"><button class="btn btn-default">Next</button></a>
+<a href="sec-basics.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-09-12
+2025-10-07
  using 
 R version 4.5.1 (2025-06-13)
 </p>
