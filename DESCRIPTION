@@ -1,0 +1,37 @@
+Package: msqorb2book
+Title:  "Statistical analysis of mass spectrometry-based proteomics data"
+Version: 0.0.99
+Authors@R:
+    c(person(given = "Christophe",
+          family = "Vanderaa",
+          role = c("aut", "cre"),
+          email = "vanderaa.christophe@gmail.com",
+          comment = c(ORCID = "0000-0001-7443-5427")),
+      person(given = "Lieven",
+          family = "Clement",
+          role = "aut"))
+Description: The book provide thorough documentation of the
+    `msqrob2` software for the statistical analysis of mass
+    spectrometry (MS)-based proteomics. It includes the latest
+    improvements of the software that enable statistical modelling for
+    a wide panel of use cases.
+License: Artistic-2.0
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+Depends:
+    msqrob2
+Suggests:
+    BiocParallel,
+    BiocFileCache,
+    dplyr,
+    ExploreModelMatrix,
+    ggplot2,
+    ggrepel,
+    patchwork,
+    scater,
+    bookdown
+URL: https://cvanderaa.github.io/2025_eurobioc_workshop_proteomics
+BugReports: https://github.com/cvanderaa/2025_eurobioc_workshop_proteomics/issues/new/choose
+VignetteBuilder: knitr
