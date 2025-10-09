@@ -1,4 +1,4 @@
-book_filename: "msqrob2_book"
+book_filename: "msqrob2book"
 delete_merged_file: true
 output_dir: "docs"
 language:
