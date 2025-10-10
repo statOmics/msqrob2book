@@ -44,6 +44,7 @@ jobs:
         run: |
           BiocManager::install("cvanderaa/QFeatures", ref = "uniquePrecId")
           BiocManager::install("statOmics/msqrob2")
+          BiocManager::install("lgatto/msmbstyle")
         shell: Rscript {0}
 
       # This repo is not a package, so I expect this to fail

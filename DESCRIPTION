@@ -32,6 +32,8 @@ Suggests:
     patchwork,
     scater,
     bookdown
+Remotes:
+    lgatto/msmbstyle
 URL: https://cvanderaa.github.io/2025_eurobioc_workshop_proteomics
 BugReports: https://github.com/cvanderaa/2025_eurobioc_workshop_proteomics/issues/new/choose
 VignetteBuilder: knitr
