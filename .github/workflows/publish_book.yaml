@@ -20,7 +20,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        shell: Rscript install_deps.R
+        run: |
+          Rscript install_deps.R
 
       # - name: Query dependencies and update old packages
       #   run: |
