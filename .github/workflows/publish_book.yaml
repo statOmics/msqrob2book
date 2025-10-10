@@ -19,10 +19,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # - name: Install dependencies
-      #   run: |
-      #     Rscript install_deps.R
-
       - name: Query dependencies and update old packages
         run: |
           BiocManager::install(ask=FALSE)
@@ -37,12 +33,20 @@ jobs:
           key: ${{ env.cache-version }}-${{ runner.os }}-r-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ env.cache-version }}-${{ runner.os }}-r-
 
+      - name: Install dependencies
+        run: |
+          BiocManager::repositories()
+          remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories())
+          remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
+
       - name: Install specific package versions
         run: |
           BiocManager::install("cvanderaa/QFeatures", ref = "uniquePrecId")
           BiocManager::install("statOmics/msqrob2")
         shell: Rscript {0}
 
+      # This repo is not a package, so I expect this to fail
       # - name: Check
       #   env:
       #     _R_CHECK_CRAN_INCOMING_REMOTE_: false
