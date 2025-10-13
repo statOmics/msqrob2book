@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 1 Preamble | Statistical analysis for proteomics data" />
+<meta property="og:type" content="book" />
+
+
+
+
+<meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
+
+<meta name="date" content="2025-10-13" />
+
+
+<meta name="description" content="Chapter 1 Preamble | Statistical analysis for proteomics data">
+
+<title>Chapter 1 Preamble | Statistical analysis for proteomics data</title>
+
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/envisioned.css" rel="stylesheet" />
+<link href="libs/msmb-css-0/msmb.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+
+if(f.classList.contains('fa-plus-square')) {
+    f.classList.add('fa-minus-square')
+    f.classList.remove('fa-plus-square')
+} else {
+    f.classList.add('fa-plus-square')
+    f.classList.remove('fa-minus-square')
+}
+
+}
+</script>
+<script>
+function copy_link(id) {
+  var dummy = document.createElement('input'),
+  text = window.location.href.split(/[?#]/)[0] + '#' + id;
+  document.body.appendChild(dummy);
+  dummy.value = text;
+  dummy.select();
+  document.execCommand('copy');
+  document.body.removeChild(dummy);
+  
+  var tooltip = document.getElementById(id + '-tooltip');
+  tooltip.innerHTML = 'Copied!';
+}
+
+function reset_tooltip(id) {
+  var tooltip = document.getElementById(id);
+  tooltip.innerHTML = 'Copy link';
+}
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul class="navbar">
+<li class="msmb"><p class="title">Statistical analysis for proteomics data<p><p class="author">Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement</p>
+<li class="dropdown" style="float:right">
+<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>
+<div class="dropdown-content">
+<a href="" id="toc-preamble"><span class="toc-section-number">1</span> Preamble</a>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="preamble" class="section level1" number="1">
+<h1>
+<span class="header-section-number">Chapter 1</span> Preamble</h1>
+<p>The aim of this book is to provide thorough documentation of the
+<code>msqrob2</code> software for the statistical analysis of mass spectrometry
+(MS)-based proteomics data. It includes the latest improvements of the
+software that enable statistical modelling for a wide panel of use
+cases. The book will first introduce the general concepts behind
+the statistical analysis of proteomics data and <code>msqrob2</code>. Further
+chapters will demonstrate the application of <code>msqrob2</code> for datasets
+that were obtained using different acquisition strategies, different
+instruments, and different search engines to answers different
+biological questions. We hope that this book will help proteomics
+researchers tailoring their statistical analysis workflow to their
+specific datasets and research questions.</p>
+<div id="why-msqrob2" class="section level2" number="1.1">
+<h2>
+<span class="header-section-number">1.1</span> Why msqrob2?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('why-msqrob2')" onmouseout="reset_tooltip('why-msqrob2-tooltip')"><span class="tooltiptext" id="why-msqrob2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>Mass spectrometry (MS)-based proteomics experiments often imposes a
+complex correlation structure among observations. Addressing this
+correlation is key for correct statistical inference and reliable
+biomarker discovery. This <code>msqrob2</code> book provides a set of (mixed) model-based
+workflows tailored toward differential abundance analysis for label-free as well as labeled MS-based proteomics data. The key features of <code>msqrob2</code> workflows
+are:</p>
+<ol style="list-style-type: decimal">
+<li>Modularity: all core functions rely on the <code>QFeatures</code> class, a
+standardised data structure, meaning that output of a function can
+be fed as input to any other function. Hence, different functions
+are assembled as modular blocks into a complete data analysis
+workflows that can be easily adapted to the peculiarities of any
+MS-based proteomics data set. Therefore, the approach extends well
+beyond the use case presented in this chapter</li>
+<li>Flexibility: the <code>msqrob2</code> modelling approach relies on the
+<code>lme4::lmer()</code> model specification syntax, meaning that any linear
+model can be specified. For fixed effects, this includes modelling
+categorical and numerical variables, as well as their interaction.
+Moreover, <code>msqrob2</code> can model both sample-specific and
+feature-specific (e.g. peptide or protein) covariates, which
+unlocks the inference to experiments with arbitrarily complex
+designs as well as to correct explicitly for feature-specific
+properties.</li>
+<li>Performance: thanks to the inclusion of robust ridge regression, we
+demonstrated improved performance of <code>msqrob2</code> workflows upon the
+competing software <span class="citation">(<label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle">Goeminne, Gevaert, and Clement 2016<span class="marginnote">Goeminne, Ludger J E, Kris Gevaert, and Lieven Clement. 2016. <span>“Peptide-Level Robust Ridge Regression Improves Estimation, Sensitivity, and Specificity in Data-Dependent Quantitative Label-Free Shotgun Proteomics.”</span> <em>Mol. Cell. Proteomics</em> 15 (2): 657–68.</span>; <label for="tufte-mn-2" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle">Sticker et al. 2020<span class="marginnote">Sticker, Adriaan, Ludger Goeminne, Lennart Martens, and Lieven Clement. 2020. <span>“Robust Summarization and Inference in Proteome-Wide Label-Free Quantification.”</span> <em>Mol. Cell. Proteomics</em> 19 (7): 1209–19.</span>; <label for="tufte-mn-3" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">Vandenbulcke et al. 2025<span class="marginnote">Vandenbulcke, Stijn, Christophe Vanderaa, Oliver Crook, Lennart Martens, and Lieven Clement. 2025. <span>“<span>Msqrob2TMT</span>: Robust Linear Mixed Models for Inferring Differential Abundant Proteins in Labeled Experiments with Arbitrarily Complex Design.”</span> <em>Mol. Cell. Proteomics</em> 24 (7): 101002.</span>)</span>.</li>
+</ol>
+</div>
+<div id="outline" class="section level2" number="1.2">
+<h2>
+<span class="header-section-number">1.2</span> Outline<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('outline')" onmouseout="reset_tooltip('outline-tooltip')"><span class="tooltiptext" id="outline-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p><strong>TODO</strong> write outline of the different chapters</p>
+</div>
+<div id="targeted-audience-and-assumed-background" class="section level2" number="1.3">
+<h2>
+<span class="header-section-number">1.3</span> Targeted audience and assumed background<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('targeted-audience-and-assumed-background')" onmouseout="reset_tooltip('targeted-audience-and-assumed-background-tooltip')"><span class="tooltiptext" id="targeted-audience-and-assumed-background-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>The course material is targeted to either proteomics practitioners or
+data analysts/bioinformaticians that would like to learn how to
+analyse proteomics data.</p>
+<p>A working knowledge of R (R syntax, commonly used functions, basic
+data structures such as data frames, vectors, matrices, … and their
+manipulation) is required. Familiarity with MS or proteomics in
+general is recommended, this would allow for a better understanding of
+the modelling assumptions taken throughout this book. Familiarity with
+other Bioconductor omics data classes and the tidyverse syntax is
+useful, but not necessary.</p>
+<p>We <strong>highly recommend</strong> reading <a href="https://rformassspectrometry.github.io/book/sec-quant.html">Chapter
+5</a> of the
+R for mass spectrometry book.</p>
+</div>
+<div id="setup" class="section level2" number="1.4">
+<h2>
+<span class="header-section-number">1.4</span> Setup<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('setup')" onmouseout="reset_tooltip('setup-tooltip')"><span class="tooltiptext" id="setup-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>To install all the necessary package, please use the latest release of
+R and execute:</p>
+<p><strong>TODO</strong> install dependencies
+<strong>TODO</strong> provide a Docker image</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span></code></pre></div>
+<p>All software versions used to generate this document are recorded at
+the end of the book in chapter <a href="#sec-end"><strong>??</strong></a>.</p>
+</div>
+<div id="citation" class="section level2" number="1.5">
+<h2>
+<span class="header-section-number">1.5</span> Citation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('citation')" onmouseout="reset_tooltip('citation-tooltip')"><span class="tooltiptext" id="citation-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>If you need to cite this book, please use the following reference:</p>
+<p><strong>TODO</strong> add citation when available on Zenodo (and paper)</p>
+<p><strong>TODO</strong> add citation when available on Zenodo (and paper)</p>
+</div>
+<div id="acknowledgments" class="section level2" number="1.6">
+<h2>
+<span class="header-section-number">1.6</span> Acknowledgments<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('acknowledgments')" onmouseout="reset_tooltip('acknowledgments-tooltip')"><span class="tooltiptext" id="acknowledgments-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We thank the <a href="https://www.rformassspectrometry.org/">R for Mass
+Spectrometry</a> initiative:</p>
+<ul>
+<li>For developing the <code>QFeatures</code> package on which <code>msqrob2</code> depends</li>
+<li>For openly sharing their
+<a href="https://rformassspectrometry.github.io/book">book</a>, which we used
+as a template.</li>
+</ul>
+</div>
+<div id="license" class="section level2" number="1.7">
+<h2>
+<span class="header-section-number">1.7</span> License<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('license')" onmouseout="reset_tooltip('license-tooltip')"><span class="tooltiptext" id="license-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"></a><br>This material is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+Attribution-ShareAlike 4.0 International License</a>. You are free to
+<strong>share</strong> (copy and redistribute the material in any medium or format)
+and <strong>adapt</strong> (remix, transform, and build upon the material) for any
+purpose, even commercially, as long as you give appropriate credit and
+distribute your contributions under the same license as the original.</p>
+</div>
+</div>
+<p style="text-align: center;">
+</p>
+<p class="build-date">Page built: 
+2025-10-13
+ using 
+R version 4.4.0 RC (2024-04-16 r86468)
+</p>
+</div>
+</div>
+
+
+
+</body>
+</html>

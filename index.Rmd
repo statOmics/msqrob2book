@@ -27,10 +27,10 @@ knitr::opts_chunk$set(
 
 The aim of this book is to provide thorough documentation of the
 `msqrob2` software for the statistical analysis of mass spectrometry
-(MS)-based proteomics. It includes the latest improvements of the
+(MS)-based proteomics data. It includes the latest improvements of the
 software that enable statistical modelling for a wide panel of use
 cases. The book will first introduce the general concepts behind
-`msqrob2` and statistical analysis of proteomics data. Further
+the statistical analysis of proteomics data and `msqrob2`. Further
 chapters will demonstrate the application of `msqrob2` for datasets
 that were obtained using different acquisition strategies, different
 instruments, and different search engines to answers different
@@ -43,9 +43,8 @@ specific datasets and research questions.
 Mass spectrometry (MS)-based proteomics experiments often imposes a
 complex correlation structure among observations. Addressing this
 correlation is key for correct statistical inference and reliable
-biomarker discovery. msqrob2TMT is a set of mixed model-based
-workflows tailored toward differential abundance analysis for labelled
-MS-based proteomics data. The key features of `msqrob2TMT` workflows
+biomarker discovery. This `msqrob2` book provides a set of (mixed) model-based
+workflows tailored toward differential abundance analysis for label-free as well as labeled MS-based proteomics data. The key features of `msqrob2` workflows
 are:
 
 1. Modularity: all core functions rely on the `QFeatures` class, a
