@@ -31,10 +31,9 @@ The aim of this book is to provide thorough documentation of the
 software that enable statistical modelling for a wide panel of use
 cases. The book will first introduce the general concepts behind
 the statistical analysis of proteomics data and `msqrob2`. Further
-chapters will demonstrate the application of `msqrob2` for datasets
-that were obtained using different acquisition strategies, different
-instruments, and different search engines to answers different
-biological questions. We hope that this book will help proteomics
+chapters will demonstrate the application of `msqrob2` for assessing different biological questions starting from datasets
+with different experimental designs, acquisition strategies,
+instruments, and search engines. We hope that this book will help proteomics
 researchers tailoring their statistical analysis workflow to their
 specific datasets and research questions.
 
