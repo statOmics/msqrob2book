@@ -368,16 +368,16 @@ vd <- VisualizeDesign(
 vd$plotlist
 ```
 
-This plot shows that the average protein intensity for the D8 group is
-estimated by `(Intercept)`, and the the average protein intensity for
-the WT group is estimated by `(Intercept) + genotypeWT`. 
+This plot shows that the  average $\log_2$ protein intensity for the D8 group is
+modelled by `(Intercept)`, and the the average $\log_2$ protein intensity for
+the WT group is modelled by `(Intercept) + genotypeWT`. 
 
 ### Hypothesis testing
 
-Assessing the difference between the WT and D8 groups boils down to
-`(Intercept) + genotypeWT - (Intercept)`, which simplifies to the
-`genotypeWT` parameter. The null hypothesis is that the differences
-between the two groups is zero, hence the estimated parameter is zero.
+Hence we can translate the research hypothesis that there is an effect of the genotype on the protein abundance to the average log2 fold change ($\log_2 FC$) between the WT and D8 groups, which boils down to
+`(Intercept) + genotypeWT - (Intercept)`, and equals the 
+`genotypeWT` parameter. The null hypothesis of the hypothesis test for this contrast is that the average $\log2 FC$ 
+between D8 knock-out and WT is zero, or in other words that the `genotypeWT` parameter is zero.
 
 ```{r}
 hypothesis <- "genotypeWT = 0"
