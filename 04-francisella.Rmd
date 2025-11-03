@@ -1,13 +1,11 @@
-# The francisella use case: a MaxQuant LFQ DDA dataset {#sec-francisella}
+# The francisella use case: a MaxQuant LFQ DDA dataset with technical replication {#sec-francisella}
 
 ## Introduction
 
-**TODO** write section
-**TODO** describe the general experimental design, and mention 
-         that this design is also applicable when having multiple
-         samples from patients
+In this vignette we show how to analyse LFQ data with technical replication. 
+In the data analysis we have to acknowledge pseudo-replication, i.e. data for multiple technical replicates from the same biological repeat are correlated and we cannot treat these as independent repeats. 
 
-In this vignette,...
+We will build upon the mixed model framework in msqrob2 to address this correlation by introducing a random effect for each biological repeat. 
 
 If you never used `msqrob2`, we suggest to familiarise yourself
 with the [concepts chapter](#sec-basics) first.
@@ -35,19 +33,8 @@ register(SerialParam())
 
 ### Experimental context
 
-A study on the facultative pathogen Francisella tularensis was
-conceived by [Ramond et al.
-(2015)](https://www.mcponline.org/article/S1535-9476(20)33188-1/fulltext).
-F. tularensis enters the cells of its host by phagocytosis. The
-authors showed that F. tularensis is arginine deficient and imports
-arginine from the host cell via an arginine transporter, ArgP, in
-order to efficiently escape from the phagosome and reach the cytosolic
-compartment, where it can actively multiply. In their study, they
-compared the proteome of wild type F. tularensis (WT) to ArgP-gene
-deleted F. tularensis (knock-out, D8). For this exercise, we use a
-subset of the F. tularensis dataset where bacterial cultures were
-grown in biological triplicate and each biorep was run in technical
-triplicate on a nanoRSLC-Q Exactive PLUS instrument. 
+A study on the facultative pathogen Francisella tularensis was conceived by [Ramond et al.
+(2015)](https://www.mcponline.org/article/S1535-9476(20)33188-1/fulltext). F. tularensis enters the cells of its host by phagocytosis. The authors showed that F. tularensis is arginine deficient and imports arginine from the host cell via an arginine transporter, ArgP, in order to efficiently escape from the phagosome and reach the cytosolic compartment, where it can actively multiply. In their study, they compared the proteome of wild type F. tularensis (WT) to ArgP-gene deleted F. tularensis (knock-out, D8). For this exercise, we use a subset of the F. tularensis dataset where bacterial cultures were grown in biological triplicate and each biorep was run in technical triplicate on a nanoRSLC-Q Exactive PLUS instrument. 
 
 ### Getting the data
 
@@ -59,12 +46,10 @@ repository:
 **TODO** put on Zenodo and use BiocFileCache
 
 ```{r}
-pepFile <- "./data/francisella/peptides.txt"
+pepFile <- "https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/master/Francisella/data/maxquant/peptides.txt"
 ```
 
-After downloading the files, we can load the peptide table. Contrarily
-a [PSM table](#sec-psm_table), the peptide table is provided in a
-"wide format", meaning that each row represents a single peptide and
+After downloading the files, we can load the peptide table. Contrarily a [PSM table](#sec-psm_table), the peptide table is provided in a "wide format", meaning that each row represents a single peptide and
 that each quantification column (that starts with `"Intensity"`)
 represents a single sample.
 
@@ -76,17 +61,17 @@ quantcols <- grep("Intensity\\.", names(peps), value = TRUE)
 knitr::kable(head(peps))
 ```
 
-We now extract the [sample annotations](#sec-annotation_table). We
-will build a table where each row in the annotation table contains
-information for one sample (the table below shows the first 6 rows).
+We now extract the [sample annotations](#sec-annotation_table). We will build a table where each row in the annotation table contains information for one sample (the table below shows the first 6 rows).
 This information is extracted from the sample names.
 
 ```{r}
 coldata <- data.frame(quantCols = quantcols) |> 
   filter(grepl("_20_", quantCols) & grepl("_n\\d", quantCols)) |> 
   mutate(genotype  = substr(quantCols, 12, 13)) |> 
-  mutate(biorep  = paste0(genotype, "_", substr(quantCols, 21, 22)))
+  mutate(biorep  = paste0(genotype, "_", substr(quantCols, 21, 22))) |> 
+  mutate(run = 1:length(quantcols))
 ```
+
 ```{r, echo=FALSE}
 knitr::kable(head(coldata))
 ```
@@ -151,22 +136,19 @@ rowData(pe[["peptides"]])$nNonZeroBiorep <- apply(
 
 We filter features based on 3 criteria (see [PSM filtering]).
 
-1. Handling overlapping protein groups
+1. Remove failed protein inference
 
-In our approach a peptide can map to multiple proteins, as long as
-there is none of these proteins present in a smaller subgroup. 
+We remove peptides that could not be uniquely mapped to a protein.
 
 ```{r}
 pe <- filterFeatures(pe,
-  ~ Proteins %in% smallestUniqueGroups(Proteins)
-)
+  ~ Proteins != "" & ## Remove failed protein inference
+    !grepl(";", Proteins)) ## Remove protein groups
 ```
 
 2. Remove reverse sequences (decoys) and contaminants
 
-We now remove the contaminants and peptides that map to decoy 
-sequences. These features bear no information of interest and will
-reduce the statistical power upon multiple test adjustment.
+We now remove the contaminants and peptides that map to decoy sequences. These features bear no information of interest and will reduce the statistical power upon multiple test adjustment.
 
 ```{r}
 pe <- filterFeatures(pe, ~ Reverse != "+" & Contaminant != "+")
@@ -174,12 +156,7 @@ pe <- filterFeatures(pe, ~ Reverse != "+" & Contaminant != "+")
 
 3. Drop peptides that were only identified in a single biorepeat
 
-Note, that in experiments without technical repeats we filter on the
-number of samples in which a peptide is picked up (this is typically 
-performed using `filterNA()`). Here, we will require that a peptide is
-picked up in at least two biorepeats. We already computed the number
-of biorepeats that were observed for each peptide (that is the number
-of biorepeats that contain at least one observed value).
+Note, that in experiments without technical repeats we filter on the number of samples in which a peptide is picked up (this is typically performed using `filterNA()`). Here, we will require that a peptide is picked up in at least two biorepeats. We already computed the number of biorepeats that were observed for each peptide (that is the number of biorepeats that contain at least one observed value).
 
 ```{r}
 (pe <- filterFeatures(pe, ~ nNonZeroBiorep >= 2))
@@ -198,13 +175,34 @@ data complies to `msqrob2`'s requirements:
 pe <- logTransform(pe, base = 2, i = "peptides", name = "peptides_log")
 ```
 
-2. Samples are normalised by substracting the sample median (see 
-   [Normalisation])
+2. Normalisation with Median of Ratios method.
 
 ```{r}
-pe <- normalize(
-  pe, i = "peptides_log", name = "peptides_norm", method = "center.median"
-)
+pseudoRef <- assay(pe[["peptides_log"]]) |> 
+  rowMeans(na.rm = TRUE) #1. Calculate the row means 
+
+nfLog <- sweep(
+  assay(pe[["peptides_log"]]), 
+  MARGIN = 1, 
+  pseudoRef) |> #2. Subtract the row means row-by-row (MARGIN = 1)
+  colMedians(na.rm = TRUE)  #3. Calculate the column median 
+
+pe <- 
+  sweep(pe, 
+        MARGIN = 2, 
+        STATS = nfLog , 
+        i = "peptides_log", 
+        name = "peptides_norm") #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
+```
+<!--
+2. Samples are normalised by substracting the sample median (see [Normalisation])
+-->
+
+
+```{r}
+#pe <- normalize(
+#  pe, i = "peptides_log", name = "peptides_norm", method #= "center.median"
+#)
 ```
 
 Upon the normalisation the density curves should be nicely centred. To
@@ -289,10 +287,26 @@ We will model two [sources of variation](#sec-modelling):
    from the population of all possible mice and are assumed to be
    i.i.d normally distributed with mean 0 and constant variance,
    $u_{biorep} \sim
-   N(0,\sigma^{2,\text{biorep}})$. The use of random effects thus
+   N(0,\sigma^{2,\text{b}})$. The use of random effects thus
    models the correlation in the data, explicitly. We expect that
    intensities from the same bacterial culture are more alike than 
    intensities between cultures.
+
+Hence, the variance-covariance matrix of the 18 protein abundance values $\mathbf{Y}=(y_{wt\_n3,1}, y_{wt\_n3,2}, y_{wt\_n3,3}, y_{wt\_n4,1} \ldots y_{d8\_n5,1}, y_{d8\_n5,2}, y_{d8\_n5,3})^T$ is assumed to have a block diagonal structure, with as variance $\sigma_b^2 + \sigma_\epsilon^2$ and the covariance between protein abundance values of technical replicates from the same biorepeat equals $\sigma_b^2$ (with \sigma_\epsilon^2 the variance of the residuals). 
+More details on mixed models can be found in **TODO** PROVIDE REFERENCE TO ADVANCED VIGNETTE! 
+
+$$
+\boldsymbol{\Sigma}_\mathbf{Y} = \left[\begin{array}{cccccccccc}\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&\sigma^2_b&0&0&0&\ldots&0&0&0\\
+\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&0&0&0&\ldots&0&0&0\\
+\sigma^2_b&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&0&0&0&\ldots&0&0&0\\
+0&0&0&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&\sigma^2_b&\ldots&0&0&0\\
+0&0&0&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&\ldots&0&0&0\\
+0&0&0&\sigma^2_b&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&\ldots&0&0&0\\
+0&0&0&0&0&0&\dots&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&\sigma^2_u\\
+0&0&0&0&0&0&\dots&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b\\
+0&0&0&0&0&0&\dots&\sigma^2_b&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon\\
+\end{array}\right]
+$$
 
 We model the protein level expression values using `msqrob2`.
 `msqrob2` workflows rely on linear mixed models, which are models that
@@ -300,13 +314,21 @@ can estimate and predict fixed and random effects, respectively. The
 fixed effect are estimated using robust regression to avoid that
 outliers distort the statistical outcome.
 
+Note, that we cannot use ridge regression here to further stabilize the parameter estimation of the fixed effects. 
+Ridge regression typically performs better the more slope parameters there are in the mean model (more complex designs).
+Here, the fixed effect consists of the genotype: knockout (D8) vs wild type (WT). 
+By default the first group (D8) will become the reference group and its effect will be absorbed in the intercept of the model. 
+Hence, only a single slope term is needed to model the average difference between D8 and WT (See Section [Statistical inference] below). 
+
 Now we have identified the sources of variation in the experiment, we
 can define a model. 
 
-```{r}
+```{r warning=FALSE}
 model <- ~ genotype + ## (1) fixed effect for genotype
   (1 | biorep)  ## (2) random effect for biological replicate (culture)
 ```
+
+
 
 ### Estimate the model
 
@@ -332,8 +354,9 @@ intensities?" into a statistical hypothesis. In other words, we must
 convert this question in a combination of the model parameters, also
 referred to as a contrast. To aid defining contrasts, we will
 visualise the experimental design using the `ExploreModelMatrix`
-package. Since we are not interested in technical effects, we will
-only focus on the variable of interest, here `genotype`.
+package. 
+Note, that with ExploreModelMatrix we can only visualise fixed effects part of the model. 
+This is fine as the mean protein abundances can only systematically differ from each other according to the `genotype` (fixed effect). 
 
 ```{r}
 library("ExploreModelMatrix")
@@ -345,16 +368,16 @@ vd <- VisualizeDesign(
 vd$plotlist
 ```
 
-This plot shows that the average protein intensity for the D8 group is
-estimated by `(Intercept)`, and the the average protein intensity for
-the WT group is estimated by `(Intercept) + genotypeWT`. 
+This plot shows that the  average $\log_2$ protein intensity for the D8 group is
+modelled by `(Intercept)`, and the the average $\log_2$ protein intensity for
+the WT group is modelled by `(Intercept) + genotypeWT`. 
 
 ### Hypothesis testing
 
-Assessing the difference between the WT and D8 groups boils down to
-`(Intercept) + genotypeWT - (Intercept)`, which simplifies to the
-`genotypeWT` parameter. The null hypothesis is that the differences
-between the two groups is zero, hence the estimated parameter is zero.
+Hence we can translate the research hypothesis that there is an effect of the genotype on the protein abundance to the average log2 fold change ($\log_2 FC$) between the WT and D8 groups, which boils down to
+`(Intercept) + genotypeWT - (Intercept)`, and equals the 
+`genotypeWT` parameter. The null hypothesis of the hypothesis test for this contrast is that the average $\log2 FC$ 
+between D8 knock-out and WT is zero, or in other words that the `genotypeWT` parameter is zero.
 
 ```{r}
 hypothesis <- "genotypeWT = 0"
@@ -455,8 +478,9 @@ pe[targetProtein, , "proteins"] |> #2
 
 ## Conclusion
 
-**TODO** mention peptide workflows exist as well and link to first 
-chapter?
+Note, that we could have performed the differential abundance analysis at the protein-level using peptide-level models (**TODO** ADD REFERENCE), i.e. by using the `msqrobAggregate` on the peptide_log assay with a formula 
+`peptideModel <- ~ genotype + (1|biorep) + (1|run) + (1|Sequence)`
+
 
 **TODO** write conclusion
 

@@ -157,8 +157,8 @@ Now the files are downloaded, we can load the two tables.
 
 ### PSM table{#sec-psm_table}
 
-An MS experiment generates spectra. Each MS2 spectra are used to infer 
-the peptide identity thanks to a search engine. When
+An MS experiment generates spectra. Each MS2 spectrum is used to infer 
+the peptide identity using a search engine. When
 an observed spectrum is matched to a theoretical peptide spectrum, we
 have a peptide-to-spectrum match (PSM). The identification software
 compiles all the PSMs inside a table. Hence, the PSM data is the
@@ -169,7 +169,7 @@ table below shows the first 6 rows). The columns contains various
 information about the PSM, such as the peptide sequence and charge,
 the quantified value, the inferred protein group, the measured and
 predicted retention time and precursor mass, the score of the match,
-... In the case of TMT data, the quantification values are provides in
+... In the case of Skyline TMT data, the quantification values are provides in
 multiple columns (start with `"Abundance."`), one for each TMT label.
 Regardless of TMT or LFQ experiments, the PSM table stacks the
 quantitative values from samples in different runs below each other.
