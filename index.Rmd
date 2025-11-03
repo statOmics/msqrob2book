@@ -1,5 +1,5 @@
 ---
-title: "Statistical analysis for proteomics data"
+title: "Statistical analysis of mass spectrometry-based proteomics data"
 subtitle: "A dive into the msqrob2 universe"
 author: "Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement"
 date: "`r Sys.Date()`"
