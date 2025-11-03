@@ -1,36 +1,10 @@
----
-title: "Case study: analyzing repeated measures designs in label-free proteomics with msqrob2"
-author:
-    - name: Christophe Vanderaa
-    - name: Stijn Vandenbulcke
-    - name: Lieven Clement
-format:
-    pdf:
-        toc: true
-        toc_depth: 2
-        code_folding: show
-date: "`r BiocStyle::doc_date()`"
-package: "`r BiocStyle::pkg_ver('msqrob2')`"
-vignette: >
-    %\VignetteIndexEntry{msqrob2 LFQ with repeated measures}
-    %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
----
+# The macrophage use case: a  MaxQuant LFQ DDA dataset with repeated measures{#sec-macrophages}
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-    warning = FALSE,
-    message = FALSE
-)
-```
-
-
-# Introduction
+## Introduction
 
 TODO write section
 
-# Load packages
-
+## Load packages
 
 First, we load the `msqrob2` package.
 
@@ -44,6 +18,7 @@ visualisation.
 ```{r}
 library("dplyr")
 library("ggplot2")
+library("patchwork")
 library("ggrepel")
 ```
 
@@ -57,57 +32,54 @@ library("BiocParallel")
 register(SerialParam())
 ```
 
-# Load data
+## Data
 
-TODO write section
+**TODO** write section
+
+### PSM table
 
 ```{r}
 library("BiocFileCache")
 bfc <- BiocFileCache()
-psm_file <- bfcrpath(bfc, "https://ftp.pride.ebi.ac.uk/pride/data/archive/2018/05/PXD008726/evidence.txt")
+evidenceFile <- bfcrpath(bfc, "https://ftp.pride.ebi.ac.uk/pride/data/archive/2018/05/PXD008726/evidence.txt")
 ```
 
 ```{r}
-mouse <- read.delim(psm_file)
+mouse <- data.table::fread(evidenceFile, check.names = TRUE)
 ```
 
-```{r}
-(mouse <- readQFeatures(
-    mouse, quantCols = "Intensity", runCol = "Raw.file"
-))
-```
+### Sample annotation table
 
-We now have a `QFeatures` object with 30 sets, each containing data
-associated with an MS run. We extract the sample annotations from the
+We extract the sample annotations from the
 sample names. This is not good practices, and the code below is rather
 complex. A better approach would have been to provide an annotation
 table with each row corresponding to a sample and each column
 corresponding to an annotation.
 
 ```{r}
-sample_names <- unlist(colnames(mouse)) |> 
-    sub(pattern = "^.*macr_", replacement = "") |> 
-    sub(pattern = "biol_repl", replacement = "")
-annotations <- sample_names |>
-    sub(pattern = "(KO|WT)_(\\d)$", replacement = "\\1_NS_0h_\\2") |> 
-    strsplit("[.]|_") |> 
-    do.call(what = rbind) |> 
-    data.frame()
-colnames(annotations) <- c("genotype", "stimulation", "time", "mouse_id")
-annotations$sample_id <- sample_names
-annotations <- annotations |> 
-    mutate(mouse_id = paste0(genotype, "_", mouse_id)) |> 
-    mutate(condition = paste0(genotype, "_", stimulation, "_", time))
+coldata <- data.frame(runCol = unique(mouse$Raw.file)) |> 
+    mutate(
+        sampleId = gsub("^.*macr_|biol_repl", "", runCol),
+        sampleId = sub("(KO|WT)_(\\d)$", "\\1_NS_0h_\\2", sampleId)) |> 
+    separate(sampleId, c("genotype", "stimulation", "time", "replicate")) |> 
+    mutate(
+        mouse_id = paste0(genotype, "_", replicate),
+        condition = paste0(genotype, "_", stimulation, "_", time)
+    )
 ```
 
-Once the annotation table created, we add it to the `QFeatures`
-object, in the `colData` slot.
+### Convert to QFeatures
 
 ```{r}
-(colData(mouse) <- annotations)
+(mouse <- readQFeatures(
+    mouse, coldata, quantCols = "Intensity", runCol = "Raw.file"
+))
 ```
 
-# Data preprocessing
+We now have a `QFeatures` object with 30 sets, each containing data
+associated with an MS run.
+
+## Data preprocessing
 
 `msqrob2` relies on the `QFeatures` data structure, meaning that we
 can directly make use of `QFeatures`' data preprocessing
@@ -115,18 +87,59 @@ functionality. We will not detail the usage of each function below, but
 instead refer to the `QFeatures`
 [documentation](https://rformassspectrometry.github.io/QFeatures/articles/Processing.html).
 
-## PSM filtering
+### Encode missing values
 
-We remove PSMs that:
+Next, we convert zero intensities to NA.
+
+```{r}
+mouse <- zeroIsNA(mouse, names(mouse))
+```
+
+### Log2 transformation
+
+```{r}
+inputNames <- names(mouse)
+logNames <- paste0(inputNames, "_log")
+mouse <- logTransform(mouse, inputNames, name = logNames, base = 2)
+```
+
+### PSM filtering
+
+[Remember](#sec-preprocess_evidence) that when starting from the
+evidence file, the data from every run is contained in a separate set
+and we need to define a feature identifier that is shared across runs.
+We will here create an `ionID`, that is the combined peptide sequence
+and charge. The issue is that MaxQuant returns multiple PSM for some
+ions, so we select only the PSM with the highest intensity (see
+[here](#sec-duplicated_psms) for a step-by-step explanation of the
+code). Once the duplicated PSMs per ion are filtered out, we can join
+the data in a single set
+
+```{r}
+for (i in logNames) {
+    rowdata <- rowData(mouse[[i]]) 
+    rowdata$ionID <- paste0(rowdata$Sequence, rowdata$Charge) 
+    rowdata$value <- assay(mouse[[i]])[, 1]
+    rowdata <- data.frame(rowdata) |>
+        group_by(ionID) |>
+        mutate(psmRank = rank(-value))
+    rowData(mouse[[i]])$psmRank <- rowdata$psmRank
+    rowData(mouse[[i]])$ionID <- rowdata$ionID
+}
+mouse <- filterFeatures(mouse, ~ psmRank == 1, keep = TRUE)
+mouse <- joinAssays(mouse, logNames, "ions_log", "ionID")
+```
+
+We next remove PSMs that:
 
 1. Could not be mapped to a protein, that is PSMs that have an empty 
-   protein identifier
+protein identifier
 2. Map to multiple proteins (the protein identifier contains multiple
-   identifiers separated by a `;`)
+identifiers separated by a `;`)
 3. Were identified as potential contaminant. These are flagged by 
-   MaxQuant with a `"+"`.
+MaxQuant with a `"+"`.
 4. Match decoy (reversed) peptides. These are flagged by 
-   MaxQuant with a `"+"`.
+MaxQuant with a `"+"`.
 
 ```{r}
 mouse <- filterFeatures(
@@ -137,149 +150,74 @@ mouse <- filterFeatures(
 ) 
 ```
 
-Next, we convert zero intensities to NA.
-
-```{r}
-mouse <- zeroIsNA(mouse, names(mouse))
-```
-
-Peptide ions that were identified with multiple PSMs in a run are
-collapsed to the PSM with the highest intensity.
-
-We therefore
-
-1. Make a new variable, `ion_id`, in the rowData by combining the
-   peptide sequence and the precursor charge.
-2. Use the intensity to rank the PSMs.
-4. Make a new variable `rank` that ranks the PSMs for each ion 
-   identifier based on the intensity.
-4. We store the new information back in the `rowData`.
-5. For each ion that maps to multiple PSMs, only keep the PSM with the
-   highest summed intensity, that is that ranks first.
-
-```{r}
-for (i in names(mouse)) {
-    rowdata <- rowData(mouse[[i]])
-    rowdata$ion_id <- paste0(rowdata$Sequence, rowdata$Charge) ## 1.
-    rowdata$intensity = assay(mouse[[i]])[, 1] ## 2.
-    rowdata <- data.frame(rowdata) |>
-        group_by(ion_id) |>
-        mutate(psm_rank = rank(-intensity)) ## 3.
-    rowData(mouse[[i]]) <- DataFrame(rowdata) ## 4.
-}
-mouse <- filterFeatures(mouse, ~ !is.na(psm_rank) & psm_rank == 1) ## 5.
-```
-
-## Preprocessing workflow
-
-We can now prepare the data for modelling. The workflow ensure the 
-data complies to `msqrob2`'s requirements:
-
-1. Intensities are log-transformed.
-2. Samples are normalised. We here use quantile normalisation as
-   performed in the original study.
-3. (optionally) PSMs intensities are summarised into protein abundance
-   values for protein-level workflows.
-
-```{r}
-sample_names <- names(mouse)
-mouse <- logTransform( ## 1.
-    mouse, sample_names, name = paste0(sample_names, "_log"), base = 2
-)
-mouse <- normalize( ## 2.
-    mouse, paste0(sample_names, "_log"), 
-    name = paste0(sample_names, "_norm"),
-    method = "quantiles"
-)
-mouse <- aggregateFeatures( ## 3.
-    mouse, i = paste0(sample_names, "_norm"), 
-    name = paste0(sample_names, "_proteins"),
-    fcol = "Proteins", fun = MsCoreUtils::medianPolish,
-    na.rm = TRUE
-)
-```
-
-We next join the assays of the different runs
-
-1. in a single PSM set for PSM-level models (we use the `ion_id` to 
-   match PSMs across runs).
-2. in single protein set for protein-level models
-
-```{r}
-mouse <- joinAssays( ## 1.
-    mouse, i = paste0(sample_names, "_norm"), name = "ions_norm", 
-    fcol = "ion_id"
-) 
-mouse <- joinAssays (## 2.
-    mouse, i = paste0(sample_names, "_proteins"), name = "proteins"
-)
-```
-
-We finally remove features (ions or proteins) with too many missing 
+We finally remove ions with too many missing 
 values. Below we plot the distribution of the proportion of missing 
-values at the ion level ...
+values at the ion level.
 
 ```{r}
-missingness_ion <- nNA(mouse, "ions_norm")$nNArows$pNA
+missingness_ion <- nNA(mouse, "ions_log")$nNArows$pNA
 hist(missingness_ion)
 ```
 
-... and at the protein level.
+We will remove ions that are missing more than 80 % (24 out of the 30 
+samples).
 
 ```{r}
-missingness_protein <- nNA(mouse, "proteins")$nNArows$pNA
-hist(missingness_protein)
+mouse <- filterNA(mouse, pNA = 0.8, i = "ions_log")
 ```
 
-We will remove ions that are missing in more than 50 % of the samples
+### Normalisation
+
+Samples are normalised using the quantile normalisation as performed 
+in the original study.
 
 ```{r}
-mouse <- filterNA(mouse, pNA = 0.5, i = c("ions_norm", "proteins"))
+mouse <- normalize(
+    mouse, "ions_log", name = "ions_norm", method = "quantiles"
+)
+```
+
+### Summarisation
+
+PSMs intensities are summarised into protein abundance values.
+
+```{r}
+mouse <- aggregateFeatures(
+    mouse, i = "ions_norm", 
+    name = "proteins",
+    fcol = "Proteins", fun = MsCoreUtils::robustSummary
+)
 ```
 
 ## Data exploration
 
-TODO write section after discussion. 
-
-```{r}
-se <- getWithColData(mouse, "ions_norm")
-```
+**TODO**: write section 
 
 ```{r}
 library("scater")
-se <- runPCA(as(se, "SingleCellExperiment"), exprs_values = 1)
-plotPCA(se, colour_by = "mouse_id")
+se <- getWithColData(mouse, "proteins")
+se <- runMDS(as(se, "SingleCellExperiment"), exprs_values = 1)
 ```
 
-```{r, eval=FALSE}
-library("omicsGMF")
-cv_results <- runCVGMF(
-    se, exprs_values = 1,
-    X = model.matrix(~ 1, colData(se)),
-    family = gaussian(),
-    control.alg = list(
-        tol = 0.001,
-        maxiter = 1000
-    ),
-    BPPARAM = MultiCoreParam(nworkers = 3),
-    control.cv = list(nfolds = 3),
-    ncomponents = c(3, 5, 10, 15, 20, 30),
-    name = "cv_GMF")
-metadata(ce)[["cv_GMF"]] |>
-    ggplot() +
-    aes(x = ncomp,
-        y = dev) +
-    geom_point()
-se <- runGMF(se, exprs_values = 1)
-plotPCA(se, colour_by = "mouse_id")
+We can now explore the data structure while coloring for the factor of
+interest, here `condition`.
+
+```{r, fig.width=6, fig.height=5}
+plotMDS(se, colour_by = "genotype") +
+    plotMDS(se, colour_by = "stimulation") +
+    plotMDS(se, colour_by = "time") +
+    plotMDS(se, colour_by = "mouse_id")
 ```
 
-# Statistical modelling
+
+**TODO** write interpretation
+
+## Statistical modelling
 
 The preprocessed data can now be modelled to answer biologically
 relevant questions.
 
-## Model definition
+### Model definition
 
 Samples (bone marrow-derived macrophages) originate from 6 mice that
 were either A20 knockouts (KO, n = 3) or wild type (WT, n = 3).
@@ -298,27 +236,27 @@ Besides the experimental, we must further identify the potential
 source of variation that should be included in the model: 
 
 1. **Biological replication effects**: the experiment involves 
-   biological replication as the macrophages were sampled from 6 mice.
-   We expect that intensities from the same mouse are more alike than
-   intensities between mice. We will therefore address this
-   correlation with a random effect for biological replicate.
+biological replication as the macrophages were sampled from 6 mice.
+We expect that intensities from the same mouse are more alike than
+intensities between mice. We will therefore address this
+correlation with a random effect for biological replicate.
 
 ```{r}
 table(mouse$mouse_id)
 ```
 
 2. **Ion effects**: we will directly estimate the treatment effect at
-   the protein-level from ion-level data, inducing an additional
-   levels of correlation. The intensities of a ion will be more
-   similar intensities between ions. We therefore need to add a random
-   effect term to account for the within ion correlation structure.
+the protein-level from ion-level data, inducing an additional
+levels of correlation. The intensities of a ion will be more
+similar intensities between ions. We therefore need to add a random
+effect term to account for the within ion correlation structure.
 
 3. **Sample effects**: modelling the data at the ion-level implies 
-   that a sample contains multiple ion intensities for each protein.
-   Hence, ion intensities for a protein within a sample will be more
-   alike than ion intensities for the same protein across different
-   samples. We will address this correlation with a random sample
-   effect.
+that a sample contains multiple ion intensities for each protein.
+Hence, ion intensities for a protein within a sample will be more
+alike than ion intensities for the same protein across different
+samples. We will address this correlation with a random sample
+effect.
 
 Note that when modelling the data at the protein-level (upon 
 summarisation), the ion effects and sample effects are averaged in
@@ -353,9 +291,9 @@ group, for which its model parameter is absorbed in the intercept. Now
 we have defined the models, we can run the `msqrob2` statistical
 analysis workflow.
 
-## Statistical workflow
+### Statistical workflow
 
-### Fitting the model
+#### Fitting the model
 
 The statistical workflow starts with `msqrobAggregate()`. The function
 takes the `QFeatures` object, extracts the quantitative values from
@@ -387,7 +325,7 @@ mouse <- msqrobAggregate(
 Once the models are estimated, we can start answering biological
 questions.
 
-### Defining contrasts 
+#### Defining contrasts 
 
 There are several biological questions we want to answer, namely what
 proteins are differentially abundant between WT and KO:
@@ -454,7 +392,7 @@ L <- makeContrast(
 )
 ```
 
-### Hypothesis testing
+#### Hypothesis testing
 
 We can now test our null hypotheses using `hypothesisTest()` which
 takes the `QFeatures` object with the fitted model and the contrast
@@ -478,7 +416,7 @@ inference$Protein <- rownames(inference)
 inference$Gene <- rowData(mouse[["proteins_msqrob"]])[["Gene.names"]]
 ```
 
-### Exploring the result
+#### Exploring the result
 
 The table contains the hypothesis testing results for every protein.
 Notice that some rows contain missing values. This is because data
@@ -510,27 +448,10 @@ subsetByColData(mouse, mouse$stimulation == "NS") |>
 plotOverdispersion(mouse, "proteins_msqrob", ".n", "msqrob_model")
 ```
 
-# Protein level analysis
+## Protein level analysis
 
 TODO needed? 
 
-# Conclusion 
+## Conclusion 
 
 TODO write section 
-
-# Citation 
-
-TODO
-
-# License
-
-This vignette is distributed under a
-[Artistic-2.0](https://opensource.org/license/artistic-2-0) license.
-
-# Session info
-
-```{r, echo=FALSE}
-sessionInfo()
-```
-
-
