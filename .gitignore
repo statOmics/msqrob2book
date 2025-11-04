@@ -35,6 +35,8 @@ vignettes/*.pdf
 
 # knitr file directory (created when kniting a single vignette)
 *_files/
+# except for this folder, it contains the plot images
+!docs/msqrob2book_files/
 
 # Temporary files created by R markdown
 *.utf8.md
@@ -55,6 +57,3 @@ rsconnect/
 # Temporary data
 data/
 
-# Bookdown files
-_bookdown_files/
-msqrob2book*
