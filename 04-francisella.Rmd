@@ -226,10 +226,10 @@ pe <-
 <!--
 2. Samples are normalised by substracting the sample median (see [Normalisation])
 -->
-```{r, eval=FALSE, echo=FALSE}
-pe <- normalize(
-  pe, i = "peptides_log", name = "peptides_norm", method #= "center.median"
-)
+```{r, echo=FALSE}
+# pe <- normalize(
+#   pe, i = "peptides_log", name = "peptides_norm", method #= "center.median"
+# )
 ```
 
 Upon the normalisation the density curves should be nicely centred. To
@@ -246,11 +246,12 @@ longForm(pe[, , c("peptides_log", "peptides_norm")], colvar = "biorep") |>
   facet_wrap(~ assay, scale = "free")
 ```
 
-3. [Summarisation](#sec-summarisation) to protein level. We use the 
-   robust summary approach to infer protein-level data from
-   peptide-level data, accounting for the fact that different peptides
-   have ionisation efficiencies hence leading to different intensity
-   baselines.
+3. [Summarisation](#sec-summarisation) to protein level. 
+
+We use the robust summary approach to infer protein-level data from
+peptide-level data, accounting for the fact that different peptides
+have ionisation efficiencies hence leading to different intensity
+baselines.
 
 ```{r,warning=FALSE}
 pe <- aggregateFeatures(
@@ -261,8 +262,8 @@ pe <- aggregateFeatures(
 
 ## Data exploration
 
-We will explore the main sources of variation in the
-data using (see [Data exploration]). 
+We will explore the main sources of variation in the data using
+[MDS](#sec_data_exploration).
 
 ```{r}
 library("scater")
@@ -379,7 +380,7 @@ estimation, but it is irrelevant in this context as the genotype
 factor only has 2 levels (WT and D8), so ridge regression . We will
 therefore leave the ridge regression disabled (default).
 
-```{r run_msqrob, cache=TRUE}
+```{r, cache=TRUE}
 pe <- msqrob(pe, i = "proteins", formula = model, robust = TRUE)
 ```
 
@@ -484,8 +485,7 @@ between the WT and the D8 genotype.
 
 ```{r}
 sigNames <- inference$Protein[!is.na(inference$adjPval) & inference$adjPval < 0.05]
-se <- getWithColData(pe, "proteins")
-se <- se[sigNames, ]
+se <- getWithColData(pe, "proteins")[sigNames, ]
 ```
 
 We then plot the protein-wise standardised data as an annotated 
@@ -559,7 +559,10 @@ Were the design a block design, where every experimental condition
 batch), then we could have corrected for the francisella culture
 effect using a fixed effect. However, every francisella strain can
 only be of one genotype (either D8 or WT), so we resort to modelling 
-the francisella cultur effect as a random effect instead.
+the francisella cultur effect as a random effect instead. Read the
+[heart use case](#sec-heart_chapter) for an example of randomised
+block design were the blocking variable can be modelled as a fixed 
+effect.
 
 Note, that we could have performed the differential abundance analysis
 at the protein-level using [ion- or peptide-level

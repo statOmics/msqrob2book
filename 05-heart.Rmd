@@ -1,14 +1,22 @@
-# Heart use case: a MaxQuant LFQ DDA dataset with a more complex design
+# Heart use case: a MaxQuant LFQ DDA dataset with a more complex design{#sec-heart_chapter}
 
 ## Introduction
 
-In this vignette we show how to analyse LFQ data from an experiment with a more complex design. The data are a small subset of the public dataset PXD006675 on PRIDE.
+In this chapter we show how to analyse LFQ data from an experiment
+with a more complex design. The data are a small subset of the public
+dataset PXD006675 on PRIDE.
 
-Particularly, the proteomes of the atrium and ventriculum in the left and the right heart region are profiled for 3 patients (identifiers 3, 4, and 8). 
+Particularly, the proteomes of the atrium and ventriculum in the left
+and the right heart region are profiled for 3 patients (identifiers 3,
+4, and 8). Hence, the design consists of a factor tissue (atrium,
+ventriculum), region (left, right) and block (patient 3,4, and 8).
 
-Hence, the design consists of a factor tissue (atrium, ventriculum), region (left, right) and blok (patient 3,4, and 8). 
-
-Suppose that researchers are mainly interested in comparing the ventricular to the atrial proteome. Particularly, they would like to compare the left atrium to the left ventricle, the right atrium to the right ventricle, the average ventricular vs atrial proteome and if ventricular vs atrial proteome shifts differ between left and right heart region.
+Suppose that researchers are mainly interested in comparing the
+ventricular to the atrial proteome. Particularly, they would like to
+compare the left atrium to the left ventricle, the right atrium to the
+right ventricle, the average ventricular vs atrial proteome and if
+ventricular vs atrial proteome shifts differ between left and right
+heart region.
 
 ## Load packages
 
@@ -18,6 +26,7 @@ manipulation and visualisation.
 ```{r}
 library("msqrob2")
 library("ggplot2")
+library("patchwork")
 library("ggrepel")
 library("dplyr")
 ```
@@ -33,19 +42,22 @@ register(SerialParam())
 
 ### Getting the data
 
-The data were
-searched with MaxQuant version version 1.5.5.6 and are deposited on the PRIDE
-repository [PXD006675](https://www.ebi.ac.uk/pride/archive/projects/PXD006675).
+The data were searched with MaxQuant version version 1.5.5.6 and are
+deposited on the PRIDE repository
+[PXD006675](https://www.ebi.ac.uk/pride/archive/projects/PXD006675).
 
-In this vignette we use a small subset of the data that is available on **TODO** put on Zenodo and use BiocFileCache. 
+In this chapter we use a small subset of the data that is available on
+**TODO** put on Zenodo and use BiocFileCache.
+
 ```{r}
-pepFile <- "https://raw.githubusercontent.com/statOmics/PDA21/data/quantification/heart/peptides.txt"
+bfc <- BiocFileCache()
+pepFile <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/PDA21/data/quantification/heart/peptides.txt")
 ```
 
-After downloading the files, we can load the peptide table, which is in "wide format". Hence, each row represents a single peptide and
-that each quantification column (that starts with `"Intensity"`)
-represents a single sample.
-
+After downloading the files, we can load the peptide table, which is
+in ["wide format"](#sec-peptide_table). Hence, each row represents a
+single peptide and that each quantification column (that starts with
+`"Intensity"`) represents a single sample.
 
 ```{r, warning=FALSE, message=FALSE}
 peps <- read.delim(pepFile)
@@ -55,19 +67,17 @@ quantcols <- grep("Intensity\\.", names(peps), value = TRUE)
 knitr::kable(head(peps))
 ```
 
-
-We now extract the [sample annotations](#sec-annotation_table). We will build a table where each row in the annotation table contains information for one sample (the table below shows the first 6 rows).
+We now extract the [sample annotations](#sec-annotation_table). We
+will build a table where each row in the annotation table contains
+information for one sample (the table below shows the first 6 rows).
 This information is extracted from the sample names.
-
 
 ```{r}
 coldata <- data.frame(quantCols = quantcols) |> 
-  mutate(location  = substr(quantCols, 11, 11)) |> #heart region left-right
-  mutate(tissue  = substr(quantCols, 12, 12)) |> #tissue Atrium-Ventriculum
-  mutate(patient  = substr(quantCols, 13, 13)) # patient id.
+  mutate(location  = substr(quantCols, 11, 11)) |> # heart region left-right
+  mutate(tissue  = substr(quantCols, 12, 12)) |> # tissue Atrium-Ventriculum
+  mutate(patient  = substr(quantCols, 13, 13)) # patient id
 ```
-
-
 ```{r, echo=FALSE}
 knitr::kable(head(coldata))
 ```
@@ -86,7 +96,6 @@ We now have a `QFeatures` object with 1 set, containing `r
 nrows(pe)[[1]]` rows (peptides) and `r ncols(pe)[[1]]` columns
 (samples). 
 
-
 ## Data preprocessing
 
 `msqrob2` relies on the `QFeatures` data structure, meaning that we
@@ -96,9 +105,8 @@ can directly make use of `QFeatures`' data preprocessing functionality
 
 ### Encoding missing values
 
-Peptides with zero intensities are missing peptides and should be
-represent with a `NA` value rather than `0` (see [Encoding missing
-values]).
+Peptides with zero intensities should be
+[encoded](#sec-encode_missing) using `NA`.
 
 ```{r}
 pe <- zeroIsNA(pe, "peptides")
@@ -114,7 +122,6 @@ data.frame(naResults$nNArows) |>
   aes(x = nNA) +
   geom_histogram()
 ```
-
 
 ### PSM filtering
 
@@ -132,16 +139,20 @@ pe <- filterFeatures(pe,
 
 2. Remove reverse sequences (decoys) and contaminants
 
-We now remove the contaminants and peptides that map to decoy sequences. These features bear no information of interest and will reduce the statistical power upon multiple test adjustment.
+We remove the contaminants and peptides that map to decoy sequences.
+These features bear no information of interest and will reduce the
+statistical power upon multiple test adjustment.
 
 ```{r}
 pe <- filterFeatures(pe, ~ Reverse != "+" & Potential.contaminant != "+")
 ```
 
-Remove highly missing peptides. We keep peptides that were observed at last 3 times out of the $n
-= 12$ samples, so we tolerate the following proportion of NAs:
-$\text{pNA} = \frac{(n - 3)}{n} = 0.75$, so we keep peptides that
-are observed in at least 25% of the samples. 
+3. Remove highly missing peptides. 
+
+We keep peptides that were observed at last 3 times out of the $n =
+12$ samples, so we tolerate the following proportion of NAs:
+$\text{pNA} = \frac{(n - 3)}{n} = 0.75$, so we keep peptides that are
+observed in at least 25% of the samples.
 
 ```{r}
 nObs <- 3
@@ -184,12 +195,10 @@ pe <-
 <!--
 2. Samples are normalised by substracting the sample median (see [Normalisation])
 -->
-
-
-```{r}
-#pe <- normalize(
+```{r, echo=FALSE}
+# pe <- normalize(
 #  pe, i = "peptides_log", name = "peptides_norm", method #= "center.median"
-#)
+# )
 ```
 
 Upon the normalisation the density curves should be nicely centred. To
@@ -206,10 +215,12 @@ longForm(pe[, , c("peptides_log", "peptides_norm")], colvar = "patient") |>
   facet_wrap(~ assay, scale = "free")
 ```
 
-3. [Summarisation] to protein level. We use the [robust summary] approach 
-   to infer protein-level data from peptide-level data, accounting for
-   the fact that different peptides have ionisation efficiencies hence
-   leading to different intensity baselines. 
+3. [Summarisation](#sec-summarisation) to protein level.
+
+We use the robust summary approach to infer protein-level data from
+peptide-level data, accounting for the fact that different peptides
+have ionisation efficiencies hence leading to different intensity
+baselines.
 
 ```{r,warning=FALSE}
 pe <- aggregateFeatures(
@@ -218,53 +229,57 @@ pe <- aggregateFeatures(
 )
 ```
 
-
 ## Data exploration
 
-We will explore the main sources of variation in the
-data using (see [Data exploration]). 
+We will explore the main sources of variation in the data using
+[MDS](#sec_data_exploration).
 
 ```{r}
 library("scater")
-getWithColData(pe, "proteins") |> 
+se <- getWithColData(pe, "proteins") |> 
   as("SingleCellExperiment") |> 
-  runMDS(exprs_values = 1) |> 
-  plotMDS(colour_by = "tissue")
-
-getWithColData(pe, "proteins") |> 
-  as("SingleCellExperiment") |> 
-  runMDS(exprs_values = 1) |> 
-  plotMDS(colour_by = "location")
-
-getWithColData(pe, "proteins") |> 
-  as("SingleCellExperiment") |> 
-  runMDS(exprs_values = 1) |> 
-  plotMDS(colour_by = "patient")
+  runMDS(exprs_values = 1) 
+plotMDS(se, colour_by = "tissue") +
+  plotMDS(se, colour_by = "location") +
+  plotMDS(se, colour_by = "patient")
 ```
 
-Note, that the samples upon robust summarisation show a clear separation according to the tissue type in the first dimension and according to location in the second dimension. 
+Note, that the samples upon robust summarisation show a clear
+separation according to the tissue type in the first dimension and
+according to location in the second dimension.
 
 ## Data modelling
 
-The preprocessed data can now be modelled to answer biologically relevant questions. 
-Particularly, the protein abundance can differ according to tissue type (A-V) and location (L-R). 
-Moreover, the effect of the tissue type can differ according to the location and vice versa. Hence, there can be an interaction between tissue and location. 
+The preprocessed data can now be modelled to answer biologically
+relevant questions. Particularly, the protein abundance can differ
+according to tissue type (A-V) and location (L-R). Moreover, the
+effect of the tissue type can differ according to the location and
+vice versa. Hence, there can be an interaction between tissue and
+location.
 
-The samples are also not independent as four biopsies (LA, RA, LV and RV) were taken for each patient. 
-Because the proteome is profiled for each tissue x location combination within each patient, the design is a randomised complete block (RCB) design.
+The samples are also not independent as four biopsies (LA, RA, LV and
+RV) were taken for each patient. Because the proteome is profiled for
+each tissue x location combination within each patient, the design is
+a randomised complete block (RCB) design.
 
-RCB designs can be correctly analysed by incorporating the block effect for patient either as a fixed or a random effect. The use of a fixed patient effect is here also possible because the effect of each factor combination can be estimated within block (patient). 
+RCB designs can be correctly analysed by incorporating the block
+effect for patient either as a fixed or a random effect. The use of a
+fixed patient effect is here also possible because the effect of each
+factor combination can be estimated within block (patient).
 
-Here, we choose to account for the patient effect using fixed effects because mixed models are computationally more demanding and rely on asymptotic inference (i.e.  statistical inference is only valid for experiments with large sample sizes). 
+Here, we choose to account for the patient effect using fixed effects
+because mixed models are computationally more demanding and rely on
+asymptotic inference (i.e.  statistical inference is only valid for
+experiments with large sample sizes).
 
-
-Now we have identified the sources of variation in the experiment that we have to account for (tissue, location and patient id), we can define a model. 
+Now we have identified the sources of variation in the experiment that
+we have to account for (tissue, location and patient id), we can
+define a model.
 
 ```{r warning=FALSE}
 model <- ~ location*tissue + ## (1) fixed effects: main effects for location and tissue type, and a tissue x location interaction
   patient  ## (2) fixed block effect for patient
 ```
-
 
 ### Estimate the model
 
@@ -272,7 +287,7 @@ We estimate the model with `msqrob()`. Recall that
 variables defined in `model` are automatically retrieved from the
 `colData` (i.e. `"tissue"`, `"location"`, and `"patient"`). 
 
-```{r run_msqrob, cache=TRUE}
+```{r, cache=TRUE}
 pe <- msqrob(pe, i = "proteins", formula = model, robust = TRUE)
 ```
 
@@ -287,10 +302,10 @@ biological questions into a statistical hypotheses:
  3. Is there on average an effect of tissue type in the heart. 
  4. Does the effect of tissue type (V-A) differ according to the heart region (L-R)? 
  
-In other words, we must translate these questions in a linear combination of the model parameters, also
-referred to as a contrast. To aid defining contrasts, we will
-visualise the experimental design using the `ExploreModelMatrix`
-package. 
+In other words, we must translate these questions in a linear
+combination of the model parameters, also referred to as a contrast.
+To aid defining contrasts, we will visualise the experimental design
+using the `ExploreModelMatrix` package.
 
 ```{r}
 library("ExploreModelMatrix")
@@ -302,11 +317,10 @@ vd <- VisualizeDesign(
 vd$plotlist
 ```
 
-
-
 ### Research question 1: is there an effect of tissue in the left heart region? 
 
-From the plot we can see that the average log2 intensity for patient 3 in the left ventriculum equals `(Intercept) + tissueV':
+From the plot we can see that the average log2 intensity for patient 3
+in the left ventriculum equals `(Intercept) + tissueV':
 
 $$
 \mu^L_{V,3} = \beta_0 + \beta_V
@@ -316,7 +330,8 @@ and for the left atrium `(Intercept)`:
 $$
 \mu^L_{A,3} = \beta_0 
 $$
-So the average $\log_2 FC$ between atrium and ventriculum for patient 3 equals to parameter `tissueV`
+So the average $\log_2 FC$ between atrium and ventriculum for patient
+3 equals to parameter `tissueV`
 
 $$
 \log_2 FC_{V-A}^L = \mu^L_{V,3} -\mu^L_{A,3} = \beta_V
@@ -326,12 +341,18 @@ The same can be seen for patient 4:
 $$
 \log_2 FC_{V-A}^L= \mu^L_{V,4} -\mu^L_{A,4} = \beta_0 + \beta_V + \beta_4 - (\beta_0 + \beta_4) = \beta_V
 $$
-So the parameter `tissueV` has the interpretation of the average $\log_2 FC$ between ventriculum and atrium after correction for the patient effect, which quantifies the effect size for the first research hypothesis. 
+So the parameter `tissueV` has the interpretation of the average
+$\log_2 FC$ between ventriculum and atrium after correction for the
+patient effect, which quantifies the effect size for the first
+research hypothesis.
 
 ### Research question 2: is there an effect of tissue in the right heart region? 
 
-When we use the same rationale for the right heart region, we can see that the average $\log_2 FC$ between atrium and ventriculum upon correction for the patient effect equals 
-`tissueV + locationR:tissueV`. So, it consists of the main effect for tissue and the location x tissue interaction. 
+When we use the same rationale for the right heart region, we can see
+that the average $\log_2 FC$ between atrium and ventriculum upon
+correction for the patient effect equals `tissueV +
+locationR:tissueV`. So, it consists of the main effect for tissue and
+the location x tissue interaction.
 
 We will illustrate this here for patient 4: 
 
@@ -347,7 +368,10 @@ $$
 
 ### Research question 3: is there an effect of tissue on average in the heart? 
 
-This research question can be quantified by calculating the averaging the $\log_2$ fold change between Ventriculum and Atrium over the left and right heart regions, which equals `tissueV + 0.5*locationR:tissueV`
+This research question can be quantified by calculating the averaging
+the $\log_2$ fold change between Ventriculum and Atrium over the left
+and right heart regions, which equals `tissueV +
+0.5*locationR:tissueV`
 
 $$
 \begin{array}{rcl}
@@ -358,7 +382,9 @@ $$
 
 ### Research question 4: does the effect of tissue differs according to the heart region? 
 
-This research question can be quantified by calculating the difference in the $\log_2$ fold change between Ventriculum and Atrium in the right and left heart regions, which equals `locationR:tissueV`
+This research question can be quantified by calculating the difference
+in the $\log_2$ fold change between Ventriculum and Atrium in the
+right and left heart regions, which equals `locationR:tissueV`
 
 $$
 \begin{array}{rcl}
@@ -369,17 +395,20 @@ $$
 ### Setting up the contrasts 
 
 We can set up the four contrasts:
-1. we make the design matrix so that we can easily extract all parameter names from the model 
-2. we make the contrast matrix for the four contrasts 
+
+1. We make the design matrix so that we can easily extract all 
+   parameter names from the model 
+2. We make the contrast matrix for the four contrasts 
 
 ```{r}
-design <- model.matrix(~location*tissue + patient, data = colData(pe))
+design <- model.matrix(~ location*tissue + patient, data = colData(pe))
 L <- makeContrast(
   c(
     "tissueV = 0",
     "tissueV + locationR:tissueV = 0",
     "tissueV + 0.5*locationR:tissueV = 0",
-    "locationR:tissueV = 0"),
+    "locationR:tissueV = 0"
+  ),
   parameterNames = colnames(design)
   )
 ```
@@ -387,10 +416,17 @@ L <- makeContrast(
 We can now falsify the null hypothesis of each contrast:
 
 ```{r}
-pe <- hypothesisTest(object = pe, i = "proteins", contrast = L, overwrite=TRUE)
+pe <- hypothesisTest(
+  object = pe, i = "proteins", contrast = L, overwrite = TRUE
+)
 ```
 
 ### Evaluate results for contrast $\log_2 FC_{V-A}^L$
+
+Let us retrieve the result table from the `rowData`. Note that the
+hypothesis testing results are stored in `rowData` columns named after
+the column names of the contrast matrix `L`. The first column contains
+the results for contrast $\log_2 FC_{V-A}^L$.
 
 ```{r}
 inferenceLeft <- rowData(pe[["proteins"]])[[colnames(L)[1]]]
@@ -404,13 +440,11 @@ not enough data was available for model fitting due to missing values
 in the quantitative data (see [how to deal with
 `fitError`s](#sec-fiterror)).
 
-
 #### Volcano plot
 
 Volcano plots are straightforward to generate from the inference table
 above. We also use `ggrepel` to annotate the 20 most significant 
 proteins.
-
 
 ```{r}
 ggplot(inferenceLeft) +
@@ -423,22 +457,41 @@ ggplot(inferenceLeft) +
           paste("Hypothesis test:", colnames(L)[1], "= 0"))
 ```
 
-
 #### Heatmap
 
-We can also build a heatmap for the significant proteins which are
-obtained by filtering the inference table.
+We can also build a [heatmap](#sec-heatmaps) for the significant
+proteins which are obtained by filtering the inference table. We first
+retrieve the data with proteins that are differentially abundant
+between the atrium and the ventriculum in the left heart.
 
 ```{r}
 sigNamesLeft <- inferenceLeft |> 
   filter(!is.na(adjPval), adjPval < 0.05) |> 
   pull()
-heatmap(assay(pe[["proteins"]])[sigNamesLeft, ])
+se <- getWithColData(pe, "proteins")[sigNamesLeft, ]
 ```
 
-There are `r length(sigNamesLeft)` proteins significantly differentially expressed at the 5% FDR level.
+We then plot the protein-wise standardised data as an annotated 
+heatmap.
 
-Below you can find the list of significant proteins. 
+```{r}
+quants <- t(scale(t(assay(se))))
+library("ComplexHeatmap")
+annotations <- columnAnnotation(
+  tissue = se$tissue,
+  location = se$location
+)
+set.seed(1234) ## annotation colours are randomly generated by default
+Heatmap(
+ quants, name = "log2 intensity",
+ top_annotation = annotations
+)
+```
+
+There are `r length(sigNamesLeft)` proteins significantly
+differentially expressed at the 5% FDR level. Below you can find the
+list of significant proteins.
+
 ```{r}
 inferenceLeft |>
   na.exclude() |>
@@ -449,19 +502,20 @@ inferenceLeft |>
 
 ### Evaluate results for contrast $\log_2 FC_{V-A}^R$
 
+Let us retrieve the result table from the `rowData`. The second column
+contains the results for contrast $\log_2 FC_{V-A}^R$.
+
 ```{r}
 inferenceRight <- rowData(pe[["proteins"]])[[colnames(L)[2]]]
 inferenceRight$Protein <- rownames(inferenceRight)
 head(inferenceRight)
 ```
 
-
 #### Volcano plot
 
 Volcano plots are straightforward to generate from the inference table
 above. We also use `ggrepel` to annotate the 20 most significant 
 proteins.
-
 
 ```{r}
 ggplot(inferenceRight) +
@@ -478,13 +532,20 @@ ggplot(inferenceRight) +
 #### Heatmap
 
 We can also build a heatmap for the significant proteins which are
-obtained by filtering the inference table.
+obtained by filtering the inference table^[Note that we use the same
+heatmap annotations so we don't need to generate it again.].
 
 ```{r}
 sigNamesRight <- inferenceRight |> 
   filter(!is.na(adjPval), adjPval < 0.05) |> 
   pull()
-heatmap(assay(pe[["proteins"]])[sigNamesRight, ])
+se <- getWithColData(pe, "proteins")[sigNamesRight, ]
+quants <- t(scale(t(assay(se))))
+set.seed(1234) ## annotation colours are randomly generated by default
+Heatmap(
+ quants, name = "log2 intensity",
+ top_annotation = annotations
+)
 ```
 
 There are `r length(sigNamesRight)` proteins significantly differentially expressed at the 5% FDR level.
@@ -499,12 +560,15 @@ inferenceRight |>
 ```
 
 ### Evaluate results average contrast $\log_2 FC_{V-A}$
+
+Let us retrieve the result table from the `rowData`. The second column
+contains the results for contrast $\log_2 FC_{V-A}$.
+
 ```{r}
 inferenceAvg <- rowData(pe[["proteins"]])[[colnames(L)[3]]]
 inferenceAvg$Protein <- rownames(inferenceAvg)
 head(inferenceAvg)
 ```
-
 
 #### Volcano plot
 
@@ -524,7 +588,6 @@ ggplot(inferenceAvg) +
           paste("Hypothesis test:", colnames(L)[2], "= 0"))
 ```
 
-
 #### Heatmap
 
 We can also build a heatmap for the significant proteins which are
@@ -534,12 +597,20 @@ obtained by filtering the inference table.
 sigNamesAvg <- inferenceAvg |> 
   filter(!is.na(adjPval), adjPval < 0.05) |> 
   pull()
-heatmap(assay(pe[["proteins"]])[sigNamesAvg, ])
+se <- getWithColData(pe, "proteins")[sigNamesAvg, ]
+quants <- t(scale(t(assay(se))))
+set.seed(1234) ## annotation colours are randomly generated by default
+Heatmap(
+ quants, name = "log2 intensity",
+ top_annotation = annotations
+)
 ```
 
-There are `r length(sigNamesAvg)` proteins significantly differentially expressed at the 5% FDR level.
+There are `r length(sigNamesAvg)` proteins significantly
+differentially expressed at the 5% FDR level.
 
 Below you can find the list of significant proteins. 
+
 ```{r}
 inferenceAvg |>
   na.exclude() |>
@@ -548,15 +619,16 @@ inferenceAvg |>
   knitr::kable()
 ```
 
-
 ### Interaction 
+
+Let us retrieve the result table from the `rowData`. The second column
+contains the results for the interaction contrast.
 
 ```{r}
 inferenceInt <- rowData(pe[["proteins"]])[[colnames(L)[4]]]
 inferenceInt$Protein <- rownames(inferenceInt)
 head(inferenceInt)
 ```
-
 
 #### Volcano plot
 
@@ -576,8 +648,7 @@ ggplot(inferenceInt) +
           paste("Hypothesis test:", colnames(L)[2], "= 0"))
 ```
 
-
-As there are no significant features, we do not return a top table and do not make a heatmap for this contrast. 
-
+As there are no significant features, we do not return a top table and
+do not make a heatmap for this contrast.
 
 ## Conclusion

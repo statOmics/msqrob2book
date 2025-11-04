@@ -795,6 +795,8 @@ spikein <- msqrobAggregate(
 )
 ```
 
+**TODO**: I canot remember why we suppress the intercept...
+
 We will now build the model by progressively adding the different
 sources of variation.
 
@@ -1000,13 +1002,26 @@ So, we built the model shown at the beginning of this section,
 effectively accounting for all sources of variation in TMT-based
 proteomics data.
 
-### Robust regression 
+### Why robust regression?
 
-We have estimated all model parameters using M-estimation by enabling (`robust = TRUE`)
-to estimate the model parameters of the regression model. In ordinary 
-least squares, the 
+Throughout this book, we estimate the model parameters using robust
+regression through M-estimation (`robust = TRUE`). This class of
+estimation does not need the assumption that the residuals $\epsilon$
+are normally distributed. However, if the residuals are normal, the
+M-estimators have a high efficiency.
 
+In ordinary least squares (OLS), the loss function that is minimised
+is:
 
+$$
+\sum\limits_{i = 1}^n \left(y_i - \mathbf{x}_i^T \boldsymbol{\beta}\right)^2
+$$
+
+While the M-estimation minimise the following loss function:
+
+$$
+\sum\limits_{i = 1}^n \rho \left(y_i - \mathbf{x}_i^T \boldsymbol{\beta}\right)
+$$
 
 No normality assumption needed
 
@@ -1014,20 +1029,18 @@ Robust fit minimises the maximal bias of the estimators
 
 CI and statistical tests are based on asymptotic theory
 
-If 𝜖
-
-is normal, the M-estimators have a high efficiency!
+If $\epsilon$ is normal, the M-estimators have a high efficiency!
 
 ordinary least squares (OLS): minimize loss function 
 
 
-### Ridge regression 
+### Why ridge regression?
 
 We also enable ridge regression (`ridge = TRUE`) which stabilises the
 parameter estimation of fixed effects.
 
-**TODO**: DISCUSS LAST SENTENCE
-
+**TODO**: take subset A bs B and demonstrate that rideg is not 
+possible. Also faster without ridge. 
 
 ## Statistical inference
 
@@ -1045,6 +1058,11 @@ vd <- VisualizeDesign(
 )
 vd$plotlist
 ```
+
+Note that with ExploreModelMatrix we can only visualise fixed effects
+part of the model. This is fine as the mean protein abundances can
+only systematically differ from each other according to the
+`Condition` (fixed effect).
 
 ### Hypothesis testing
 
@@ -1308,8 +1326,6 @@ estimated. While the results for such one-hit wonders are
 questionable, we provide `msqrobRefit()` to refit a new model for a
 subset of proteins of interest.
 
-**TODO**: include msqrobRefit in `msqrob2`.
-
 In this case, we want to refit a model without a sample effect for
 one-hit-wonder proteins. This information can be retrieved from the
 aggregation results, using `aggcounts()`. This getter function
@@ -1332,6 +1348,8 @@ Using `msqrobRefit()` is very similar to `msqrobAggregate()`, see here
 however that we adapted the formula to remove the random effect for
 label nested within run. We also mention which proteins must be
 refit using the `subset` argument.
+
+**TODO**: include msqrobRefit in `msqrob2`.
 
 ```{r msqrobRefit, cache = TRUE}
 spikein <- msqrobRefit(

@@ -1071,7 +1071,7 @@ Since this is a benchmark study and we know the concentration of A
 (0.25 fmol/µL) and B (0.74 fmol/µL), the obvious answer is
 $log_2(0.74) - log_2(0.25) = 1.566$. The average log2 difference in
 intensity between condition B and condition A that has been estimated
-by the model is `r params[["ridgeconditionB"]]`, rather close. Now,
+by the model is `r params[["ridgeconditionb"]]`, rather close. Now,
 the question is if we can conclude that the fold change between
 condition B and condition A is statistically significant based on the
 model output.
@@ -1080,9 +1080,9 @@ model output.
 
 As shown above, the average difference in log2 intensity between
 condition B and A after correcting for the lab effect is
-`ridgeconditionB`. This combination of parameters is also called a
+`ridgeconditionb`. This combination of parameters is also called a
 contrast. Thus, we assess the following nul hypothesis for this
-contrast: 'ridgeconditionB = 0' with our statistical test.
+contrast: 'ridgeconditionb = 0' with our statistical test.
 
 As shown above, the average difference in log2 intensity between
 condition b and a after correcting for the lab effect is
@@ -1191,11 +1191,12 @@ inference |>
     fdp = round(mean(!isEcoli) * 100, 2))
 ```
 
-### Heatmaps 
+### Heatmaps{#sec-heatmaps}
 
 We can explore the quantitative data of the significant proteins using
 a heatmap. First, we select the names of the proteins that were 
-declared significant and extract their quantitative data.
+declared significant between condition A and condition B and extract
+their quantitative data.
 
 ```{r}
 sigNames <- inference$Protein[!is.na(inference$adjPval) & inference$adjPval < 0.05]
@@ -1337,7 +1338,7 @@ The contrast contains multiple hypotheses (multiple column) that
 involve multiple parameters (multiple rows). 
 
 We use again `hypothesisTest()` for performing the hypothesis test. We
-already generated results for the contrast `ridgeconditionB = 0` and
+already generated results for the contrast `ridgeconditionb = 0` and
 the function will throw an error by default, but we can overwrite the
 results with the argument `overwrite = TRUE`.
 

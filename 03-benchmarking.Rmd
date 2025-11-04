@@ -895,7 +895,7 @@ ggplot(resultsProtein) +
     ggtitle("Statistical inference for all pairwise comparisons") 
 ```
 
-#### Modelling at the ion-level
+#### Modelling at the ion-level{#sec-ion_level_modelling}
 
 The model definition for the ion-level data is more ellaborate than
 for the protein-level data. We need to account for the fact that
@@ -921,7 +921,7 @@ evidence <- msqrobAggregate(
 ```
 
 Because some proteins are only measured by a single ion, its
-corresponding sample and ion effectd cannot be estimated and hence the
+corresponding sample and ion effects cannot be estimated and hence the
 model for those proteins will not be estimated. We therefore refit a
 simplified model for those proteins using the refitting workflow
 described in the [advanced chapter](#sec-msqrob_refit).
@@ -930,7 +930,7 @@ described in the [advanced chapter](#sec-msqrob_refit).
 counts <- aggcounts(evidence[["msqrob"]])
 oneHitProteins <- rownames(counts)[rowMax(counts) == 1]
 evidence <- msqrobRefit(
-  evidence, i = i, subset = oneHitProteins,
+  evidence, i = "ions_norm", subset = oneHitProteins,
   formula = ~ Condition,
   fcol = "Proteins", name = "msqrob",
   robust = TRUE, ridge = TRUE
