@@ -328,22 +328,8 @@ assumed to have a block diagonal structure, with as variance
 $\sigma_b^2 + \sigma_\epsilon^2$ and the covariance between protein
 abundance values of technical replicates from the same biorepeat
 equals $\sigma_b^2$ (with \sigma_\epsilon^2 the variance of the
-residuals). More details on mixed models can be found in 
-
-**TODO** PROVIDE REFERENCE TO ADVANCED VIGNETTE!
-
-$$
-\boldsymbol{\Sigma}_\mathbf{Y} = \left[\begin{array}{cccccccccc}\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&\sigma^2_b&0&0&0&\ldots&0&0&0\\
-\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&0&0&0&\ldots&0&0&0\\
-\sigma^2_b&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&0&0&0&\ldots&0&0&0\\
-0&0&0&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&\sigma^2_b&\ldots&0&0&0\\
-0&0&0&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&\ldots&0&0&0\\
-0&0&0&\sigma^2_b&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&\ldots&0&0&0\\
-0&0&0&0&0&0&\dots&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b&\sigma^2_u\\
-0&0&0&0&0&0&\dots&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon&\sigma^2_b\\
-0&0&0&0&0&0&\dots&\sigma^2_b&\sigma^2_b&\sigma^2_b+\sigma^2_\epsilon\\
-\end{array}\right]
-$$
+residuals). More details on mixed models can be found in the [advanced
+chapter](#sec-random_effect).
 
 We model the protein level expression values using `msqrob2`.
 `msqrob2` workflows rely on linear mixed models, which are models that
