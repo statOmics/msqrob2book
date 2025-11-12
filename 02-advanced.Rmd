@@ -1,5 +1,8 @@
-
 # Advanced statistical analysis with msqrob2 {#sec-advanced}
+
+```{r, echo = FALSE}
+source("R/knitr_setup.R")
+```
 
 This chapter builds upon the [basics](#sec-basics) of proteomics data
 analysis and provides more advanced concepts using `msqrob2`. To
@@ -376,8 +379,6 @@ the data. Therefore, we will add custom filtering variable to the
 provides an ideal use case to demonstrate the customisation of a
 filtering workflow.
 
-**TODO**: use some of the QFeaturesGUI functions?
-
 #### Remove ambiguous identifications
 
 The background proteins originate from HeLa cells, which also contain
@@ -614,6 +615,9 @@ spikein <- normalize(
 )
 ```
 
+**TODO** think about using the Median of Ratio normalisation for tmt 
+data. 
+
 And we confirm that the normalisation resulted in a better alignment
 of the intensity distribution across samples.
 
@@ -702,7 +706,7 @@ data](#sec-summarisation) also apply to TMT data. Briefly:
    compared to majority of the peptides. 
 
 **TODO**: use robust summary instead of median polish for consistency
-with previous vignette?
+with previous vignette? I known median polish is faster, but still?
 
 Here, we summarise the ion-level data into protein intensities
 through the median polish approach, which alternately removes the
@@ -783,7 +787,7 @@ have shown performs best [@Vandenbulcke2025-sj].
 ```{r, eval = FALSE}
 spikein <- msqrobAggregate(
     spikein,  i = "ions",
-    formula = ~ 0 + Condition + ## fixed effect for experimental condition
+    formula = ~ Condition + ## fixed effect for experimental condition
         (1 | Label) + ## random effect for label
         (1 | Mixture) + ## random effect for mixture
         (1 | Run) + ## random effect for run
@@ -794,8 +798,6 @@ spikein <- msqrobAggregate(
     robust = TRUE, ridge = TRUE
 )
 ```
-
-**TODO**: I canot remember why we suppress the intercept...
 
 We will now build the model by progressively adding the different
 sources of variation.
@@ -836,16 +838,10 @@ model translates into the following code:
 ```{r run_msqrob_protein1, eval = FALSE}
 spikein <- msqrob(
     spikein,  i = "proteins",
-    formula = ~  0 + Condition, ## fixed effect for experimental condition
+    formula = ~ Condition, ## fixed effect for experimental condition
     robust = TRUE, ridge = TRUE
 )
 ```
-
-**TODO**: do we need to suppress the intercept? We documented this for
-the msqrob2TMT vignette but my feeling is that we should learn users
-to perform to build contrasts with intercepts. However, regarding 
-ridge regression, suppressing the intercept is better and we found
-that ridge regression performs better.
 
 This model is however incomplete and relying on its results would lead
 to incorrect conclusions as we are still missing important source of 
@@ -954,7 +950,7 @@ Specifying label as a random effect translates in the following code:
 ```{r run_msqrob_protein2, eval=FALSE}
 spikein <- msqrob(
     spikein,  i = "proteins",
-    formula = ~  0 + Condition + ## fixed effect for experimental condition
+    formula = ~ Condition + ## fixed effect for experimental condition
         (1 | Label) ## random effect for label
     robust = TRUE, ridge = TRUE
     )
@@ -992,10 +988,10 @@ sample that has been measured in run $r$ and labelled with label $l$.
 
 This translates in the following code:
 
-```{r run_msqrob_protein2, eval=FALSE}
+```{r, eval=FALSE}
 spikein <- msqrob(
     spikein,  i = "proteins",
-    formula = ~  0 + Condition + ## fixed effect for experimental condition
+    formula = ~ Condition + ## fixed effect for experimental condition
         (1 | Label) + ## random effect for label
         (1 | Run), ## random effect for MS run
     robust = TRUE, ridge = TRUE
@@ -1029,7 +1025,7 @@ The model translates to the following code:
 ```{r run_msqrob_protein3, cache=TRUE, warning=FALSE}
 spikein <- msqrob(
     spikein,  i = "proteins",
-    formula = ~  0 + Condition + ## fixed effect for experimental condition
+    formula = ~ Condition + ## fixed effect for experimental condition
         (1 | Label) + ## random effect for label
         (1 | Run) + ## random effect for MS run
         (1 | Mixture), ## random effect for mixture
@@ -1087,7 +1083,7 @@ protein-level set, which we call `proteins_msqrob`.
 ```{r msqrob_psm_rrilmm, cache=TRUE, warning=FALSE}
 spikein <- msqrobAggregate(
     spikein,  i = "ions",
-    formula = ~  0 + Condition + ## fixed effect for experimental condition
+    formula = ~ Condition + ## fixed effect for experimental condition
         (1 | Label) + ## random effect for label
         (1 | Run) + ## random effect for Run
         (1 | Mixture) + ## random effect for mixture
@@ -1103,7 +1099,7 @@ So, we built the model shown at the beginning of this section,
 effectively accounting for all sources of variation in TMT-based
 proteomics data.
 
-### Why robust regression?
+### Why robust regression?{#sec-robust}
 
 Throughout this book, we estimate the model parameters using robust
 regression through M-estimation (`robust = TRUE`). This class of
@@ -1164,7 +1160,7 @@ estimation, we can use the same statistical testing framework as for
 OLS, although the tests and confidence intervals are based on
 asymptotic theory.
 
-### Why ridge regression?
+### Why ridge regression?{#sec-ridge}
 
 `msqrob2` also allows for ridge regression (when `ridge = TRUE`). In 
 ridge regression, model parameters are estimated by minimising a 
@@ -1194,8 +1190,8 @@ estimation of $\beta$ is
 $$
 \hat{\sigma}^2_\beta = (\mathbf{X}^T\mathbf{X}+\lambda \mathbf{I})^{-1} \mathbf{X}^T\mathbf{X} (\mathbf{X}^T\mathbf{X}+\lambda \mathbf{I})^{-1} \hat{\sigma}_\epsilon^2
 $$
-while $\hat{\sigma}^{2, OLS}_\beta = \mathbf{X}^T\mathbf{X}
-\hat{\sigma}_\epsilon^2}$. However, the penalty term in the loss
+while $\hat{\sigma}^{2, OLS}_\beta = \mathbf{X}^T\mathbf{X} 
+\hat{\sigma}_\epsilon^2$. However, the penalty term in the loss
 function also implies that the estimates of $\boldsymbol{\beta}$ will
 be biased towards smaller values. This is known as the variance-bias
 tradeoff. Another disadvantage of ridge is that it take more time to
@@ -1203,7 +1199,7 @@ estimate.
 
 Note that ridge regression cannot be estimated when $\mathbf{X}$ 
 contains an intercept and a single covariate. We demonstrate this on
-the spike-in data by subsetting only for A and B conditions.
+the spike-in data by subsetting only spike-in condition `1` and `0.5`.
 
 ```{r}
 spikeinSubset <- subsetByColData(spikein, spikein$Condition %in% c("1", "0.5"))
@@ -1220,15 +1216,13 @@ try(msqrobAggregate(
   robust = TRUE, ridge = TRUE
 ))
 ```
-**TODO** I'm not sure whether the error will be printed since I 
-silence all the warnings and messages, to check in compiled version.
-Also, I'm not convinced that showing the code is necessary.
 
-As the message suggests, the intercept must be supressed in order to
+As the message suggests, the intercept must be suppressed in order to
 fit a variable with 2 levels using ridge regression.
 
-**TODO** do we need to explain theoretically why a 1 covariate is not possible
-and why ridge is slower?
+**TODO** do we need to explain theoretically why a 1 covariate is not
+possible and why ridge is slower? I'm not convinced that showing the
+code is necessary.
 
 **TODO**: discuss/show link between ridge and mixed models? 
 
@@ -1243,7 +1237,7 @@ We plot an overview of the model parameters.
 library("ExploreModelMatrix")
 vd <- VisualizeDesign(
     sampleData =  colData(spikein),
-    designFormula = ~ 0 + Condition,
+    designFormula = ~ Condition,
     textSizeFitted = 4
 )
 vd$plotlist
@@ -1265,19 +1259,12 @@ that assess all possible pairwise comparisons between spike-in
 conditions.
 
 ```{r}
-source("utils.R")
 allHypotheses <- createPairwiseContrasts(
-  ~ 0 + Condition + ## fixed effect for experimental condition
-        (1 | Label) + ## random effect for label
-        (1 | Run) + ## random effect for Run
-        (1 | Mixture) + ## random effect for mixture
-        (1 | Run:Label) + ## random effect for label nested in run
-        (1 | Run:ionID), 
-  colData(spikein), "Condition", ridge = TRUE
+  ~ Condition, colData(spikein), "Condition", ridge = TRUE
 )
 L <- makeContrast(
   allHypotheses,
-  parameterNames = paste0("ridgeCondition", c("0.125", "0.5", "0.667", "1"))
+  parameterNames = paste0("ridgeCondition", c("0.5", "0.667", "1"))
 )
 ```
 
@@ -1324,9 +1311,9 @@ Then, we plot the volcano plots with each comparison in a separate facet.
 ggplot(inferences) +
     aes(x = logFC,
         y = -log10(pval),
-        color = isUps) +
+        color = isUps,
+        shape = adjPval < 0.05) +
     geom_point() +
-    geom_hline(yintercept = -log10(0.05)) +
     scale_color_manual(
       values = c("grey20", "firebrick"), name = "",
       labels = c("HeLA background", "UPS standard")
@@ -1407,7 +1394,7 @@ spikein[targetProtein, , "ions"] |>
 We here show how to perform a two-step approach, where the data are 
 first summarised then modelled. We perform the same statistical
 workflow as above, but starting from the protein level model estimated
-in [this section](#sec-tmt_protein_model)^[Note that the inference
+in [the section above](#sec-tmt_protein_model)^[Note that the inference
 pipeline is exactly the same whether the model was estimated with
 `msqrob()` or `msqrobAggregate()`, and we don't need to build a new 
 contrast matrix.].
@@ -1545,7 +1532,7 @@ refit using the `subset` argument.
 spikein <- msqrobRefit(
     spikein, i = "ions",
     subset = oneHitProteins,
-    formula = ~ 0 + Condition + ## fixed effect for experimental condition
+    formula = ~ Condition + ## fixed effect for experimental condition
         (1 | Label) + ## fixed effect for label
         (1 | Mixture) + ## random effect for mixture
         (1 | Run ) + ## random effect for run
@@ -1626,7 +1613,7 @@ the ion-level model.
 ```{r msqrob_psm_rrilmm_imputed, cache=TRUE}
 spikein <- msqrobAggregate(
     spikein,  i = "ions_imputed",
-    formula = ~ 0 + Condition + ## fixed effect for experimental condition
+    formula = ~ Condition + ## fixed effect for experimental condition
         (1 | Label) + ## random effect for label
         (1 | Mixture) + ## random effect for mixture
         (1 | Run) + ## random effect for run
@@ -1656,7 +1643,7 @@ oneHitProteins <- rownames(counts)[rowMax(counts) == 1]
 spikein <- msqrobRefit(
     spikein, i = "ions_imputed",
     subset = oneHitProteins,
-    formula = ~ 0 + Condition + ## fixed effect for experimental condition
+    formula = ~ Condition + ## fixed effect for experimental condition
         (1 | Label) + ## random effect for label
         (1 | Mixture) + ## random effect for mixture
         (1 | Run ) + ## random effect for run
@@ -1673,28 +1660,29 @@ rowData(spikein[["proteins_msqrob_imputed"]])[["msqrob_psm_rrilmm"]] |>
 ```
 
 Upon refit, no `fitError`s were generated for any proteins, as
-expected. Be mindful that although the results upon imputation will be
-highly depended on the suitability of the imputation approach.
+expected. Be mindful that the results upon imputation will be highly
+depended on the suitability of the imputation approach.
 
 ## Conclusion
 
 In this chapter, we expanded upon the basic concepts with a more
 complex analysis. First, we started our analysis from PSM-level data,
-showing that our tools are amenable to read both [wide
-format](#sec-peptide_table) and [long format](#sec-psm_table) tables.
-Starting from the PSM level data also enabled better control of the
-PSM filtering compared to starting with peptide-level data. We
-demonstrated how to conduct a comprehensive feature filtering
-workflow, with different level of customisation to enable filtering
-based on any criterion.
+showing that our tools are amenable to read different levels of input
+format such as the [peptides table](#sec-peptide_table) or the
+[PSM table](#sec-psm_table). Starting from the PSM level data
+also enabled better control of the PSM filtering compared to starting
+with peptide-level data. We demonstrated how to conduct a
+comprehensive feature filtering workflow, with different level of
+customisation to enable filtering based on any criterion.
 
 The complexity of the analysis is the reflection of the complexity of
-the TMT-based designs, which impose several additional sources of
-variation compared to LFQ experiments: effect of treatment of
-interest, effect of TMT labelling, effect of the MS acquisition run,
-and the effect of replication. We built protein-level models, but we
-have also shown that we can build PSM-level models if we also include
-a spectrum effect and an effect for TMT label nested within run.
+the experimental designs, as TMT-labelling includes the modelling of
+several additional sources of variation compared to LFQ experiments:
+effect of treatment of interest, effect of TMT labelling, effect of
+the MS acquisition run, and the effect of replication. We built
+protein-level models, but we have also shown that we can build
+PSM-level models if we also include a spectrum effect and an effect
+for TMT label nested within run.
 
 Finally, we have demonstrated how to deal with proteins that cannot be
 modelled due to missing values. For PSM-level models, we can remove

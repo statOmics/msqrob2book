@@ -1,5 +1,58 @@
 # Usefull links and session information{#sec-end}
 
+```{r, echo = FALSE}
+source("R/knitr_setup.R")
+```
+
+## Data sets
+
+We refer here the data sources used in the book:
+
+### E. Coli LFQ spike-in data set
+
+Original study: Shen X, Shen S, Li J, Hu Q, Nie L, Tu C, et al. (2018)
+Ionstar enables high-precision, low-missing-data proteomics
+quantification in large bio- logical cohorts. Proc.  Natl.  Acad.
+Sci. U.S.A. 115, E4767–E4776
+
+Reanalysis study: Sticker A, Goeminne L, Martens L, Clement L. Robust
+Summarization and Inference in Proteome-wide Label-free
+Quantification. Mol Cell Proteomics. 2020;19(7):1209-1219.
+
+Link to data: https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/peptides.zip
+
+Link to data in archive: **TODO** add link to Zenodo
+
+Used in chapters \@ref(sec-basics), and \@ref(sec-benchmarking).
+
+### TMT spike-in data set
+
+Original study: Huang T, Choi M, Tzouros M, Golling S, Pandya NJ,
+Banfai B, et al. MSstatsTMT: Statistical Detection of Differentially
+Abundant Proteins in Experiments with Isobaric Labeling and Multiple
+Mixtures. Mol Cell Proteomics. 2020;19(10):1706-1723.
+
+Reanalysis study: Vandenbulcke S, Vanderaa C, Crook O, Martens L,
+Clement L. Msqrob2TMT: Robust linear mixed models for inferring
+differential abundant proteins in labeled experiments with arbitrarily
+complex design. Mol Cell Proteomics. 2025;24(7):101002.
+  
+Data source: MassIVE repository (RMSV000000265)
+
+Link to data from archive: https://zenodo.org/records/14767905
+
+Used in chapter \@ref(sec-advanced).
+
+### Francisella data set
+
+
+
+### Heart data set
+
+
+### Mouse diet data set
+
+
 ## License
 
 This book is distributed under a
@@ -8,6 +61,28 @@ This book is distributed under a
 **TODO**: add logo and explicit how people can access and modify this work
 
 ## Citation
+
+Please cite this book as:
+
+**TODO**: add citation once published
+
+Please cite the `msqrob2` package as: 
+
+> Goeminne L, Gevaert K, Clement L (2016). "Peptide-level Robust 
+  Ridge Regression Improves Estimation, Sensitivity, and Specificity
+  in Data-dependent Quantitative Label-free Shotgun Proteomics."
+  _Molecular & Cellular Proteomics_, *15*(2), 657-668.
+  doi:[10.1074/mcp.m115.055897](https://doi.org/10.1074/mcp.m115.055897).
+
+If you opt for a summarised based workflow, you can also cite: 
+
+> Sticker A, Goeminne L, Martens L, Clement L (2020). "Robust 
+  Summarization and Inference in Proteome-wide Label-free
+  Quantification." _Molecular & Cellular Proteomics_, *19*(7),
+  1209-1219.
+  doi:[10.1074/mcp.ra119.001624](https://doi.org/10.1074/mcp.ra119.001624).
+
+If you use TMT-based workflows, please cite
 
 > Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L.
 msqrob2TMT: robust linear mixed models for inferring differential
@@ -20,6 +95,10 @@ doi:10.1101/2024.03.29.587218
 ## Session Info
 
 The following packages have been used to generate this document.
+
+```{r, echo=FALSE}
+devtools::load_all()
+```
 
 ```{r}
 sessionInfo()

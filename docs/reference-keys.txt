@@ -1,10 +1,9 @@
-fig:unnamed-chunk-106
-fig:unnamed-chunk-116
-fig:unnamed-chunk-180
-fig:unnamed-chunk-361
 preamble
 why-msqrob2
 outline
+concepts
+benchmarking
+sec-overview_use_cases
 targeted-audience-and-assumed-background
 setup
 citation
@@ -27,7 +26,6 @@ sec-encode_missing
 sec-log2
 sec-filter
 remove-failed-protein-inference
-remove-species-ambiguous-proteins
 remove-reverse-sequences-and-contaminants
 remove-highly-missing-peptides
 sec-norm
@@ -62,6 +60,7 @@ data-preprocessing
 encoding-missing-values
 log2-transformation
 sample-filtering
+psm-filtering
 remove-ambiguous-identifications
 remove-failed-protein-inference-1
 remove-inconsistent-protein-inference
@@ -74,11 +73,12 @@ summarisation
 data-exploration
 sec-run_model
 sec-fixed_effect
-effect-of-tmt-label-and-run
+sec-random_effect
+effect-of-run
 sec-tmt_protein_model
 sec-tmt_ion_model
-why-robust-regression
-why-ridge-regression
+sec-robust
+sec-ridge
 statistical-inference
 hypothesis-testing-1
 volcano-plots-1
@@ -136,7 +136,7 @@ volcano-plot
 heatmap
 detail-plots-1
 conclusion-2
-sec-heart_chapter
+sec-heart
 introduction-1
 load-packages-4
 load-data-1
@@ -144,7 +144,7 @@ getting-the-data-1
 the-qfeatures-data-class-1
 data-preprocessing-3
 encoding-missing-values-2
-psm-filtering
+psm-filtering-1
 standard-preprocessing-workflow-1
 data-exploration-2
 data-modelling-2
@@ -176,7 +176,7 @@ the-qfeatures-data-class-2
 data-preprocessing-4
 encoding-missing-values-3
 sample-filtering-1
-psm-filtering-1
+psm-filtering-2
 standard-preprocessing-workflow-2
 data-exploration-3
 data-modelling-3
@@ -190,6 +190,12 @@ interaction-does-the-diet-effect-change-according-to-duration
 protein-level-model
 conclusion-4
 sec-end
+data-sets
+e.-coli-lfq-spike-in-data-set
+tmt-spike-in-data-set
+francisella-data-set
+heart-data-set
+mouse-diet-data-set
 license-1
 citation-1
 session-info

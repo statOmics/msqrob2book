@@ -1,5 +1,9 @@
 # The francisella use case: a MaxQuant LFQ DDA dataset with technical replication {#sec-francisella}
 
+```{r, echo = FALSE}
+source("R/knitr_setup.R")
+```
+
 ## Introduction
 
 In this vignette we show how to analyse LFQ data with technical
@@ -172,8 +176,6 @@ performed using `filterNA()`). Here, we will require that a peptide is
 picked up in at least two biorepeats. We compute the number
 of biorepeats that were observed for each peptide (that is the number
 of biorepeats that contain at least one observed value).
-
-**TODO** make a function for this?
 
 ```{r}
 rowData(pe[["peptides"]])$nNonZeroBiorep <- apply(

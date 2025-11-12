@@ -1,4 +1,8 @@
-# Heart use case: a MaxQuant LFQ DDA dataset with a more complex design{#sec-heart_chapter}
+# Heart use case: a MaxQuant LFQ DDA dataset with a more complex design{#sec-heart}
+
+```{r, echo = FALSE}
+source("R/knitr_setup.R")
+```
 
 ## Introduction
 
@@ -50,6 +54,7 @@ In this chapter we use a small subset of the data that is available on
 **TODO** put on Zenodo and use BiocFileCache.
 
 ```{r}
+library("BiocFileCache")
 bfc <- BiocFileCache()
 pepFile <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/PDA21/data/quantification/heart/peptides.txt")
 ```

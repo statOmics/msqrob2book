@@ -1,5 +1,9 @@
 # Statistical analysis with msqrob2 {#sec-basics}
 
+```{r, echo = FALSE}
+source("R/knitr_setup.R")
+```
+
 This chapter explains the main concepts for statistical analysis of
 proteomics data using `msqrob2`. To illustrate these concepts, we will
 use using a publicly available spike-in study (PRIDE identifier:
@@ -185,15 +189,16 @@ deposited on `GitHub`. We here retrieve MaxQuant's `peptides.txt` for the
 E. coli study.
 
 ```{r}
+library("BiocFileCache")
+bfc <- BiocFileCache()
 # myurl <- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/peptides.zip"
 # download.file(myurl,"data/sticker2020/peptides.zip", method = "curl", extra = "-L")
 # unzip("data/sticker2020/peptides.zip", exdir = "data/sticker2020/")
 peptideFile <- "data/sticker2020/peptides.txt"
 ```
 
-**TODO**: put data on Zenodo. 
-**TODO**: should we work on a subset? The modelling takes quite a lot 
-of time (in serial computation)
+**TODO**: put data on Zenodo. BiocFileCache will be used for fetching 
+these data.
 
 #### Peptide table{#sec-peptide_table}
 
@@ -237,6 +242,23 @@ coldata$concentration <- concentrations[coldata$condition]
 ```{r, echo=FALSE}
 knitr::kable(head(coldata))
 ```
+
+We will also extract the E. coli protein identifiers from the FASTA
+file to later annotate the spike-in proteins which are known to be
+differentially abundant.
+
+1. We download the fasta files
+2. We read the text file as vector, one line p
+3. We keep only the protein headers
+4. We extract the proteins identifiers from the headers
+
+```{r}
+ecoli <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/refs/heads/master/spikein/data/fasta/ecoli_up000000625_7_06_2018.fasta")
+ecoli <- readLines(ecoli)
+ecoli <- ecoli[grepl("^>", ecoli)]
+ecoli <- gsub(">sp\\|(.*)\\|.*", "\\1", ecoli)
+```
+
 
 ### Convert to QFeatures{#sec-qfeatures}
 
@@ -372,8 +394,6 @@ options).
 # )
 ```
 
-**TODO** mention the hurdle model here?
-
 ### Log2 transformation{#sec-log2}
 
 We need to log2 transform the intensities. We illustrate the rationale
@@ -489,49 +509,6 @@ by a `";"`.
 spikein <- filterFeatures(
   spikein, ~ Proteins != "" & ## Remove failed protein inference
     !grepl(";", Proteins)) ## Remove protein groups
-```
-
-#### Remove species-ambiguous proteins
-
-**TODO**: the original code checked to keep only the proteins that map
-only to human and only to E.Coli, but this always true, see 
-`intersect(ecoli, human)`. In my opinion, we should do this filtering
-at the peptide-level rather than the protein level, but this requires
-to computationally digest the protein sequences in the fasta files.
-
-We will now use the annotation on E. coli and human proteins to
-annotate the spike-in proteins. We will extract the protein names for
-both species from the fasta files with the amino acid sequences of all
-annotated proteins of the corresponding species.
-
-1. We download the fasta files
-2. We extract the protein names 
-3. We determine the proteins that are unique for E. coli and human. 
-
-```{r}
-library("BiocFileCache")
-bfc <- BiocFileCache()
-
-human <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/refs/heads/master/spikein/data/fasta/human_up000005640_sp_7_06_2018.fasta")
-human <- readLines(human)
-human <- human[grepl("^>", human)]
-human <- gsub(">sp\\|(.*)\\|.*", "\\1", human)
-
-ecoli <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/refs/heads/master/spikein/data/fasta/ecoli_up000000625_7_06_2018.fasta")
-ecoli <- readLines(ecoli)
-ecoli <- ecoli[grepl("^>", ecoli)]
-ecoli <- gsub(">sp\\|(.*)\\|.*", "\\1", ecoli)
-```
-
-Next, we filter out proteins that map to both E. coli and human
-because these are ambiguous with respect to their differential
-abundance (DA) status. We also add an additional variable to the
-rowData that indicates if a protein is DA (E. coli) or not (human).
-
-```{r}
-spikein <- filterFeatures(spikein,~ !Proteins %in% intersect(ecoli, human)) # Filter
-rowData(spikein[["peptides_log"]])$ecoli <- 
-  rowData(spikein[["peptides_log"]])$Proteins %in% ecoli # DA status
 ```
 
 #### Remove reverse sequences and contaminants
@@ -650,8 +627,6 @@ spikein <- sweep( #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
 )
 ```
 
-**TODO**: include this in QFeatures
-
 Formally, the function applies the follow operation on each sample $i$
 across all PSMs $p$:
 
@@ -766,7 +741,7 @@ $\epsilon_{ip}$ is the residual effect that cannot be explained by the
 average sample and peptide effects. The method is called robust
 summarisation because the estimation process will minimize $\epsilon$
 using a robust estimator^[During robust estimation, the least squared
-error minimization, that is minimizing $\sum_i\mathbf{\epsilon}^2_i$, is
+error minimisation, that is minimising $\sum_i\mathbf{\epsilon}^2_i$, is
 iteratively reweighted using Huber weights, i.e. $\sum_iw_i\mathbf{\epsilon}^2_i$. This is internally
 performed using `MASS::rlm()`.] that will down-weigh extreme values,
 effectively tackling issue 4.
@@ -978,20 +953,12 @@ spikein <- msqrob(
 )
 ```
 
-**TODO** discuss that msqrob2 assumes MAR upon conditioning for 
-peptide species?.
-**TODO** need to expand more robust ridge (cf SGA course:
-https://statomics.github.io/SGA/pda_technicalDetails.html?). And that
-ridge is not always possible.
-
 We enable M-estimation (`robust = TRUE`) for improved robustness
 against outliers. We also enable ridge regression (`ridge = TRUE`).
 Ridge regression stabilises the parameter estimation of fixed effects
 in case where the number of parameters are close to the number of
-available samples. Keep in mind that ridge regression is irrelevant
-when modelling a single fixed effect with only 2 factors. 
-
-**TODO**: DISCUSS LAST SENTENCE
+available samples. The next chapter provides more details on [robust
+regression](#sec-robust) and [ridge regression](#sec-ridge).
 
 The fitting results are available in the `msqrobModels` column of the
 `rowData`. More specifically, the modelling output is stored in the
@@ -1048,7 +1015,7 @@ head(params)
 ```
 
 Note the `"ridge"` tag in front of the parameter names that indicates
-the parameters have been estimated using ridge penalization. The model
+the parameters have been estimated using ridge penalisation. The model
 estimated `r length(params)` parameters to model the fixed and random
 effects. However, we are interested, for this data set, in the
 parameters that model the effect of `condition`.
@@ -1318,7 +1285,6 @@ regression, which influences parameter names.
 **TODO**: add automatic pairwise comparisons function to msqrob2 
 
 ```{r}
-source("utils.R")
 (allHypotheses <- createPairwiseContrasts(
   model, colData(spikein), "condition", ridge = TRUE
 ))
@@ -1518,22 +1484,29 @@ spike in conditions.
 ## Conclusion
 
 In this vignette, we have demonstrated a typical data analysis
-workflow for label free data using `msqrob2`. Because the packages relies on
-the `QFeatures` data class, we could demonstrate the implementation of
-a complete pre-processing workflow starting from MaxQuant's peptide 
-table: log2-transformation, PSM filtering, missing value management, 
-normalisation, and summarisation. The data exploration revealed 
-expected patterns of variation among samples, as this is a ground
-truth data set.
+workflow for label free data using `msqrob2`. Because the packages
+relies on the `QFeatures` data class, we could demonstrate the
+implementation of a complete pre-processing workflow starting from
+MaxQuant's peptide table: log2-transformation, PSM filtering, missing
+value management, normalisation, and summarisation. The data
+exploration revealed expected patterns of variation among samples, as
+this is a ground truth data set.
 
 Once pre-processed, we use the `msqrob2` package to model the (known)
-effect of spike-in condition. We
-showed how to run statistical inference on the modelling results to
-retrieve the significance of differentially abundant proteins. We
-explored statistical results through volcano plots and boxplots of the
-log2 fold changes and visually validated the results for one protein
-by plotting the input data. We have shown the inference pipeline can
-be streamlined when having multiple hypotheses to test.
+effect of spike-in condition. We showed how to run statistical
+inference on the modelling results to retrieve the significance of
+differentially abundant proteins. We explored statistical results
+through volcano plots and boxplots of the log2 fold changes and
+visually validated the results for one protein by plotting the input
+data. We have shown the inference pipeline can be streamlined when
+having multiple hypotheses to test. In this example, the spike-in
+condition can be encoded as a categorical variable or a numeric
+variable, and we showed how to model and interpret the results for 
+both cases. 
 
-**TODO**: extend conclusion with the going further topics, and link 
-with other chapters with more complex design
+This chapter hence provides a general framework for analysing simple
+experimental designs for label-free proteomics experiments. Remember,
+this book provides [an overview](#sec-overview_use_cases) of different
+use cases with more complex designs. In the next chapter, we will
+illustrate advanced concepts of proteomics data analysis, illustrated
+by the analysis of a TMT-labelled spike-in experiment.

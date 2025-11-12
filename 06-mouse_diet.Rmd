@@ -1,5 +1,9 @@
 # The mouse diet use case: a Skyline TMT DDA dataset {#sec-mouse_diet}
 
+```{r, echo = FALSE}
+source("R/knitr_setup.R")
+```
+
 ## Introduction
 
 If you never used `msqrob2`, we suggest to familiarise yourself with
@@ -316,8 +320,6 @@ standard dimension reduction approaches. `omicsGMF` [@Segers2025-ce]
 provides an interesting alternative, but is still in its early stage
 and will not be included here. We will therefore run a MDS analysis on
 the protein-level data instead, which contains less missing values.
-
-**TODO** include omicsGMF?
 
 ```{r}
 library("scater")
