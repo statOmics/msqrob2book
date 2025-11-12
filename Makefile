@@ -21,6 +21,7 @@ $(BUILD_DIR):
 
 # --- Rule: Render bookdown HTML from built md files ---
 $(HTML): $(MDS) _bookdown.yml | $(DOCS_DIR)
+	cp refs.bib $(BUILD_DIR)/refs.bib
 	Rscript -e "setwd('$(BUILD_DIR)');bookdown::render_book('index.md', output_dir = '../$(DOCS_DIR)')"
 
 # --- Ensure docs directory exists ---
