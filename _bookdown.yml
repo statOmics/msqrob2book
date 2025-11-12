@@ -1,9 +1,0 @@
-book_filename: msqrob2book
-delete_merged_file: true
-output_dir: docs
-language:
-  ui:
-    chapter_name: ["Chapter "]
-new_session: yes
-
-rmd_files: ["01-basics.md", "02-advanced.md", "03-benchmarking.md", "04-francisella.md", "05-heart.md", "06-mouse_diet.md", "99-end.md", "index.md"]
