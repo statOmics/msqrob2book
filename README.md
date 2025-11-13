@@ -35,7 +35,8 @@ knitr::knit("CHAPTER.Rmd"", output = "build/CHAPTER.md", quiet = FALSE)
 bookdown::render_book("build/index.md", output_dir = "docs")
 ```
 
-This process is automatised using `make` in a (`bash`) shell:
+This process is automatised using `make` in a (`bash`) shell. Credits
+to https://github.com/rstudio/bookdown/issues/1262:
 
 ```
 make all
@@ -43,3 +44,20 @@ make all
 
 The book can also be compiled through [GitHub
 Actions](https://github.com/statOmics/msqrob2book/actions/workflows/publish_book.yaml)
+
+## License
+
+This book is distributed under a
+[Artistic-2.0](https://opensource.org/license/artistic-2-0) license.
+
+**TODO**: add logo and explicit how people can access and modify this work
+
+## Citation
+
+> Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L.
+msqrob2TMT: robust linear mixed models for inferring differential
+abundant proteins in labelled experiments with arbitrarily complex
+design. bioRxiv. Published online March 29, 2024:2024.03.29.587218.
+doi:10.1101/2024.03.29.587218
+
+**TODO**: populate the citation section and 

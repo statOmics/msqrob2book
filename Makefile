@@ -28,5 +28,6 @@ $(HTML): $(MDS) _bookdown.yml | $(DOCS_DIR)
 $(DOCS_DIR):
 	mkdir -p $(DOCS_DIR)
 
-# --- Clean up generated files ---
+# --- Clean up unecessary files ---
 clean:
+	build/msqrob2book.rds
