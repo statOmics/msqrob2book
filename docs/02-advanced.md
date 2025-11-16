@@ -51,7 +51,7 @@ This leads to a signal boost for low abundant peptides and hence
 should improve data sensitivity and consistency.
 
 <div class="figure">
-<img src="figs/tmt_workflow.png" alt="Overview of an TMT-based proteomics workflow." width="40%" />
+<img src="figs/tmt_workflow.png" alt="Overview of an TMT-based proteomics workflow." width="60%" />
 <p class="caption">Overview of an TMT-based proteomics workflow.</p>
 </div>
 
@@ -162,12 +162,12 @@ Now the files are downloaded, we can load the two tables.
 
 ### PSM table{#sec-psm_table}
 
-An MS experiment generates spectra. Each MS2 spectrum is used to infer 
-the peptide identity using a search engine. When
-an observed spectrum is matched to a theoretical peptide spectrum, we
-have a peptide-to-spectrum match (PSM). The identification software
-compiles all the PSMs inside a table. Hence, the PSM data is the
-lowest possible level to perform data modelling.
+An MS experiment generates spectra. Each MS2 spectrum is used to infer
+the peptide identity using a search engine. When an observed spectrum
+is matched to a theoretical peptide spectrum, we have a
+peptide-to-spectrum match (PSM). The identification software compiles
+all the PSMs inside a table. Hence, the PSM data is the lowest
+possible level to perform data modelling.
 
 Each row in the PSM data table contains information for one PSM (the
 table below shows the first 6 rows). The columns contains various
@@ -361,7 +361,7 @@ intensities and log2-intensities for one of the peptide ions, the
 triply charged DLLHVLAFSK, in function of the UPS spike-in dilution
 factor. 
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
+![ ](figure/advanced_log_plot-1.png)
 
 Log2-transformation solves the heteroskedasticity issue, but also
 provides a scale that directly relates to biological interpretation
@@ -394,7 +394,7 @@ using `subsetByColData()`.
 spikein <- subsetByColData(spikein, spikein$Condition != "Norm")
 ```
 
-### PSM filtering
+### PSM filtering{#sec-filter}
 
 Filtering removes low-quality and unreliable PSMs that would otherwise
 introduce noise and artefacts in the data. Conceptually, PSM filtering
@@ -637,7 +637,7 @@ spikein[, , logNames] |>
     theme(legend.position = "bottom")
 ```
 
-![plot of chunk unnamed-chunk-28](figure/unnamed-chunk-28-1.png)
+![ ](figure/advanced_before_norm-1.png)
 
 Similarly to the previous chapter, we again observe misalignments of
 the intensity distributions across samples. We see the intensity
@@ -676,7 +676,7 @@ spikein[, , normNames] |>
     theme(legend.position = "bottom")
 ```
 
-![plot of chunk unnamed-chunk-30](figure/unnamed-chunk-30-1.png)
+![ ](figure/advanced_after_norm-1.png)
 
 Up to now, the data from different runs were kept in separate assays.
 We can now join the normalised sets into an `ions` set using
@@ -723,7 +723,7 @@ axis and plot the log2 normalised intensities across samples on y
 axis. All the points belonging to the same sample are linked through a
 grey line.
 
-![plot of chunk unnamed-chunk-32](figure/unnamed-chunk-32-1.png)
+![ ](figure/advanced_summarise-1.png)
 
 We see that the same challenges observed for [LFQ
 data](#sec-summarisation) also apply to TMT data. Briefly:
@@ -803,7 +803,7 @@ plotMDS(se, colour_by = "Condition") +
   plotMDS(se, colour_by = "Mixture")
 ```
 
-![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35-1.png)
+![ ](figure/advanced_mds-1.png)
 
 There is a strong run-to-run effect, which is partly explained by a
 mixture effect as the runs from the same mixture tend to be closer
@@ -824,7 +824,7 @@ plotMDS(se, colour_by = "Condition") +
   plotMDS(se, colour_by = "Mixture")
 ```
 
-![plot of chunk unnamed-chunk-36](figure/unnamed-chunk-36-1.png)
+![ ](figure/advanced_mds_proteins-1.png)
 
 While the run effects are smaller (i.e. points within a run are more
 scattered than on the previous plots) on the protein-level MDS
@@ -1261,8 +1261,9 @@ tradeoff. Another disadvantage of ridge is that it take more time to
 estimate.
 
 Note that ridge regression cannot be estimated when $\mathbf{X}$ 
-contains an intercept and a single covariate. We demonstrate this on
-the spike-in data by subsetting only spike-in condition `1` and `0.5`.
+contains an intercept and a single covariate. We demonstrate this by
+intentionally triggering an error after subsetting only spike-in
+condition `1` and `0.5`.
 
 
 ``` r
@@ -1292,8 +1293,8 @@ try(msqrobAggregate(
 ## 
 ```
 
-As the message suggests, the intercept must be suppressed in order to
-fit a variable with 2 levels using ridge regression.
+As the error message suggests, the intercept must be suppressed in
+order to fit a variable with 2 levels using ridge regression.
 
 **TODO** do we need to explain theoretically why a 1 covariate is not
 possible and why ridge is slower? I'm not convinced that showing the
@@ -1323,7 +1324,7 @@ vd$plotlist
 ## [[1]]
 ```
 
-![plot of chunk unnamed-chunk-40](figure/unnamed-chunk-40-1.png)
+![ ](figure/advanced_VisualizeDesign-1.png)
 
 Note that with ExploreModelMatrix we can only visualise fixed effects
 part of the model. This is fine as the mean protein abundances can
@@ -1403,6 +1404,7 @@ inferences <- lapply(colnames(inferences), function(i) {
   inference$Protein <- rownames(inference)
   inference$isUps <- grepl("ups", inference$Protein)
   inference$Comparison <- gsub("ridgeCondition", "", i)
+  inference$Comparison <- gsub("^([0-9.]*)$", "\\1 - 0.125", inference$Comparison)
   inference
 })
 inferences <- do.call(rbind, inferences) ## combine in a single table
@@ -1426,13 +1428,26 @@ ggplot(inferences) +
     ggtitle("Statistical inference for all pairwise comparisons") 
 ```
 
-![plot of chunk unnamed-chunk-45](figure/unnamed-chunk-45-1.png)
+![ ](figure/advanced_volcao-1.png)
 
 ### Fold change distributions
 
 As this is a spike-in study with known ground truth, we can also plot
 the log2 fold change distributions against the expected values, in
-this case 0 for the HeLa proteins and 1 for the UPS standards.
+this case 0 for the HeLa proteins and the difference of the log
+concentration for the spiked-in UPS standards. We first create a small
+table with the real values.
+
+
+``` r
+realLogFC <- data.frame(Comparison = unique(inferences$Comparison))
+realLogFC$logFC <- paste0("log2(", gsub("-", "/", realLogFC$Comparison), ")") |> 
+  sapply(function(x) eval(parse(text = x)))
+```
+
+We can now create the boxplots with the estimated log2-fold changes,
+adding horizontal lines with the corresponding target values.
+
 
 
 ``` r
@@ -1441,20 +1456,19 @@ ggplot(inferences) +
         x = isUps,
         colour = isUps) +
     geom_boxplot() +
-    geom_point( ## Adding the expected Log2 fold changes 
-        data = group_by(inferences, Comparison, isUps) |> 
-          summarise(logFC = ifelse(isUps, log2(eval(parse(text = sub("-", "/", Comparison)))), 0)),
-        shape = 10, size = 4
-    ) +
+  
     scale_color_manual(
         values = c("grey20", "firebrick"), name = "",
         labels = c("HeLA background", "UPS standard")
     ) +
+    geom_hline(data = realLogFC, aes(yintercept = logFC), 
+               colour = "firebrick") +
+    geom_hline(yintercept = 0) +
     facet_wrap(~ Comparison) +
     ggtitle("Distribution of the log2 fold changes")
 ```
 
-![plot of chunk unnamed-chunk-46](figure/unnamed-chunk-46-1.png)
+![ ](figure/advanced_boxplot-1.png)
 
 Estimated log2 fold change for HeLa proteins are closely distributed
 around 0, as expected. log2 fold changes for UPS standard proteins are
@@ -1504,7 +1518,7 @@ spikein[targetProtein, , "ions"] |>
     theme(axis.text.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-48](figure/unnamed-chunk-48-1.png)
+![ ](figure/advanced_detail_plot-1.png)
 
 ## Protein-level inference
 
@@ -1549,7 +1563,7 @@ ggplot(inferences) +
             subtitle = "Protein-level modelling") 
 ```
 
-![plot of chunk unnamed-chunk-50](figure/unnamed-chunk-50-1.png)
+![ ](figure/advanced_volcano_proteins-1.png)
 
 We plot the fold change distributions:
 
@@ -1574,7 +1588,7 @@ ggplot(inferences) +
             subtitle = "Protein-level modelling") 
 ```
 
-![plot of chunk unnamed-chunk-51](figure/unnamed-chunk-51-1.png)
+![ ](figure/advanced_boxplot_proteins-1.png)
 
 Exploring the intensities at the protein level is simplified compared
 to PSM-level exploration since every sample now contains a single
@@ -1598,7 +1612,7 @@ spikein[targetProtein, , "proteins"] |>
     theme(axis.text.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-52](figure/unnamed-chunk-52-1.png)
+![ ](figure/advanced_detail_plot_proteins-1.png)
 
 Notice how the summarisation-based approach hides the variation
 associated with the measurement of different peptide ions within the
@@ -1767,7 +1781,7 @@ spikein[proteinError, , "ions"] |>
     theme(axis.text.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-58](figure/unnamed-chunk-58-1.png)
+![ ](figure/advanced_fiterror_manual-1.png)
 
 We can immediately spot that PSM intensities are only present in
 mixture 3. Hence, the mixed model cannot be fitted with a random
@@ -1861,13 +1875,6 @@ spikein <- msqrobRefit(
     name = "proteins_msqrob_imputed",
     robust = TRUE, ridge = TRUE
 )
-```
-
-```
-## Error in msqrobRefit(spikein, i = "ions_imputed", subset = oneHitProteins, : could not find function "msqrobRefit"
-```
-
-``` r
 rowData(spikein[["proteins_msqrob_imputed"]])[["msqrob_psm_rrilmm"]] |>
     sapply(function(x) x@type) |>
     table()
@@ -1875,8 +1882,8 @@ rowData(spikein[["proteins_msqrob_imputed"]])[["msqrob_psm_rrilmm"]] |>
 
 ```
 ## 
-## fitError     lmer 
-##       59      348
+## lmer 
+##  407
 ```
 
 Upon refit, no `fitError`s were generated for any proteins, as

@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 1 Preamble | Statistical analysis of mass spectrometry-based proteomics data" />
+<meta property="og:title" content="1 Preamble | Statistical analysis of mass spectrometry-based proteomics data" />
 <meta property="og:type" content="book" />
 
 
@@ -13,18 +13,18 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-11-12" />
+<meta name="date" content="2025-11-16" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script src="/usr/share/javascript/mathjax/MathJax.js" type="text/javascript"></script>
 
-<meta name="description" content="Chapter 1 Preamble | Statistical analysis of mass spectrometry-based proteomics data">
+<meta name="description" content="1 Preamble | Statistical analysis of mass spectrometry-based proteomics data">
 
-<title>Chapter 1 Preamble | Statistical analysis of mass spectrometry-based proteomics data</title>
+<title>1 Preamble | Statistical analysis of mass spectrometry-based proteomics data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/envisioned.css" rel="stylesheet" />
@@ -81,7 +81,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -139,7 +139,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -186,10 +185,11 @@ div.csl-indent {
 <a href="sec-basics.html" id="toc-sec-basics"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
 <a href="sec-advanced.html" id="toc-sec-advanced"><span class="toc-section-number">3</span> Advanced statistical analysis with msqrob2</a>
 <a href="sec-benchmarking.html" id="toc-sec-benchmarking"><span class="toc-section-number">4</span> Benchmarking workflows</a>
-<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">5</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
-<a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">6</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
-<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">7</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
-<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">8</span> Usefull links and session information</a>
+<a href="sec-worflow_optimisation.html#sec-worflow_optimisation" id="toc-sec-worflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
+<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
+<a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
+<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
+<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Usefull links and session information</a>
 </div>
 </li>
 </ul>
@@ -200,7 +200,7 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="preamble" class="section level1" number="1">
 <h1>
-<span class="header-section-number">Chapter 1</span> Preamble</h1>
+<span class="header-section-number">1</span> Preamble</h1>
 <p>This book provides comprehensive hands-on tutorials on how to apply the
 <code>msqrob2</code> software for the statistical analysis of mass spectrometry
 (MS)-based proteomics data. It includes the latest improvements of the
@@ -338,17 +338,18 @@ R and execute:</p>
 <span id="cb1-6"><a href="index.html#cb1-6" tabindex="-1"></a>   <span class="st">"ComplexHeatmap"</span>,</span>
 <span id="cb1-7"><a href="index.html#cb1-7" tabindex="-1"></a>   <span class="st">"dplyr"</span>,</span>
 <span id="cb1-8"><a href="index.html#cb1-8" tabindex="-1"></a>   <span class="st">"ExploreModelMatrix"</span>,</span>
-<span id="cb1-9"><a href="index.html#cb1-9" tabindex="-1"></a>   <span class="st">"ggplot2"</span>,</span>
-<span id="cb1-10"><a href="index.html#cb1-10" tabindex="-1"></a>   <span class="st">"ggrepel"</span>,</span>
-<span id="cb1-11"><a href="index.html#cb1-11" tabindex="-1"></a>   <span class="st">"impute"</span>,</span>
-<span id="cb1-12"><a href="index.html#cb1-12" tabindex="-1"></a>   <span class="st">"MsDataHub"</span>,</span>
-<span id="cb1-13"><a href="index.html#cb1-13" tabindex="-1"></a>   <span class="st">"patchwork"</span>,</span>
-<span id="cb1-14"><a href="index.html#cb1-14" tabindex="-1"></a>   <span class="st">"scater"</span>,</span>
-<span id="cb1-15"><a href="index.html#cb1-15" tabindex="-1"></a>   <span class="st">"tidyr"</span>,</span>
-<span id="cb1-16"><a href="index.html#cb1-16" tabindex="-1"></a>   <span class="st">"bookdown"</span></span>
-<span id="cb1-17"><a href="index.html#cb1-17" tabindex="-1"></a>))</span></code></pre></div>
+<span id="cb1-9"><a href="index.html#cb1-9" tabindex="-1"></a>   <span class="st">"ggpattern"</span>,</span>
+<span id="cb1-10"><a href="index.html#cb1-10" tabindex="-1"></a>   <span class="st">"ggplot2"</span>,</span>
+<span id="cb1-11"><a href="index.html#cb1-11" tabindex="-1"></a>   <span class="st">"ggrepel"</span>,</span>
+<span id="cb1-12"><a href="index.html#cb1-12" tabindex="-1"></a>   <span class="st">"impute"</span>,</span>
+<span id="cb1-13"><a href="index.html#cb1-13" tabindex="-1"></a>   <span class="st">"MsDataHub"</span>,</span>
+<span id="cb1-14"><a href="index.html#cb1-14" tabindex="-1"></a>   <span class="st">"patchwork"</span>,</span>
+<span id="cb1-15"><a href="index.html#cb1-15" tabindex="-1"></a>   <span class="st">"scater"</span>,</span>
+<span id="cb1-16"><a href="index.html#cb1-16" tabindex="-1"></a>   <span class="st">"tidyr"</span>,</span>
+<span id="cb1-17"><a href="index.html#cb1-17" tabindex="-1"></a>   <span class="st">"bookdown"</span></span>
+<span id="cb1-18"><a href="index.html#cb1-18" tabindex="-1"></a>))</span></code></pre></div>
 <p>All software versions used to generate this document are recorded at
-the end of the book in chapter <a href="sec-end.html#sec-end">8</a>.</p>
+the end of the book in chapter <a href="sec-end.html#sec-end">9</a>.</p>
 </div>
 <div id="citation" class="section level2" number="1.5">
 <h2>
@@ -387,7 +388,7 @@ distribute your contributions under the same license as the original.</p>
 <a href="sec-basics.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-11-12
+2025-11-16
  using 
 R version 4.5.2 (2025-10-31)
 </p>

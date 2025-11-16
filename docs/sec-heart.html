@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 6 Heart use case: a MaxQuant LFQ DDA dataset with a more complex design | Statistical analysis of mass spectrometry-based proteomics data" />
+<meta property="og:title" content="7 Heart use case: a MaxQuant LFQ DDA dataset with a more complex design | Statistical analysis of mass spectrometry-based proteomics data" />
 <meta property="og:type" content="book" />
 
 
@@ -13,18 +13,18 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-11-12" />
+<meta name="date" content="2025-11-16" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script src="/usr/share/javascript/mathjax/MathJax.js" type="text/javascript"></script>
 
-<meta name="description" content="Chapter 6 Heart use case: a MaxQuant LFQ DDA dataset with a more complex design | Statistical analysis of mass spectrometry-based proteomics data">
+<meta name="description" content="7 Heart use case: a MaxQuant LFQ DDA dataset with a more complex design | Statistical analysis of mass spectrometry-based proteomics data">
 
-<title>Chapter 6 Heart use case: a MaxQuant LFQ DDA dataset with a more complex design | Statistical analysis of mass spectrometry-based proteomics data</title>
+<title>7 Heart use case: a MaxQuant LFQ DDA dataset with a more complex design | Statistical analysis of mass spectrometry-based proteomics data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/envisioned.css" rel="stylesheet" />
@@ -81,7 +81,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -139,7 +139,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -178,19 +177,20 @@ div.csl-indent {
 <a href="sec-basics.html" id="toc-sec-basics"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
 <a href="sec-advanced.html" id="toc-sec-advanced"><span class="toc-section-number">3</span> Advanced statistical analysis with msqrob2</a>
 <a href="sec-benchmarking.html" id="toc-sec-benchmarking"><span class="toc-section-number">4</span> Benchmarking workflows</a>
-<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">5</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
-<a id="active-page" href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">6</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a><ul class="toc-sections">
+<a href="sec-worflow_optimisation.html#sec-worflow_optimisation" id="toc-sec-worflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
+<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
+<a id="active-page" href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a><ul class="toc-sections">
 <li class="toc"><a href="#introduction-1"> Introduction</a></li>
-<li class="toc"><a href="#load-packages-4"> Load packages</a></li>
+<li class="toc"><a href="#load-packages-5"> Load packages</a></li>
 <li class="toc"><a href="#load-data-1"> Load Data</a></li>
 <li class="toc"><a href="#data-preprocessing-3"> Data preprocessing</a></li>
 <li class="toc"><a href="#data-exploration-2"> Data exploration</a></li>
-<li class="toc"><a href="#data-modelling-2"> Data modelling</a></li>
+<li class="toc"><a href="#data-modelling-3"> Data modelling</a></li>
 <li class="toc"><a href="#statistical-inference-2"> Statistical inference</a></li>
-<li class="toc"><a href="#conclusion-3"> Conclusion</a></li>
+<li class="toc"><a href="#conclusion-4"> Conclusion</a></li>
 </ul>
-<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">7</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
-<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">8</span> Usefull links and session information</a>
+<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
+<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Usefull links and session information</a>
 </div>
 </li>
 </ul>
@@ -199,12 +199,12 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="sec-heart" class="section level1" number="6">
+<div id="sec-heart" class="section level1" number="7">
 <h1>
-<span class="header-section-number">Chapter 6</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</h1>
-<div id="introduction-1" class="section level2" number="6.1">
+<span class="header-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</h1>
+<div id="introduction-1" class="section level2" number="7.1">
 <h2>
-<span class="header-section-number">6.1</span> Introduction<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('introduction-1')" onmouseout="reset_tooltip('introduction-1-tooltip')"><span class="tooltiptext" id="introduction-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.1</span> Introduction<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('introduction-1')" onmouseout="reset_tooltip('introduction-1-tooltip')"><span class="tooltiptext" id="introduction-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>In this chapter we show how to analyse LFQ data from an experiment
 with a more complex design. The data are a small subset of the public
@@ -220,43 +220,43 @@ right ventricle, the average ventricular vs atrial proteome and if
 ventricular vs atrial proteome shifts differ between left and right
 heart region.</p>
 </div>
-<div id="load-packages-4" class="section level2" number="6.2">
+<div id="load-packages-5" class="section level2" number="7.2">
 <h2>
-<span class="header-section-number">6.2</span> Load packages<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-packages-4')" onmouseout="reset_tooltip('load-packages-4-tooltip')"><span class="tooltiptext" id="load-packages-4-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.2</span> Load packages<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-packages-5')" onmouseout="reset_tooltip('load-packages-5-tooltip')"><span class="tooltiptext" id="load-packages-5-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>First, we load the <code>msqrob2</code> package and additional packages for data
 manipulation and visualisation.</p>
-<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="sec-heart.html#cb256-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"msqrob2"</span>)</span>
-<span id="cb256-2"><a href="sec-heart.html#cb256-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb256-3"><a href="sec-heart.html#cb256-3" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
-<span id="cb256-4"><a href="sec-heart.html#cb256-4" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggrepel"</span>)</span>
-<span id="cb256-5"><a href="sec-heart.html#cb256-5" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="sec-heart.html#cb284-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"msqrob2"</span>)</span>
+<span id="cb284-2"><a href="sec-heart.html#cb284-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb284-3"><a href="sec-heart.html#cb284-3" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb284-4"><a href="sec-heart.html#cb284-4" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggrepel"</span>)</span>
+<span id="cb284-5"><a href="sec-heart.html#cb284-5" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span></code></pre></div>
 <p>We also configure the <a href="sec-basics.html#sec-parallel">parallelisation</a> framework.</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="sec-heart.html#cb257-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocParallel"</span>)</span>
-<span id="cb257-2"><a href="sec-heart.html#cb257-2" tabindex="-1"></a><span class="fu">register</span>(<span class="fu">SerialParam</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb285"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb285-1"><a href="sec-heart.html#cb285-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocParallel"</span>)</span>
+<span id="cb285-2"><a href="sec-heart.html#cb285-2" tabindex="-1"></a><span class="fu">register</span>(<span class="fu">SerialParam</span>())</span></code></pre></div>
 </div>
-<div id="load-data-1" class="section level2" number="6.3">
+<div id="load-data-1" class="section level2" number="7.3">
 <h2>
-<span class="header-section-number">6.3</span> Load Data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-data-1')" onmouseout="reset_tooltip('load-data-1-tooltip')"><span class="tooltiptext" id="load-data-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.3</span> Load Data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-data-1')" onmouseout="reset_tooltip('load-data-1-tooltip')"><span class="tooltiptext" id="load-data-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
-<div id="getting-the-data-1" class="section level3" number="6.3.1">
+<div id="getting-the-data-1" class="section level3" number="7.3.1">
 <h3>
-<span class="header-section-number">6.3.1</span> Getting the data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('getting-the-data-1')" onmouseout="reset_tooltip('getting-the-data-1-tooltip')"><span class="tooltiptext" id="getting-the-data-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.3.1</span> Getting the data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('getting-the-data-1')" onmouseout="reset_tooltip('getting-the-data-1-tooltip')"><span class="tooltiptext" id="getting-the-data-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>The data were searched with MaxQuant version version 1.5.5.6 and are
 deposited on the PRIDE repository
 <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD006675">PXD006675</a>.</p>
 <p>In this chapter we use a small subset of the data that is available on
 <strong>TODO</strong> put on Zenodo and use BiocFileCache.</p>
-<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="sec-heart.html#cb258-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocFileCache"</span>)</span>
-<span id="cb258-2"><a href="sec-heart.html#cb258-2" tabindex="-1"></a>bfc <span class="ot">&lt;-</span> <span class="fu">BiocFileCache</span>()</span>
-<span id="cb258-3"><a href="sec-heart.html#cb258-3" tabindex="-1"></a>pepFile <span class="ot">&lt;-</span> <span class="fu">bfcrpath</span>(bfc, <span class="st">"https://raw.githubusercontent.com/statOmics/PDA21/data/quantification/heart/peptides.txt"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="sec-heart.html#cb286-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocFileCache"</span>)</span>
+<span id="cb286-2"><a href="sec-heart.html#cb286-2" tabindex="-1"></a>bfc <span class="ot">&lt;-</span> <span class="fu">BiocFileCache</span>()</span>
+<span id="cb286-3"><a href="sec-heart.html#cb286-3" tabindex="-1"></a>pepFile <span class="ot">&lt;-</span> <span class="fu">bfcrpath</span>(bfc, <span class="st">"https://raw.githubusercontent.com/statOmics/PDA21/data/quantification/heart/peptides.txt"</span>)</span></code></pre></div>
 <p>After downloading the files, we can load the peptide table, which is
 in <a href="sec-basics.html#sec-peptide_table">“wide format”</a>. Hence, each row represents a
 single peptide and that each quantification column (that starts with
 <code>"Intensity"</code>) represents a single sample.</p>
-<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="sec-heart.html#cb259-1" tabindex="-1"></a>peps <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(pepFile)</span>
-<span id="cb259-2"><a href="sec-heart.html#cb259-2" tabindex="-1"></a>quantcols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"Intensity</span><span class="sc">\\</span><span class="st">."</span>, <span class="fu">names</span>(peps), <span class="at">value =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="sec-heart.html#cb287-1" tabindex="-1"></a>peps <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(pepFile)</span>
+<span id="cb287-2"><a href="sec-heart.html#cb287-2" tabindex="-1"></a>quantcols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"Intensity</span><span class="sc">\\</span><span class="st">."</span>, <span class="fu">names</span>(peps), <span class="at">value =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <table style="width:100%;">
 <colgroup>
 <col width="1%">
@@ -1105,10 +1105,10 @@ single peptide and that each quantification column (that starts with
 will build a table where each row in the annotation table contains
 information for one sample (the table below shows the first 6 rows).
 This information is extracted from the sample names.</p>
-<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="sec-heart.html#cb260-1" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">quantCols =</span> quantcols) <span class="sc">|&gt;</span> </span>
-<span id="cb260-2"><a href="sec-heart.html#cb260-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">location  =</span> <span class="fu">substr</span>(quantCols, <span class="dv">11</span>, <span class="dv">11</span>)) <span class="sc">|&gt;</span> <span class="co"># heart region left-right</span></span>
-<span id="cb260-3"><a href="sec-heart.html#cb260-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tissue  =</span> <span class="fu">substr</span>(quantCols, <span class="dv">12</span>, <span class="dv">12</span>)) <span class="sc">|&gt;</span> <span class="co"># tissue Atrium-Ventriculum</span></span>
-<span id="cb260-4"><a href="sec-heart.html#cb260-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">patient  =</span> <span class="fu">substr</span>(quantCols, <span class="dv">13</span>, <span class="dv">13</span>)) <span class="co"># patient id</span></span></code></pre></div>
+<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="sec-heart.html#cb288-1" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">quantCols =</span> quantcols) <span class="sc">|&gt;</span> </span>
+<span id="cb288-2"><a href="sec-heart.html#cb288-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">location  =</span> <span class="fu">substr</span>(quantCols, <span class="dv">11</span>, <span class="dv">11</span>)) <span class="sc">|&gt;</span> <span class="co"># heart region left-right</span></span>
+<span id="cb288-3"><a href="sec-heart.html#cb288-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tissue  =</span> <span class="fu">substr</span>(quantCols, <span class="dv">12</span>, <span class="dv">12</span>)) <span class="sc">|&gt;</span> <span class="co"># tissue Atrium-Ventriculum</span></span>
+<span id="cb288-4"><a href="sec-heart.html#cb288-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">patient  =</span> <span class="fu">substr</span>(quantCols, <span class="dv">13</span>, <span class="dv">13</span>)) <span class="co"># patient id</span></span></code></pre></div>
 <table>
 <thead><tr class="header">
 <th align="left">quantCols</th>
@@ -1156,14 +1156,14 @@ This information is extracted from the sample names.</p>
 </tbody>
 </table>
 </div>
-<div id="the-qfeatures-data-class-1" class="section level3" number="6.3.2">
+<div id="the-qfeatures-data-class-1" class="section level3" number="7.3.2">
 <h3>
-<span class="header-section-number">6.3.2</span> The <code>QFeatures</code> data class<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('the-qfeatures-data-class-1')" onmouseout="reset_tooltip('the-qfeatures-data-class-1-tooltip')"><span class="tooltiptext" id="the-qfeatures-data-class-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.3.2</span> The <code>QFeatures</code> data class<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('the-qfeatures-data-class-1')" onmouseout="reset_tooltip('the-qfeatures-data-class-1-tooltip')"><span class="tooltiptext" id="the-qfeatures-data-class-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We combine the two tables into a <a href="sec-basics.html#sec-qfeatures"><code>QFeatures</code> object</a>.</p>
-<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="sec-heart.html#cb261-1" tabindex="-1"></a>(pe <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
-<span id="cb261-2"><a href="sec-heart.html#cb261-2" tabindex="-1"></a>  peps, <span class="at">colData =</span> coldata, <span class="at">fnames =</span> <span class="st">"Sequence"</span>, <span class="at">name =</span> <span class="st">"peptides"</span></span>
-<span id="cb261-3"><a href="sec-heart.html#cb261-3" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="sec-heart.html#cb289-1" tabindex="-1"></a>(pe <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
+<span id="cb289-2"><a href="sec-heart.html#cb289-2" tabindex="-1"></a>  peps, <span class="at">colData =</span> coldata, <span class="at">fnames =</span> <span class="st">"Sequence"</span>, <span class="at">name =</span> <span class="st">"peptides"</span></span>
+<span id="cb289-3"><a href="sec-heart.html#cb289-3" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## An instance of class QFeatures (type: bulk) with 1 set:
 ## 
 ##  [1] peptides: SummarizedExperiment with 31319 rows and 12 columns</code></pre>
@@ -1171,94 +1171,91 @@ This information is extracted from the sample names.</p>
 (samples).</p>
 </div>
 </div>
-<div id="data-preprocessing-3" class="section level2" number="6.4">
+<div id="data-preprocessing-3" class="section level2" number="7.4">
 <h2>
-<span class="header-section-number">6.4</span> Data preprocessing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-preprocessing-3')" onmouseout="reset_tooltip('data-preprocessing-3-tooltip')"><span class="tooltiptext" id="data-preprocessing-3-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.4</span> Data preprocessing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-preprocessing-3')" onmouseout="reset_tooltip('data-preprocessing-3-tooltip')"><span class="tooltiptext" id="data-preprocessing-3-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p><code>msqrob2</code> relies on the <code>QFeatures</code> data structure, meaning that we
 can directly make use of <code>QFeatures</code>’ data preprocessing functionality
 (see also the <code>QFeatures</code>
 <a href="https://rformassspectrometry.github.io/QFeatures/articles/Processing.html">documentation</a>).</p>
-<div id="encoding-missing-values-2" class="section level3" number="6.4.1">
+<div id="encoding-missing-values-2" class="section level3" number="7.4.1">
 <h3>
-<span class="header-section-number">6.4.1</span> Encoding missing values<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('encoding-missing-values-2')" onmouseout="reset_tooltip('encoding-missing-values-2-tooltip')"><span class="tooltiptext" id="encoding-missing-values-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.4.1</span> Encoding missing values<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('encoding-missing-values-2')" onmouseout="reset_tooltip('encoding-missing-values-2-tooltip')"><span class="tooltiptext" id="encoding-missing-values-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Peptides with zero intensities should be
 <a href="sec-basics.html#sec-encode_missing">encoded</a> using <code>NA</code>.</p>
-<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="sec-heart.html#cb263-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(pe, <span class="st">"peptides"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="sec-heart.html#cb291-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(pe, <span class="st">"peptides"</span>)</span></code></pre></div>
 <p>We calculate how many non zero intensities we have per peptide and
 this is often useful for filtering.</p>
-<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="sec-heart.html#cb264-1" tabindex="-1"></a>naResults <span class="ot">&lt;-</span> <span class="fu">nNA</span>(pe, <span class="st">"peptides"</span>)</span>
-<span id="cb264-2"><a href="sec-heart.html#cb264-2" tabindex="-1"></a><span class="fu">data.frame</span>(naResults<span class="sc">$</span>nNArows) <span class="sc">|&gt;</span> </span>
-<span id="cb264-3"><a href="sec-heart.html#cb264-3" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb264-4"><a href="sec-heart.html#cb264-4" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> nNA) <span class="sc">+</span></span>
-<span id="cb264-5"><a href="sec-heart.html#cb264-5" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-11-1.png" alt="plot of chunk unnamed-chunk-11"><div class="figcaption">plot of chunk unnamed-chunk-11</div>
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="sec-heart.html#cb292-1" tabindex="-1"></a>naResults <span class="ot">&lt;-</span> <span class="fu">nNA</span>(pe, <span class="st">"peptides"</span>)</span>
+<span id="cb292-2"><a href="sec-heart.html#cb292-2" tabindex="-1"></a><span class="fu">data.frame</span>(naResults<span class="sc">$</span>nNArows) <span class="sc">|&gt;</span> </span>
+<span id="cb292-3"><a href="sec-heart.html#cb292-3" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb292-4"><a href="sec-heart.html#cb292-4" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> nNA) <span class="sc">+</span></span>
+<span id="cb292-5"><a href="sec-heart.html#cb292-5" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<p><img src="figure/heart_nNA_hist-1.png"></p>
 </div>
-</div>
-<div id="psm-filtering-1" class="section level3" number="6.4.2">
+<div id="psm-filtering" class="section level3" number="7.4.2">
 <h3>
-<span class="header-section-number">6.4.2</span> PSM filtering<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('psm-filtering-1')" onmouseout="reset_tooltip('psm-filtering-1-tooltip')"><span class="tooltiptext" id="psm-filtering-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.4.2</span> PSM filtering<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('psm-filtering')" onmouseout="reset_tooltip('psm-filtering-tooltip')"><span class="tooltiptext" id="psm-filtering-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
-<p>We filter features based on 3 criteria (see <a href="sec-advanced.html#psm-filtering">PSM filtering</a>).</p>
+<p>We filter features based on 3 criteria (see <a href="sec-basics.html#sec-filter">PSM filtering</a>).</p>
 <ol style="list-style-type: decimal">
 <li>Remove failed protein inference</li>
 </ol>
 <p>We remove peptides that could not be uniquely mapped to a protein.</p>
-<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="sec-heart.html#cb265-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe,</span>
-<span id="cb265-2"><a href="sec-heart.html#cb265-2" tabindex="-1"></a>  <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
-<span id="cb265-3"><a href="sec-heart.html#cb265-3" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins)) <span class="do">## Remove protein groups</span></span></code></pre></div>
+<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="sec-heart.html#cb293-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe,</span>
+<span id="cb293-2"><a href="sec-heart.html#cb293-2" tabindex="-1"></a>  <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
+<span id="cb293-3"><a href="sec-heart.html#cb293-3" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins)) <span class="do">## Remove protein groups</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Remove reverse sequences (decoys) and contaminants</li>
 </ol>
 <p>We remove the contaminants and peptides that map to decoy sequences.
 These features bear no information of interest and will reduce the
 statistical power upon multiple test adjustment.</p>
-<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="sec-heart.html#cb266-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe, <span class="sc">~</span> Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> Potential.contaminant <span class="sc">!=</span> <span class="st">"+"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="sec-heart.html#cb294-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe, <span class="sc">~</span> Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> Potential.contaminant <span class="sc">!=</span> <span class="st">"+"</span>)</span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Remove highly missing peptides.</li>
 </ol>
-<p>We keep peptides that were observed at last 3 times out of the <span class="math inline">\(n =
-12\)</span> samples, so we tolerate the following proportion of NAs:
+<p>We keep peptides that were observed at last 3 times out of the <span class="math inline">\(n = 12\)</span> samples, so we tolerate the following proportion of NAs:
 <span class="math inline">\(\text{pNA} = \frac{(n - 3)}{n} = 0.75\)</span>, so we keep peptides that are
 observed in at least 25% of the samples.</p>
-<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="sec-heart.html#cb267-1" tabindex="-1"></a>nObs <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb267-2"><a href="sec-heart.html#cb267-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(pe[[<span class="st">"peptides"</span>]])</span>
-<span id="cb267-3"><a href="sec-heart.html#cb267-3" tabindex="-1"></a>(pe <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(pe, <span class="at">i =</span> <span class="st">"peptides"</span>, <span class="at">pNA =</span> (n <span class="sc">-</span> nObs) <span class="sc">/</span> n))</span></code></pre></div>
+<div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb295-1"><a href="sec-heart.html#cb295-1" tabindex="-1"></a>nObs <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb295-2"><a href="sec-heart.html#cb295-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(pe[[<span class="st">"peptides"</span>]])</span>
+<span id="cb295-3"><a href="sec-heart.html#cb295-3" tabindex="-1"></a>(pe <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(pe, <span class="at">i =</span> <span class="st">"peptides"</span>, <span class="at">pNA =</span> (n <span class="sc">-</span> nObs) <span class="sc">/</span> n))</span></code></pre></div>
 <pre><code>## An instance of class QFeatures (type: bulk) with 1 set:
 ## 
 ##  [1] peptides: SummarizedExperiment with 15630 rows and 12 columns</code></pre>
 <p>We keep 15630 peptides upon filtering.</p>
 </div>
-<div id="standard-preprocessing-workflow-1" class="section level3" number="6.4.3">
+<div id="standard-preprocessing-workflow-1" class="section level3" number="7.4.3">
 <h3>
-<span class="header-section-number">6.4.3</span> Standard preprocessing workflow<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('standard-preprocessing-workflow-1')" onmouseout="reset_tooltip('standard-preprocessing-workflow-1-tooltip')"><span class="tooltiptext" id="standard-preprocessing-workflow-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.4.3</span> Standard preprocessing workflow<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('standard-preprocessing-workflow-1')" onmouseout="reset_tooltip('standard-preprocessing-workflow-1-tooltip')"><span class="tooltiptext" id="standard-preprocessing-workflow-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We can now prepare the data for modelling. The workflow ensures the
 data complies to <code>msqrob2</code>’s requirements:</p>
 <ol style="list-style-type: decimal">
 <li>Intensities are <a href="sec-basics.html#sec-log2">log-transformed</a>.</li>
 </ol>
-<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="sec-heart.html#cb269-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(pe, <span class="at">base =</span> <span class="dv">2</span>, <span class="at">i =</span> <span class="st">"peptides"</span>, <span class="at">name =</span> <span class="st">"peptides_log"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="sec-heart.html#cb297-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(pe, <span class="at">base =</span> <span class="dv">2</span>, <span class="at">i =</span> <span class="st">"peptides"</span>, <span class="at">name =</span> <span class="st">"peptides_log"</span>)</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Normalisation with Median of Ratios method.</li>
 </ol>
-<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="sec-heart.html#cb270-1" tabindex="-1"></a>pseudoRef <span class="ot">&lt;-</span> <span class="fu">assay</span>(pe[[<span class="st">"peptides_log"</span>]]) <span class="sc">|&gt;</span> </span>
-<span id="cb270-2"><a href="sec-heart.html#cb270-2" tabindex="-1"></a>  <span class="fu">rowMeans</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co">#1. Calculate the row means </span></span>
-<span id="cb270-3"><a href="sec-heart.html#cb270-3" tabindex="-1"></a></span>
-<span id="cb270-4"><a href="sec-heart.html#cb270-4" tabindex="-1"></a>nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
-<span id="cb270-5"><a href="sec-heart.html#cb270-5" tabindex="-1"></a>  <span class="fu">assay</span>(pe[[<span class="st">"peptides_log"</span>]]), </span>
-<span id="cb270-6"><a href="sec-heart.html#cb270-6" tabindex="-1"></a>  <span class="at">MARGIN =</span> <span class="dv">1</span>, </span>
-<span id="cb270-7"><a href="sec-heart.html#cb270-7" tabindex="-1"></a>  pseudoRef) <span class="sc">|&gt;</span> <span class="co">#2. Subtract the row means row-by-row (MARGIN = 1)</span></span>
-<span id="cb270-8"><a href="sec-heart.html#cb270-8" tabindex="-1"></a>  <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)  <span class="co">#3. Calculate the column median </span></span>
-<span id="cb270-9"><a href="sec-heart.html#cb270-9" tabindex="-1"></a></span>
-<span id="cb270-10"><a href="sec-heart.html#cb270-10" tabindex="-1"></a>pe <span class="ot">&lt;-</span> </span>
-<span id="cb270-11"><a href="sec-heart.html#cb270-11" tabindex="-1"></a>  <span class="fu">sweep</span>(pe, </span>
-<span id="cb270-12"><a href="sec-heart.html#cb270-12" tabindex="-1"></a>        <span class="at">MARGIN =</span> <span class="dv">2</span>, </span>
-<span id="cb270-13"><a href="sec-heart.html#cb270-13" tabindex="-1"></a>        <span class="at">STATS =</span> nfLog , </span>
-<span id="cb270-14"><a href="sec-heart.html#cb270-14" tabindex="-1"></a>        <span class="at">i =</span> <span class="st">"peptides_log"</span>, </span>
-<span id="cb270-15"><a href="sec-heart.html#cb270-15" tabindex="-1"></a>        <span class="at">name =</span> <span class="st">"peptides_norm"</span>) <span class="co">#4. Subtract log2 norm factor column-by-column (MARGIN = 2)</span></span></code></pre></div>
+<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="sec-heart.html#cb298-1" tabindex="-1"></a>pseudoRef <span class="ot">&lt;-</span> <span class="fu">assay</span>(pe[[<span class="st">"peptides_log"</span>]]) <span class="sc">|&gt;</span> </span>
+<span id="cb298-2"><a href="sec-heart.html#cb298-2" tabindex="-1"></a>  <span class="fu">rowMeans</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co">#1. Calculate the row means </span></span>
+<span id="cb298-3"><a href="sec-heart.html#cb298-3" tabindex="-1"></a></span>
+<span id="cb298-4"><a href="sec-heart.html#cb298-4" tabindex="-1"></a>nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
+<span id="cb298-5"><a href="sec-heart.html#cb298-5" tabindex="-1"></a>  <span class="fu">assay</span>(pe[[<span class="st">"peptides_log"</span>]]), </span>
+<span id="cb298-6"><a href="sec-heart.html#cb298-6" tabindex="-1"></a>  <span class="at">MARGIN =</span> <span class="dv">1</span>, </span>
+<span id="cb298-7"><a href="sec-heart.html#cb298-7" tabindex="-1"></a>  pseudoRef) <span class="sc">|&gt;</span> <span class="co">#2. Subtract the row means row-by-row (MARGIN = 1)</span></span>
+<span id="cb298-8"><a href="sec-heart.html#cb298-8" tabindex="-1"></a>  <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)  <span class="co">#3. Calculate the column median </span></span>
+<span id="cb298-9"><a href="sec-heart.html#cb298-9" tabindex="-1"></a></span>
+<span id="cb298-10"><a href="sec-heart.html#cb298-10" tabindex="-1"></a>pe <span class="ot">&lt;-</span> </span>
+<span id="cb298-11"><a href="sec-heart.html#cb298-11" tabindex="-1"></a>  <span class="fu">sweep</span>(pe, </span>
+<span id="cb298-12"><a href="sec-heart.html#cb298-12" tabindex="-1"></a>        <span class="at">MARGIN =</span> <span class="dv">2</span>, </span>
+<span id="cb298-13"><a href="sec-heart.html#cb298-13" tabindex="-1"></a>        <span class="at">STATS =</span> nfLog , </span>
+<span id="cb298-14"><a href="sec-heart.html#cb298-14" tabindex="-1"></a>        <span class="at">i =</span> <span class="st">"peptides_log"</span>, </span>
+<span id="cb298-15"><a href="sec-heart.html#cb298-15" tabindex="-1"></a>        <span class="at">name =</span> <span class="st">"peptides_norm"</span>) <span class="co">#4. Subtract log2 norm factor column-by-column (MARGIN = 2)</span></span></code></pre></div>
 <!--
 2. Samples are normalised by substracting the sample median (see [Normalisation])
 -->
@@ -1267,14 +1264,12 @@ confirm this, we will plot the intensity distributions for each
 biorepeat (mouse). <code>longForm()</code> seamlessly combines the quantification
 and annotation data into a table suitable for <code>ggplot2</code> visualisation.
 We also subset the object with the data before and after normalisation.</p>
-<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="sec-heart.html#cb271-1" tabindex="-1"></a><span class="fu">longForm</span>(pe[, , <span class="fu">c</span>(<span class="st">"peptides_log"</span>, <span class="st">"peptides_norm"</span>)], <span class="at">colvar =</span> <span class="st">"patient"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb271-2"><a href="sec-heart.html#cb271-2" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb271-3"><a href="sec-heart.html#cb271-3" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">group =</span> colname, <span class="at">color =</span> patient) <span class="sc">+</span></span>
-<span id="cb271-4"><a href="sec-heart.html#cb271-4" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
-<span id="cb271-5"><a href="sec-heart.html#cb271-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> assay, <span class="at">scale =</span> <span class="st">"free"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-18-1.png" alt="plot of chunk unnamed-chunk-18"><div class="figcaption">plot of chunk unnamed-chunk-18</div>
-</div>
+<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="sec-heart.html#cb299-1" tabindex="-1"></a><span class="fu">longForm</span>(pe[, , <span class="fu">c</span>(<span class="st">"peptides_log"</span>, <span class="st">"peptides_norm"</span>)], <span class="at">colvar =</span> <span class="st">"patient"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb299-2"><a href="sec-heart.html#cb299-2" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb299-3"><a href="sec-heart.html#cb299-3" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">group =</span> colname, <span class="at">color =</span> patient) <span class="sc">+</span></span>
+<span id="cb299-4"><a href="sec-heart.html#cb299-4" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb299-5"><a href="sec-heart.html#cb299-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> assay, <span class="at">scale =</span> <span class="st">"free"</span>)</span></code></pre></div>
+<p><img src="figure/heart_after_norm-1.png"></p>
 <ol start="3" style="list-style-type: decimal">
 <li>
 <a href="sec-basics.html#sec-summarisation">Summarisation</a> to protein level.</li>
@@ -1283,35 +1278,33 @@ We also subset the object with the data before and after normalisation.</p>
 peptide-level data, accounting for the fact that different peptides
 have ionisation efficiencies hence leading to different intensity
 baselines.</p>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="sec-heart.html#cb272-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
-<span id="cb272-2"><a href="sec-heart.html#cb272-2" tabindex="-1"></a>  pe, <span class="at">i =</span> <span class="st">"peptides_norm"</span>, <span class="at">fcol =</span> <span class="st">"Proteins"</span>, </span>
-<span id="cb272-3"><a href="sec-heart.html#cb272-3" tabindex="-1"></a>  <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"proteins"</span></span>
-<span id="cb272-4"><a href="sec-heart.html#cb272-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="sec-heart.html#cb300-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
+<span id="cb300-2"><a href="sec-heart.html#cb300-2" tabindex="-1"></a>  pe, <span class="at">i =</span> <span class="st">"peptides_norm"</span>, <span class="at">fcol =</span> <span class="st">"Proteins"</span>, </span>
+<span id="cb300-3"><a href="sec-heart.html#cb300-3" tabindex="-1"></a>  <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"proteins"</span></span>
+<span id="cb300-4"><a href="sec-heart.html#cb300-4" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 </div>
-<div id="data-exploration-2" class="section level2" number="6.5">
+<div id="data-exploration-2" class="section level2" number="7.5">
 <h2>
-<span class="header-section-number">6.5</span> Data exploration<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-exploration-2')" onmouseout="reset_tooltip('data-exploration-2-tooltip')"><span class="tooltiptext" id="data-exploration-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.5</span> Data exploration<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-exploration-2')" onmouseout="reset_tooltip('data-exploration-2-tooltip')"><span class="tooltiptext" id="data-exploration-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>We will explore the main sources of variation in the data using
 <a href="sec-basics.html#sec_data_exploration">MDS</a>.</p>
-<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="sec-heart.html#cb273-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"scater"</span>)</span>
-<span id="cb273-2"><a href="sec-heart.html#cb273-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb273-3"><a href="sec-heart.html#cb273-3" tabindex="-1"></a>  <span class="fu">as</span>(<span class="st">"SingleCellExperiment"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb273-4"><a href="sec-heart.html#cb273-4" tabindex="-1"></a>  <span class="fu">runMDS</span>(<span class="at">exprs_values =</span> <span class="dv">1</span>) </span>
-<span id="cb273-5"><a href="sec-heart.html#cb273-5" tabindex="-1"></a><span class="fu">plotMDS</span>(se, <span class="at">colour_by =</span> <span class="st">"tissue"</span>) <span class="sc">+</span></span>
-<span id="cb273-6"><a href="sec-heart.html#cb273-6" tabindex="-1"></a>  <span class="fu">plotMDS</span>(se, <span class="at">colour_by =</span> <span class="st">"location"</span>) <span class="sc">+</span></span>
-<span id="cb273-7"><a href="sec-heart.html#cb273-7" tabindex="-1"></a>  <span class="fu">plotMDS</span>(se, <span class="at">colour_by =</span> <span class="st">"patient"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-20-1.png" alt="plot of chunk unnamed-chunk-20"><div class="figcaption">plot of chunk unnamed-chunk-20</div>
-</div>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="sec-heart.html#cb301-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"scater"</span>)</span>
+<span id="cb301-2"><a href="sec-heart.html#cb301-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb301-3"><a href="sec-heart.html#cb301-3" tabindex="-1"></a>  <span class="fu">as</span>(<span class="st">"SingleCellExperiment"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb301-4"><a href="sec-heart.html#cb301-4" tabindex="-1"></a>  <span class="fu">runMDS</span>(<span class="at">exprs_values =</span> <span class="dv">1</span>) </span>
+<span id="cb301-5"><a href="sec-heart.html#cb301-5" tabindex="-1"></a><span class="fu">plotMDS</span>(se, <span class="at">colour_by =</span> <span class="st">"tissue"</span>) <span class="sc">+</span></span>
+<span id="cb301-6"><a href="sec-heart.html#cb301-6" tabindex="-1"></a>  <span class="fu">plotMDS</span>(se, <span class="at">colour_by =</span> <span class="st">"location"</span>) <span class="sc">+</span></span>
+<span id="cb301-7"><a href="sec-heart.html#cb301-7" tabindex="-1"></a>  <span class="fu">plotMDS</span>(se, <span class="at">colour_by =</span> <span class="st">"patient"</span>)</span></code></pre></div>
+<p><img src="figure/heart_mds-1.png"></p>
 <p>Note, that the samples upon robust summarisation show a clear
 separation according to the tissue type in the first dimension and
 according to location in the second dimension.</p>
 </div>
-<div id="data-modelling-2" class="section level2" number="6.6">
+<div id="data-modelling-3" class="section level2" number="7.6">
 <h2>
-<span class="header-section-number">6.6</span> Data modelling<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-modelling-2')" onmouseout="reset_tooltip('data-modelling-2-tooltip')"><span class="tooltiptext" id="data-modelling-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.6</span> Data modelling<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-modelling-3')" onmouseout="reset_tooltip('data-modelling-3-tooltip')"><span class="tooltiptext" id="data-modelling-3-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>The preprocessed data can now be modelled to answer biologically
 relevant questions. Particularly, the protein abundance can differ
@@ -1334,21 +1327,21 @@ experiments with large sample sizes).</p>
 <p>Now we have identified the sources of variation in the experiment that
 we have to account for (tissue, location and patient id), we can
 define a model.</p>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="sec-heart.html#cb274-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="er">~</span> location<span class="sc">*</span>tissue <span class="sc">+</span> <span class="do">## (1) fixed effects: main effects for location and tissue type, and a tissue x location interaction</span></span>
-<span id="cb274-2"><a href="sec-heart.html#cb274-2" tabindex="-1"></a>  patient  <span class="do">## (2) fixed block effect for patient</span></span></code></pre></div>
-<div id="estimate-the-model-1" class="section level3" number="6.6.1">
+<div class="sourceCode" id="cb302"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb302-1"><a href="sec-heart.html#cb302-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="er">~</span> location<span class="sc">*</span>tissue <span class="sc">+</span> <span class="do">## (1) fixed effects: main effects for location and tissue type, and a tissue x location interaction</span></span>
+<span id="cb302-2"><a href="sec-heart.html#cb302-2" tabindex="-1"></a>  patient  <span class="do">## (2) fixed block effect for patient</span></span></code></pre></div>
+<div id="estimate-the-model-1" class="section level3" number="7.6.1">
 <h3>
-<span class="header-section-number">6.6.1</span> Estimate the model<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('estimate-the-model-1')" onmouseout="reset_tooltip('estimate-the-model-1-tooltip')"><span class="tooltiptext" id="estimate-the-model-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.6.1</span> Estimate the model<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('estimate-the-model-1')" onmouseout="reset_tooltip('estimate-the-model-1-tooltip')"><span class="tooltiptext" id="estimate-the-model-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We estimate the model with <code>msqrob()</code>. Recall that
 variables defined in <code>model</code> are automatically retrieved from the
 <code>colData</code> (i.e. <code>"tissue"</code>, <code>"location"</code>, and <code>"patient"</code>).</p>
-<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="sec-heart.html#cb275-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(pe, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">formula =</span> model, <span class="at">robust =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="sec-heart.html#cb303-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(pe, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">formula =</span> model, <span class="at">robust =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
 </div>
-<div id="statistical-inference-2" class="section level2" number="6.7">
+<div id="statistical-inference-2" class="section level2" number="7.7">
 <h2>
-<span class="header-section-number">6.7</span> Statistical inference<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('statistical-inference-2')" onmouseout="reset_tooltip('statistical-inference-2-tooltip')"><span class="tooltiptext" id="statistical-inference-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.7</span> Statistical inference<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('statistical-inference-2')" onmouseout="reset_tooltip('statistical-inference-2-tooltip')"><span class="tooltiptext" id="statistical-inference-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>Once the models are estimated, we can start answering biological
 questions by performing <a href="sec-basics.html#sec-inference">Statistical inference</a>. We must translate the
@@ -1363,25 +1356,21 @@ biological questions into a statistical hypotheses:</p>
 combination of the model parameters, also referred to as a contrast.
 To aid defining contrasts, we will visualise the experimental design
 using the <code>ExploreModelMatrix</code> package.</p>
-<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="sec-heart.html#cb276-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ExploreModelMatrix"</span>)</span>
-<span id="cb276-2"><a href="sec-heart.html#cb276-2" tabindex="-1"></a>vd <span class="ot">&lt;-</span> <span class="fu">VisualizeDesign</span>(</span>
-<span id="cb276-3"><a href="sec-heart.html#cb276-3" tabindex="-1"></a>    <span class="at">sampleData =</span>  <span class="fu">colData</span>(pe),</span>
-<span id="cb276-4"><a href="sec-heart.html#cb276-4" tabindex="-1"></a>    <span class="at">designFormula =</span> <span class="sc">~</span> location<span class="sc">*</span>tissue <span class="sc">+</span> patient,</span>
-<span id="cb276-5"><a href="sec-heart.html#cb276-5" tabindex="-1"></a>    <span class="at">textSizeFitted =</span> <span class="dv">4</span></span>
-<span id="cb276-6"><a href="sec-heart.html#cb276-6" tabindex="-1"></a>)</span>
-<span id="cb276-7"><a href="sec-heart.html#cb276-7" tabindex="-1"></a>vd<span class="sc">$</span>plotlist</span></code></pre></div>
+<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="sec-heart.html#cb304-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ExploreModelMatrix"</span>)</span>
+<span id="cb304-2"><a href="sec-heart.html#cb304-2" tabindex="-1"></a>vd <span class="ot">&lt;-</span> <span class="fu">VisualizeDesign</span>(</span>
+<span id="cb304-3"><a href="sec-heart.html#cb304-3" tabindex="-1"></a>    <span class="at">sampleData =</span>  <span class="fu">colData</span>(pe),</span>
+<span id="cb304-4"><a href="sec-heart.html#cb304-4" tabindex="-1"></a>    <span class="at">designFormula =</span> <span class="sc">~</span> location<span class="sc">*</span>tissue <span class="sc">+</span> patient,</span>
+<span id="cb304-5"><a href="sec-heart.html#cb304-5" tabindex="-1"></a>    <span class="at">textSizeFitted =</span> <span class="dv">4</span></span>
+<span id="cb304-6"><a href="sec-heart.html#cb304-6" tabindex="-1"></a>)</span>
+<span id="cb304-7"><a href="sec-heart.html#cb304-7" tabindex="-1"></a>vd<span class="sc">$</span>plotlist</span></code></pre></div>
 <pre><code>## $`location = L`</code></pre>
-<div class="float">
-<img src="figure/unnamed-chunk-23-1.png" alt="plot of chunk unnamed-chunk-23"><div class="figcaption">plot of chunk unnamed-chunk-23</div>
-</div>
+<p><img src="figure/heart_VisualizeDesign-1.png"></p>
 <pre><code>## 
 ## $`location = R`</code></pre>
-<div class="float">
-<img src="figure/unnamed-chunk-23-2.png" alt="plot of chunk unnamed-chunk-23"><div class="figcaption">plot of chunk unnamed-chunk-23</div>
-</div>
-<div id="research-question-1-is-there-an-effect-of-tissue-in-the-left-heart-region" class="section level3" number="6.7.1">
+<p><img src="figure/heart_VisualizeDesign-2.png"></p>
+<div id="research-question-1-is-there-an-effect-of-tissue-in-the-left-heart-region" class="section level3" number="7.7.1">
 <h3>
-<span class="header-section-number">6.7.1</span> Research question 1: is there an effect of tissue in the left heart region?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('research-question-1-is-there-an-effect-of-tissue-in-the-left-heart-region')" onmouseout="reset_tooltip('research-question-1-is-there-an-effect-of-tissue-in-the-left-heart-region-tooltip')"><span class="tooltiptext" id="research-question-1-is-there-an-effect-of-tissue-in-the-left-heart-region-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.7.1</span> Research question 1: is there an effect of tissue in the left heart region?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('research-question-1-is-there-an-effect-of-tissue-in-the-left-heart-region')" onmouseout="reset_tooltip('research-question-1-is-there-an-effect-of-tissue-in-the-left-heart-region-tooltip')"><span class="tooltiptext" id="research-question-1-is-there-an-effect-of-tissue-in-the-left-heart-region-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>From the plot we can see that the average log2 intensity for patient 3
 in the left ventriculum equals `(Intercept) + tissueV’:</p>
@@ -1406,9 +1395,9 @@ So the parameter <code>tissueV</code> has the interpretation of the average
 patient effect, which quantifies the effect size for the first
 research hypothesis.</p>
 </div>
-<div id="research-question-2-is-there-an-effect-of-tissue-in-the-right-heart-region" class="section level3" number="6.7.2">
+<div id="research-question-2-is-there-an-effect-of-tissue-in-the-right-heart-region" class="section level3" number="7.7.2">
 <h3>
-<span class="header-section-number">6.7.2</span> Research question 2: is there an effect of tissue in the right heart region?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('research-question-2-is-there-an-effect-of-tissue-in-the-right-heart-region')" onmouseout="reset_tooltip('research-question-2-is-there-an-effect-of-tissue-in-the-right-heart-region-tooltip')"><span class="tooltiptext" id="research-question-2-is-there-an-effect-of-tissue-in-the-right-heart-region-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.7.2</span> Research question 2: is there an effect of tissue in the right heart region?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('research-question-2-is-there-an-effect-of-tissue-in-the-right-heart-region')" onmouseout="reset_tooltip('research-question-2-is-there-an-effect-of-tissue-in-the-right-heart-region-tooltip')"><span class="tooltiptext" id="research-question-2-is-there-an-effect-of-tissue-in-the-right-heart-region-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>When we use the same rationale for the right heart region, we can see
 that the average <span class="math inline">\(\log_2 FC\)</span> between atrium and ventriculum upon
@@ -1425,9 +1414,9 @@ the location x tissue interaction.</p>
 \end{array}
 \]</span></p>
 </div>
-<div id="research-question-3-is-there-an-effect-of-tissue-on-average-in-the-heart" class="section level3" number="6.7.3">
+<div id="research-question-3-is-there-an-effect-of-tissue-on-average-in-the-heart" class="section level3" number="7.7.3">
 <h3>
-<span class="header-section-number">6.7.3</span> Research question 3: is there an effect of tissue on average in the heart?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('research-question-3-is-there-an-effect-of-tissue-on-average-in-the-heart')" onmouseout="reset_tooltip('research-question-3-is-there-an-effect-of-tissue-on-average-in-the-heart-tooltip')"><span class="tooltiptext" id="research-question-3-is-there-an-effect-of-tissue-on-average-in-the-heart-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.7.3</span> Research question 3: is there an effect of tissue on average in the heart?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('research-question-3-is-there-an-effect-of-tissue-on-average-in-the-heart')" onmouseout="reset_tooltip('research-question-3-is-there-an-effect-of-tissue-on-average-in-the-heart-tooltip')"><span class="tooltiptext" id="research-question-3-is-there-an-effect-of-tissue-on-average-in-the-heart-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>This research question can be quantified by calculating the averaging
 the <span class="math inline">\(\log_2\)</span> fold change between Ventriculum and Atrium over the left
@@ -1439,9 +1428,9 @@ and right heart regions, which equals <code>tissueV + 0.5*locationR:tissueV</cod
 \end{array}
 \]</span></p>
 </div>
-<div id="research-question-4-does-the-effect-of-tissue-differs-according-to-the-heart-region" class="section level3" number="6.7.4">
+<div id="research-question-4-does-the-effect-of-tissue-differs-according-to-the-heart-region" class="section level3" number="7.7.4">
 <h3>
-<span class="header-section-number">6.7.4</span> Research question 4: does the effect of tissue differs according to the heart region?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('research-question-4-does-the-effect-of-tissue-differs-according-to-the-heart-region')" onmouseout="reset_tooltip('research-question-4-does-the-effect-of-tissue-differs-according-to-the-heart-region-tooltip')"><span class="tooltiptext" id="research-question-4-does-the-effect-of-tissue-differs-according-to-the-heart-region-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.7.4</span> Research question 4: does the effect of tissue differs according to the heart region?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('research-question-4-does-the-effect-of-tissue-differs-according-to-the-heart-region')" onmouseout="reset_tooltip('research-question-4-does-the-effect-of-tissue-differs-according-to-the-heart-region-tooltip')"><span class="tooltiptext" id="research-question-4-does-the-effect-of-tissue-differs-according-to-the-heart-region-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>This research question can be quantified by calculating the difference
 in the <span class="math inline">\(\log_2\)</span> fold change between Ventriculum and Atrium in the
@@ -1459,33 +1448,33 @@ right and left heart regions, which equals <code>locationR:tissueV</code></p>
 parameter names from the model</li>
 <li>We make the contrast matrix for the four contrasts</li>
 </ol>
-<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="sec-heart.html#cb279-1" tabindex="-1"></a>design <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> location<span class="sc">*</span>tissue <span class="sc">+</span> patient, <span class="at">data =</span> <span class="fu">colData</span>(pe))</span>
-<span id="cb279-2"><a href="sec-heart.html#cb279-2" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
-<span id="cb279-3"><a href="sec-heart.html#cb279-3" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb279-4"><a href="sec-heart.html#cb279-4" tabindex="-1"></a>    <span class="st">"tissueV = 0"</span>,</span>
-<span id="cb279-5"><a href="sec-heart.html#cb279-5" tabindex="-1"></a>    <span class="st">"tissueV + locationR:tissueV = 0"</span>,</span>
-<span id="cb279-6"><a href="sec-heart.html#cb279-6" tabindex="-1"></a>    <span class="st">"tissueV + 0.5*locationR:tissueV = 0"</span>,</span>
-<span id="cb279-7"><a href="sec-heart.html#cb279-7" tabindex="-1"></a>    <span class="st">"locationR:tissueV = 0"</span></span>
-<span id="cb279-8"><a href="sec-heart.html#cb279-8" tabindex="-1"></a>  ),</span>
-<span id="cb279-9"><a href="sec-heart.html#cb279-9" tabindex="-1"></a>  <span class="at">parameterNames =</span> <span class="fu">colnames</span>(design)</span>
-<span id="cb279-10"><a href="sec-heart.html#cb279-10" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="sec-heart.html#cb307-1" tabindex="-1"></a>design <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> location<span class="sc">*</span>tissue <span class="sc">+</span> patient, <span class="at">data =</span> <span class="fu">colData</span>(pe))</span>
+<span id="cb307-2"><a href="sec-heart.html#cb307-2" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
+<span id="cb307-3"><a href="sec-heart.html#cb307-3" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb307-4"><a href="sec-heart.html#cb307-4" tabindex="-1"></a>    <span class="st">"tissueV = 0"</span>,</span>
+<span id="cb307-5"><a href="sec-heart.html#cb307-5" tabindex="-1"></a>    <span class="st">"tissueV + locationR:tissueV = 0"</span>,</span>
+<span id="cb307-6"><a href="sec-heart.html#cb307-6" tabindex="-1"></a>    <span class="st">"tissueV + 0.5*locationR:tissueV = 0"</span>,</span>
+<span id="cb307-7"><a href="sec-heart.html#cb307-7" tabindex="-1"></a>    <span class="st">"locationR:tissueV = 0"</span></span>
+<span id="cb307-8"><a href="sec-heart.html#cb307-8" tabindex="-1"></a>  ),</span>
+<span id="cb307-9"><a href="sec-heart.html#cb307-9" tabindex="-1"></a>  <span class="at">parameterNames =</span> <span class="fu">colnames</span>(design)</span>
+<span id="cb307-10"><a href="sec-heart.html#cb307-10" tabindex="-1"></a>  )</span></code></pre></div>
 <p>We can now falsify the null hypothesis of each contrast:</p>
-<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="sec-heart.html#cb280-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(</span>
-<span id="cb280-2"><a href="sec-heart.html#cb280-2" tabindex="-1"></a>  <span class="at">object =</span> pe, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">contrast =</span> L, <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
-<span id="cb280-3"><a href="sec-heart.html#cb280-3" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb308"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb308-1"><a href="sec-heart.html#cb308-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(</span>
+<span id="cb308-2"><a href="sec-heart.html#cb308-2" tabindex="-1"></a>  <span class="at">object =</span> pe, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">contrast =</span> L, <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb308-3"><a href="sec-heart.html#cb308-3" tabindex="-1"></a>)</span></code></pre></div>
 </div>
-<div id="evaluate-results-for-contrast-log_2-fc_v-al" class="section level3" number="6.7.5">
+<div id="evaluate-results-for-contrast-log_2-fc_v-al" class="section level3" number="7.7.5">
 <h3>
-<span class="header-section-number">6.7.5</span> Evaluate results for contrast <span class="math inline">\(\log_2 FC_{V-A}^L\)</span>
+<span class="header-section-number">7.7.5</span> Evaluate results for contrast <span class="math inline">\(\log_2 FC_{V-A}^L\)</span>
 <div class="tooltip"><button class="internal-link-btn" onclick="copy_link('evaluate-results-for-contrast-log_2-fc_v-al')" onmouseout="reset_tooltip('evaluate-results-for-contrast-log_2-fc_v-al-tooltip')"><span class="tooltiptext" id="evaluate-results-for-contrast-log_2-fc_v-al-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Let us retrieve the result table from the <code>rowData</code>. Note that the
 hypothesis testing results are stored in <code>rowData</code> columns named after
 the column names of the contrast matrix <code>L</code>. The first column contains
 the results for contrast <span class="math inline">\(\log_2 FC_{V-A}^L\)</span>.</p>
-<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="sec-heart.html#cb281-1" tabindex="-1"></a>inferenceLeft <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)[<span class="dv">1</span>]]]</span>
-<span id="cb281-2"><a href="sec-heart.html#cb281-2" tabindex="-1"></a>inferenceLeft<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inferenceLeft)</span>
-<span id="cb281-3"><a href="sec-heart.html#cb281-3" tabindex="-1"></a><span class="fu">head</span>(inferenceLeft)</span></code></pre></div>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="sec-heart.html#cb309-1" tabindex="-1"></a>inferenceLeft <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)[<span class="dv">1</span>]]]</span>
+<span id="cb309-2"><a href="sec-heart.html#cb309-2" tabindex="-1"></a>inferenceLeft<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inferenceLeft)</span>
+<span id="cb309-3"><a href="sec-heart.html#cb309-3" tabindex="-1"></a><span class="fu">head</span>(inferenceLeft)</span></code></pre></div>
 <pre><code>##             logFC        se       df         t      pval   adjPval Protein
 ## A0PJW6  0.5935576 0.5331166 7.990114  1.113373 0.2979183 0.5261831  A0PJW6
 ## A0PJZ3         NA        NA       NA        NA        NA        NA  A0PJZ3
@@ -1498,59 +1487,55 @@ modelling resulted in a <code>fitError</code> for some proteins, probably becaus
 not enough data was available for model fitting due to missing values
 in the quantitative data (see <a href="sec-advanced.html#sec-fiterror">how to deal with
 <code>fitError</code>s</a>).</p>
-<div id="volcano-plot-1" class="section level4" number="6.7.5.1">
+<div id="volcano-plot-1" class="section level4" number="7.7.5.1">
 <h4>
-<span class="header-section-number">6.7.5.1</span> Volcano plot</h4>
+<span class="header-section-number">7.7.5.1</span> Volcano plot</h4>
 <p>Volcano plots are straightforward to generate from the inference table
 above. We also use <code>ggrepel</code> to annotate the 20 most significant
 proteins.</p>
-<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="sec-heart.html#cb283-1" tabindex="-1"></a><span class="fu">ggplot</span>(inferenceLeft) <span class="sc">+</span></span>
-<span id="cb283-2"><a href="sec-heart.html#cb283-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
-<span id="cb283-3"><a href="sec-heart.html#cb283-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb283-4"><a href="sec-heart.html#cb283-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inferenceLeft, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
-<span id="cb283-5"><a href="sec-heart.html#cb283-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
-<span id="cb283-6"><a href="sec-heart.html#cb283-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
-<span id="cb283-7"><a href="sec-heart.html#cb283-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"log2 FC V-A left"</span>,</span>
-<span id="cb283-8"><a href="sec-heart.html#cb283-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L)[<span class="dv">1</span>], <span class="st">"= 0"</span>))</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-27-1.png" alt="plot of chunk unnamed-chunk-27"><div class="figcaption">plot of chunk unnamed-chunk-27</div>
+<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="sec-heart.html#cb311-1" tabindex="-1"></a><span class="fu">ggplot</span>(inferenceLeft) <span class="sc">+</span></span>
+<span id="cb311-2"><a href="sec-heart.html#cb311-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb311-3"><a href="sec-heart.html#cb311-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb311-4"><a href="sec-heart.html#cb311-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inferenceLeft, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
+<span id="cb311-5"><a href="sec-heart.html#cb311-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
+<span id="cb311-6"><a href="sec-heart.html#cb311-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
+<span id="cb311-7"><a href="sec-heart.html#cb311-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"log2 FC V-A left"</span>,</span>
+<span id="cb311-8"><a href="sec-heart.html#cb311-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L)[<span class="dv">1</span>], <span class="st">"= 0"</span>))</span></code></pre></div>
+<p><img src="figure/heart_volcano_left-1.png"></p>
 </div>
-</div>
-<div id="heatmap-1" class="section level4" number="6.7.5.2">
+<div id="heatmap-1" class="section level4" number="7.7.5.2">
 <h4>
-<span class="header-section-number">6.7.5.2</span> Heatmap</h4>
+<span class="header-section-number">7.7.5.2</span> Heatmap</h4>
 <p>We can also build a <a href="sec-basics.html#sec-heatmaps">heatmap</a> for the significant
 proteins which are obtained by filtering the inference table. We first
 retrieve the data with proteins that are differentially abundant
 between the atrium and the ventriculum in the left heart.</p>
-<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="sec-heart.html#cb284-1" tabindex="-1"></a>sigNamesLeft <span class="ot">&lt;-</span> inferenceLeft <span class="sc">|&gt;</span> </span>
-<span id="cb284-2"><a href="sec-heart.html#cb284-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval), adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb284-3"><a href="sec-heart.html#cb284-3" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
-<span id="cb284-4"><a href="sec-heart.html#cb284-4" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>)[sigNamesLeft, ]</span></code></pre></div>
+<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="sec-heart.html#cb312-1" tabindex="-1"></a>sigNamesLeft <span class="ot">&lt;-</span> inferenceLeft <span class="sc">|&gt;</span> </span>
+<span id="cb312-2"><a href="sec-heart.html#cb312-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval), adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb312-3"><a href="sec-heart.html#cb312-3" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
+<span id="cb312-4"><a href="sec-heart.html#cb312-4" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>)[sigNamesLeft, ]</span></code></pre></div>
 <p>We then plot the protein-wise standardised data as an annotated
 heatmap.</p>
-<div class="sourceCode" id="cb285"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb285-1"><a href="sec-heart.html#cb285-1" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
-<span id="cb285-2"><a href="sec-heart.html#cb285-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ComplexHeatmap"</span>)</span>
-<span id="cb285-3"><a href="sec-heart.html#cb285-3" tabindex="-1"></a>annotations <span class="ot">&lt;-</span> <span class="fu">columnAnnotation</span>(</span>
-<span id="cb285-4"><a href="sec-heart.html#cb285-4" tabindex="-1"></a>  <span class="at">tissue =</span> se<span class="sc">$</span>tissue,</span>
-<span id="cb285-5"><a href="sec-heart.html#cb285-5" tabindex="-1"></a>  <span class="at">location =</span> se<span class="sc">$</span>location</span>
-<span id="cb285-6"><a href="sec-heart.html#cb285-6" tabindex="-1"></a>)</span>
-<span id="cb285-7"><a href="sec-heart.html#cb285-7" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
-<span id="cb285-8"><a href="sec-heart.html#cb285-8" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
-<span id="cb285-9"><a href="sec-heart.html#cb285-9" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
-<span id="cb285-10"><a href="sec-heart.html#cb285-10" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
-<span id="cb285-11"><a href="sec-heart.html#cb285-11" tabindex="-1"></a>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-29-1.png" alt="plot of chunk unnamed-chunk-29"><div class="figcaption">plot of chunk unnamed-chunk-29</div>
-</div>
+<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="sec-heart.html#cb313-1" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
+<span id="cb313-2"><a href="sec-heart.html#cb313-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ComplexHeatmap"</span>)</span>
+<span id="cb313-3"><a href="sec-heart.html#cb313-3" tabindex="-1"></a>annotations <span class="ot">&lt;-</span> <span class="fu">columnAnnotation</span>(</span>
+<span id="cb313-4"><a href="sec-heart.html#cb313-4" tabindex="-1"></a>  <span class="at">tissue =</span> se<span class="sc">$</span>tissue,</span>
+<span id="cb313-5"><a href="sec-heart.html#cb313-5" tabindex="-1"></a>  <span class="at">location =</span> se<span class="sc">$</span>location</span>
+<span id="cb313-6"><a href="sec-heart.html#cb313-6" tabindex="-1"></a>)</span>
+<span id="cb313-7"><a href="sec-heart.html#cb313-7" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
+<span id="cb313-8"><a href="sec-heart.html#cb313-8" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
+<span id="cb313-9"><a href="sec-heart.html#cb313-9" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
+<span id="cb313-10"><a href="sec-heart.html#cb313-10" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
+<span id="cb313-11"><a href="sec-heart.html#cb313-11" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="figure/heart_heatmap_left-1.png"></p>
 <p>There are 118 proteins significantly
 differentially expressed at the 5% FDR level. Below you can find the
 list of significant proteins.</p>
-<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="sec-heart.html#cb286-1" tabindex="-1"></a>inferenceLeft <span class="sc">|&gt;</span></span>
-<span id="cb286-2"><a href="sec-heart.html#cb286-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
-<span id="cb286-3"><a href="sec-heart.html#cb286-3" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval<span class="sc">&lt;</span><span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
-<span id="cb286-4"><a href="sec-heart.html#cb286-4" tabindex="-1"></a>  <span class="fu">arrange</span>(pval)  <span class="sc">|&gt;</span></span>
-<span id="cb286-5"><a href="sec-heart.html#cb286-5" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="sec-heart.html#cb314-1" tabindex="-1"></a>inferenceLeft <span class="sc">|&gt;</span></span>
+<span id="cb314-2"><a href="sec-heart.html#cb314-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
+<span id="cb314-3"><a href="sec-heart.html#cb314-3" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval<span class="sc">&lt;</span><span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb314-4"><a href="sec-heart.html#cb314-4" tabindex="-1"></a>  <span class="fu">arrange</span>(pval)  <span class="sc">|&gt;</span></span>
+<span id="cb314-5"><a href="sec-heart.html#cb314-5" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
 <table>
 <colgroup>
 <col width="12%">
@@ -2757,16 +2742,16 @@ list of significant proteins.</p>
 </table>
 </div>
 </div>
-<div id="evaluate-results-for-contrast-log_2-fc_v-ar" class="section level3" number="6.7.6">
+<div id="evaluate-results-for-contrast-log_2-fc_v-ar" class="section level3" number="7.7.6">
 <h3>
-<span class="header-section-number">6.7.6</span> Evaluate results for contrast <span class="math inline">\(\log_2 FC_{V-A}^R\)</span>
+<span class="header-section-number">7.7.6</span> Evaluate results for contrast <span class="math inline">\(\log_2 FC_{V-A}^R\)</span>
 <div class="tooltip"><button class="internal-link-btn" onclick="copy_link('evaluate-results-for-contrast-log_2-fc_v-ar')" onmouseout="reset_tooltip('evaluate-results-for-contrast-log_2-fc_v-ar-tooltip')"><span class="tooltiptext" id="evaluate-results-for-contrast-log_2-fc_v-ar-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Let us retrieve the result table from the <code>rowData</code>. The second column
 contains the results for contrast <span class="math inline">\(\log_2 FC_{V-A}^R\)</span>.</p>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="sec-heart.html#cb287-1" tabindex="-1"></a>inferenceRight <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)[<span class="dv">2</span>]]]</span>
-<span id="cb287-2"><a href="sec-heart.html#cb287-2" tabindex="-1"></a>inferenceRight<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inferenceRight)</span>
-<span id="cb287-3"><a href="sec-heart.html#cb287-3" tabindex="-1"></a><span class="fu">head</span>(inferenceRight)</span></code></pre></div>
+<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="sec-heart.html#cb315-1" tabindex="-1"></a>inferenceRight <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)[<span class="dv">2</span>]]]</span>
+<span id="cb315-2"><a href="sec-heart.html#cb315-2" tabindex="-1"></a>inferenceRight<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inferenceRight)</span>
+<span id="cb315-3"><a href="sec-heart.html#cb315-3" tabindex="-1"></a><span class="fu">head</span>(inferenceRight)</span></code></pre></div>
 <pre><code>##             logFC        se       df          t      pval   adjPval Protein
 ## A0PJW6  0.4611037 0.5697298 7.990114  0.8093375 0.4417536 0.6792717  A0PJW6
 ## A0PJZ3         NA        NA       NA         NA        NA        NA  A0PJZ3
@@ -2774,50 +2759,46 @@ contains the results for contrast <span class="math inline">\(\log_2 FC_{V-A}^R\
 ## A1A4S6  0.4201975 0.3089822 8.825715  1.3599409 0.2075703 0.4543736  A1A4S6
 ## A1A5D9         NA        NA       NA         NA        NA        NA  A1A5D9
 ## A1IGU5 -0.6251472 0.3572207 8.602465 -1.7500304 0.1155889 0.3351572  A1IGU5</code></pre>
-<div id="volcano-plot-2" class="section level4" number="6.7.6.1">
+<div id="volcano-plot-2" class="section level4" number="7.7.6.1">
 <h4>
-<span class="header-section-number">6.7.6.1</span> Volcano plot</h4>
+<span class="header-section-number">7.7.6.1</span> Volcano plot</h4>
 <p>Volcano plots are straightforward to generate from the inference table
 above. We also use <code>ggrepel</code> to annotate the 20 most significant
 proteins.</p>
-<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="sec-heart.html#cb289-1" tabindex="-1"></a><span class="fu">ggplot</span>(inferenceRight) <span class="sc">+</span></span>
-<span id="cb289-2"><a href="sec-heart.html#cb289-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
-<span id="cb289-3"><a href="sec-heart.html#cb289-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb289-4"><a href="sec-heart.html#cb289-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inferenceRight, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
-<span id="cb289-5"><a href="sec-heart.html#cb289-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
-<span id="cb289-6"><a href="sec-heart.html#cb289-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
-<span id="cb289-7"><a href="sec-heart.html#cb289-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"log2 FC V-A Right"</span>,</span>
-<span id="cb289-8"><a href="sec-heart.html#cb289-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L)[<span class="dv">2</span>], <span class="st">"= 0"</span>))</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-32-1.png" alt="plot of chunk unnamed-chunk-32"><div class="figcaption">plot of chunk unnamed-chunk-32</div>
+<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb317-1"><a href="sec-heart.html#cb317-1" tabindex="-1"></a><span class="fu">ggplot</span>(inferenceRight) <span class="sc">+</span></span>
+<span id="cb317-2"><a href="sec-heart.html#cb317-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb317-3"><a href="sec-heart.html#cb317-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb317-4"><a href="sec-heart.html#cb317-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inferenceRight, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
+<span id="cb317-5"><a href="sec-heart.html#cb317-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
+<span id="cb317-6"><a href="sec-heart.html#cb317-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
+<span id="cb317-7"><a href="sec-heart.html#cb317-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"log2 FC V-A Right"</span>,</span>
+<span id="cb317-8"><a href="sec-heart.html#cb317-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L)[<span class="dv">2</span>], <span class="st">"= 0"</span>))</span></code></pre></div>
+<p><img src="figure/heart_volcano_right-1.png"></p>
 </div>
-</div>
-<div id="heatmap-2" class="section level4" number="6.7.6.2">
+<div id="heatmap-2" class="section level4" number="7.7.6.2">
 <h4>
-<span class="header-section-number">6.7.6.2</span> Heatmap</h4>
+<span class="header-section-number">7.7.6.2</span> Heatmap</h4>
 <p>We can also build a heatmap for the significant proteins which are
-obtained by filtering the inference table<label for="tufte-sn-31" class="margin-toggle sidenote-number">31</label><input type="checkbox" id="tufte-sn-31" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">31</span> Note that we use the same
+obtained by filtering the inference table<label for="tufte-sn-34" class="margin-toggle sidenote-number">34</label><input type="checkbox" id="tufte-sn-34" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">34</span> Note that we use the same
 heatmap annotations so we don’t need to generate it again.</span>.</p>
-<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="sec-heart.html#cb290-1" tabindex="-1"></a>sigNamesRight <span class="ot">&lt;-</span> inferenceRight <span class="sc">|&gt;</span> </span>
-<span id="cb290-2"><a href="sec-heart.html#cb290-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval), adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb290-3"><a href="sec-heart.html#cb290-3" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
-<span id="cb290-4"><a href="sec-heart.html#cb290-4" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>)[sigNamesRight, ]</span>
-<span id="cb290-5"><a href="sec-heart.html#cb290-5" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
-<span id="cb290-6"><a href="sec-heart.html#cb290-6" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
-<span id="cb290-7"><a href="sec-heart.html#cb290-7" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
-<span id="cb290-8"><a href="sec-heart.html#cb290-8" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
-<span id="cb290-9"><a href="sec-heart.html#cb290-9" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
-<span id="cb290-10"><a href="sec-heart.html#cb290-10" tabindex="-1"></a>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-33-1.png" alt="plot of chunk unnamed-chunk-33"><div class="figcaption">plot of chunk unnamed-chunk-33</div>
-</div>
+<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="sec-heart.html#cb318-1" tabindex="-1"></a>sigNamesRight <span class="ot">&lt;-</span> inferenceRight <span class="sc">|&gt;</span> </span>
+<span id="cb318-2"><a href="sec-heart.html#cb318-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval), adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb318-3"><a href="sec-heart.html#cb318-3" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
+<span id="cb318-4"><a href="sec-heart.html#cb318-4" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>)[sigNamesRight, ]</span>
+<span id="cb318-5"><a href="sec-heart.html#cb318-5" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
+<span id="cb318-6"><a href="sec-heart.html#cb318-6" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
+<span id="cb318-7"><a href="sec-heart.html#cb318-7" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
+<span id="cb318-8"><a href="sec-heart.html#cb318-8" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
+<span id="cb318-9"><a href="sec-heart.html#cb318-9" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
+<span id="cb318-10"><a href="sec-heart.html#cb318-10" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="figure/heart_heatmap_right-1.png"></p>
 <p>There are 65 proteins significantly differentially expressed at the 5% FDR level.</p>
 <p>Below you can find the list of significant proteins.</p>
-<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="sec-heart.html#cb291-1" tabindex="-1"></a>inferenceRight <span class="sc">|&gt;</span></span>
-<span id="cb291-2"><a href="sec-heart.html#cb291-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
-<span id="cb291-3"><a href="sec-heart.html#cb291-3" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval<span class="sc">&lt;</span><span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
-<span id="cb291-4"><a href="sec-heart.html#cb291-4" tabindex="-1"></a>  <span class="fu">arrange</span>(pval)  <span class="sc">|&gt;</span></span>
-<span id="cb291-5"><a href="sec-heart.html#cb291-5" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb319"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb319-1"><a href="sec-heart.html#cb319-1" tabindex="-1"></a>inferenceRight <span class="sc">|&gt;</span></span>
+<span id="cb319-2"><a href="sec-heart.html#cb319-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
+<span id="cb319-3"><a href="sec-heart.html#cb319-3" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval<span class="sc">&lt;</span><span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb319-4"><a href="sec-heart.html#cb319-4" tabindex="-1"></a>  <span class="fu">arrange</span>(pval)  <span class="sc">|&gt;</span></span>
+<span id="cb319-5"><a href="sec-heart.html#cb319-5" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
 <table>
 <colgroup>
 <col width="9%">
@@ -3494,16 +3475,16 @@ heatmap annotations so we don’t need to generate it again.</span>.</p>
 </table>
 </div>
 </div>
-<div id="evaluate-results-average-contrast-log_2-fc_v-a" class="section level3" number="6.7.7">
+<div id="evaluate-results-average-contrast-log_2-fc_v-a" class="section level3" number="7.7.7">
 <h3>
-<span class="header-section-number">6.7.7</span> Evaluate results average contrast <span class="math inline">\(\log_2 FC_{V-A}\)</span>
+<span class="header-section-number">7.7.7</span> Evaluate results average contrast <span class="math inline">\(\log_2 FC_{V-A}\)</span>
 <div class="tooltip"><button class="internal-link-btn" onclick="copy_link('evaluate-results-average-contrast-log_2-fc_v-a')" onmouseout="reset_tooltip('evaluate-results-average-contrast-log_2-fc_v-a-tooltip')"><span class="tooltiptext" id="evaluate-results-average-contrast-log_2-fc_v-a-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Let us retrieve the result table from the <code>rowData</code>. The second column
 contains the results for contrast <span class="math inline">\(\log_2 FC_{V-A}\)</span>.</p>
-<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="sec-heart.html#cb292-1" tabindex="-1"></a>inferenceAvg <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)[<span class="dv">3</span>]]]</span>
-<span id="cb292-2"><a href="sec-heart.html#cb292-2" tabindex="-1"></a>inferenceAvg<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inferenceAvg)</span>
-<span id="cb292-3"><a href="sec-heart.html#cb292-3" tabindex="-1"></a><span class="fu">head</span>(inferenceAvg)</span></code></pre></div>
+<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="sec-heart.html#cb320-1" tabindex="-1"></a>inferenceAvg <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)[<span class="dv">3</span>]]]</span>
+<span id="cb320-2"><a href="sec-heart.html#cb320-2" tabindex="-1"></a>inferenceAvg<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inferenceAvg)</span>
+<span id="cb320-3"><a href="sec-heart.html#cb320-3" tabindex="-1"></a><span class="fu">head</span>(inferenceAvg)</span></code></pre></div>
 <pre><code>##             logFC        se       df         t       pval   adjPval Protein
 ## A0PJW6  0.5273307 0.3895665 7.990114  1.353635 0.21289715 0.3848377  A0PJW6
 ## A0PJZ3         NA        NA       NA        NA         NA        NA  A0PJZ3
@@ -3511,50 +3492,46 @@ contains the results for contrast <span class="math inline">\(\log_2 FC_{V-A}\)<
 ## A1A4S6  0.4348803 0.2154228 8.825715  2.018729 0.07489582 0.1932545  A1A4S6
 ## A1A5D9         NA        NA       NA        NA         NA        NA  A1A5D9
 ## A1IGU5 -0.5192180 0.2551204 8.602465 -2.035189 0.07377174 0.1918451  A1IGU5</code></pre>
-<div id="volcano-plot-3" class="section level4" number="6.7.7.1">
+<div id="volcano-plot-3" class="section level4" number="7.7.7.1">
 <h4>
-<span class="header-section-number">6.7.7.1</span> Volcano plot</h4>
+<span class="header-section-number">7.7.7.1</span> Volcano plot</h4>
 <p>Volcano plots are straightforward to generate from the inference table
 above. We also use <code>ggrepel</code> to annotate the 20 most significant
 proteins.</p>
-<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="sec-heart.html#cb294-1" tabindex="-1"></a><span class="fu">ggplot</span>(inferenceAvg) <span class="sc">+</span></span>
-<span id="cb294-2"><a href="sec-heart.html#cb294-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
-<span id="cb294-3"><a href="sec-heart.html#cb294-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb294-4"><a href="sec-heart.html#cb294-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inferenceAvg, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
-<span id="cb294-5"><a href="sec-heart.html#cb294-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
-<span id="cb294-6"><a href="sec-heart.html#cb294-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
-<span id="cb294-7"><a href="sec-heart.html#cb294-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"log2 FC V-A Right"</span>,</span>
-<span id="cb294-8"><a href="sec-heart.html#cb294-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L)[<span class="dv">2</span>], <span class="st">"= 0"</span>))</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-36-1.png" alt="plot of chunk unnamed-chunk-36"><div class="figcaption">plot of chunk unnamed-chunk-36</div>
+<div class="sourceCode" id="cb322"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb322-1"><a href="sec-heart.html#cb322-1" tabindex="-1"></a><span class="fu">ggplot</span>(inferenceAvg) <span class="sc">+</span></span>
+<span id="cb322-2"><a href="sec-heart.html#cb322-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb322-3"><a href="sec-heart.html#cb322-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb322-4"><a href="sec-heart.html#cb322-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inferenceAvg, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
+<span id="cb322-5"><a href="sec-heart.html#cb322-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
+<span id="cb322-6"><a href="sec-heart.html#cb322-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
+<span id="cb322-7"><a href="sec-heart.html#cb322-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"log2 FC V-A Right"</span>,</span>
+<span id="cb322-8"><a href="sec-heart.html#cb322-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L)[<span class="dv">2</span>], <span class="st">"= 0"</span>))</span></code></pre></div>
+<p><img src="figure/heart_volcano_average-1.png"></p>
 </div>
-</div>
-<div id="heatmap-3" class="section level4" number="6.7.7.2">
+<div id="heatmap-3" class="section level4" number="7.7.7.2">
 <h4>
-<span class="header-section-number">6.7.7.2</span> Heatmap</h4>
+<span class="header-section-number">7.7.7.2</span> Heatmap</h4>
 <p>We can also build a heatmap for the significant proteins which are
 obtained by filtering the inference table.</p>
-<div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb295-1"><a href="sec-heart.html#cb295-1" tabindex="-1"></a>sigNamesAvg <span class="ot">&lt;-</span> inferenceAvg <span class="sc">|&gt;</span> </span>
-<span id="cb295-2"><a href="sec-heart.html#cb295-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval), adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb295-3"><a href="sec-heart.html#cb295-3" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
-<span id="cb295-4"><a href="sec-heart.html#cb295-4" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>)[sigNamesAvg, ]</span>
-<span id="cb295-5"><a href="sec-heart.html#cb295-5" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
-<span id="cb295-6"><a href="sec-heart.html#cb295-6" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
-<span id="cb295-7"><a href="sec-heart.html#cb295-7" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
-<span id="cb295-8"><a href="sec-heart.html#cb295-8" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
-<span id="cb295-9"><a href="sec-heart.html#cb295-9" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
-<span id="cb295-10"><a href="sec-heart.html#cb295-10" tabindex="-1"></a>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-37-1.png" alt="plot of chunk unnamed-chunk-37"><div class="figcaption">plot of chunk unnamed-chunk-37</div>
-</div>
+<div class="sourceCode" id="cb323"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb323-1"><a href="sec-heart.html#cb323-1" tabindex="-1"></a>sigNamesAvg <span class="ot">&lt;-</span> inferenceAvg <span class="sc">|&gt;</span> </span>
+<span id="cb323-2"><a href="sec-heart.html#cb323-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval), adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb323-3"><a href="sec-heart.html#cb323-3" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
+<span id="cb323-4"><a href="sec-heart.html#cb323-4" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>)[sigNamesAvg, ]</span>
+<span id="cb323-5"><a href="sec-heart.html#cb323-5" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
+<span id="cb323-6"><a href="sec-heart.html#cb323-6" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
+<span id="cb323-7"><a href="sec-heart.html#cb323-7" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
+<span id="cb323-8"><a href="sec-heart.html#cb323-8" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
+<span id="cb323-9"><a href="sec-heart.html#cb323-9" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
+<span id="cb323-10"><a href="sec-heart.html#cb323-10" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="figure/heart_heatmap_average-1.png"></p>
 <p>There are 327 proteins significantly
 differentially expressed at the 5% FDR level.</p>
 <p>Below you can find the list of significant proteins.</p>
-<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="sec-heart.html#cb296-1" tabindex="-1"></a>inferenceAvg <span class="sc">|&gt;</span></span>
-<span id="cb296-2"><a href="sec-heart.html#cb296-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
-<span id="cb296-3"><a href="sec-heart.html#cb296-3" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval<span class="sc">&lt;</span><span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
-<span id="cb296-4"><a href="sec-heart.html#cb296-4" tabindex="-1"></a>  <span class="fu">arrange</span>(pval)  <span class="sc">|&gt;</span></span>
-<span id="cb296-5"><a href="sec-heart.html#cb296-5" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="sec-heart.html#cb324-1" tabindex="-1"></a>inferenceAvg <span class="sc">|&gt;</span></span>
+<span id="cb324-2"><a href="sec-heart.html#cb324-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
+<span id="cb324-3"><a href="sec-heart.html#cb324-3" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval<span class="sc">&lt;</span><span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb324-4"><a href="sec-heart.html#cb324-4" tabindex="-1"></a>  <span class="fu">arrange</span>(pval)  <span class="sc">|&gt;</span></span>
+<span id="cb324-5"><a href="sec-heart.html#cb324-5" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
 <table>
 <colgroup>
 <col width="12%">
@@ -6851,15 +6828,15 @@ differentially expressed at the 5% FDR level.</p>
 </table>
 </div>
 </div>
-<div id="interaction" class="section level3" number="6.7.8">
+<div id="interaction" class="section level3" number="7.7.8">
 <h3>
-<span class="header-section-number">6.7.8</span> Interaction<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('interaction')" onmouseout="reset_tooltip('interaction-tooltip')"><span class="tooltiptext" id="interaction-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.7.8</span> Interaction<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('interaction')" onmouseout="reset_tooltip('interaction-tooltip')"><span class="tooltiptext" id="interaction-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Let us retrieve the result table from the <code>rowData</code>. The second column
 contains the results for the interaction contrast.</p>
-<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="sec-heart.html#cb297-1" tabindex="-1"></a>inferenceInt <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)[<span class="dv">4</span>]]]</span>
-<span id="cb297-2"><a href="sec-heart.html#cb297-2" tabindex="-1"></a>inferenceInt<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inferenceInt)</span>
-<span id="cb297-3"><a href="sec-heart.html#cb297-3" tabindex="-1"></a><span class="fu">head</span>(inferenceInt)</span></code></pre></div>
+<div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb325-1"><a href="sec-heart.html#cb325-1" tabindex="-1"></a>inferenceInt <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)[<span class="dv">4</span>]]]</span>
+<span id="cb325-2"><a href="sec-heart.html#cb325-2" tabindex="-1"></a>inferenceInt<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inferenceInt)</span>
+<span id="cb325-3"><a href="sec-heart.html#cb325-3" tabindex="-1"></a><span class="fu">head</span>(inferenceInt)</span></code></pre></div>
 <pre><code>##              logFC        se       df           t      pval   adjPval Protein
 ## A0PJW6 -0.13245393 0.7813850 7.990114 -0.16951174 0.8696072 0.9786806  A0PJW6
 ## A0PJZ3          NA        NA       NA          NA        NA        NA  A0PJZ3
@@ -6867,33 +6844,47 @@ contains the results for the interaction contrast.</p>
 ## A1A4S6 -0.02936564 0.4308457 8.825715 -0.06815815 0.9471789 0.9922515  A1A4S6
 ## A1A5D9          NA        NA       NA          NA        NA        NA  A1A5D9
 ## A1IGU5 -0.21185828 0.5090726 8.602465 -0.41616519 0.6874791 0.9578319  A1IGU5</code></pre>
-<div id="volcano-plot-4" class="section level4" number="6.7.8.1">
+<div id="volcano-plot-4" class="section level4" number="7.7.8.1">
 <h4>
-<span class="header-section-number">6.7.8.1</span> Volcano plot</h4>
+<span class="header-section-number">7.7.8.1</span> Volcano plot</h4>
 <p>Volcano plots are straightforward to generate from the inference table
 above. We also use <code>ggrepel</code> to annotate the 20 most significant
 proteins.</p>
-<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="sec-heart.html#cb299-1" tabindex="-1"></a><span class="fu">ggplot</span>(inferenceInt) <span class="sc">+</span></span>
-<span id="cb299-2"><a href="sec-heart.html#cb299-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
-<span id="cb299-3"><a href="sec-heart.html#cb299-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb299-4"><a href="sec-heart.html#cb299-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inferenceInt, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
-<span id="cb299-5"><a href="sec-heart.html#cb299-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
-<span id="cb299-6"><a href="sec-heart.html#cb299-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
-<span id="cb299-7"><a href="sec-heart.html#cb299-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"log2 FC V-A Right"</span>,</span>
-<span id="cb299-8"><a href="sec-heart.html#cb299-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L)[<span class="dv">2</span>], <span class="st">"= 0"</span>))</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-40-1.png" alt="plot of chunk unnamed-chunk-40"><div class="figcaption">plot of chunk unnamed-chunk-40</div>
-</div>
+<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="sec-heart.html#cb327-1" tabindex="-1"></a><span class="fu">ggplot</span>(inferenceInt) <span class="sc">+</span></span>
+<span id="cb327-2"><a href="sec-heart.html#cb327-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb327-3"><a href="sec-heart.html#cb327-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb327-4"><a href="sec-heart.html#cb327-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inferenceInt, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
+<span id="cb327-5"><a href="sec-heart.html#cb327-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
+<span id="cb327-6"><a href="sec-heart.html#cb327-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
+<span id="cb327-7"><a href="sec-heart.html#cb327-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"log2 FC V-A Right"</span>,</span>
+<span id="cb327-8"><a href="sec-heart.html#cb327-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L)[<span class="dv">2</span>], <span class="st">"= 0"</span>))</span></code></pre></div>
+<p><img src="figure/heart_volcano_interaction-1.png"></p>
 <p>As there are no significant features, we do not return a top table and
 do not make a heatmap for this contrast.</p>
 </div>
 </div>
 </div>
-<div id="conclusion-3" class="section level2" number="6.8">
+<div id="conclusion-4" class="section level2" number="7.8">
 <h2>
-<span class="header-section-number">6.8</span> Conclusion<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('conclusion-3')" onmouseout="reset_tooltip('conclusion-3-tooltip')"><span class="tooltiptext" id="conclusion-3-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">7.8</span> Conclusion<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('conclusion-4')" onmouseout="reset_tooltip('conclusion-4-tooltip')"><span class="tooltiptext" id="conclusion-4-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
-
+<p>In this chapter, we illustrated the analysis of a label-free
+proteomics data set with technical replication. We followed the
+workflow described in the previous chapters with minimal changes.</p>
+<p>The experiment presented in this chapter presents a complex design and
+is an excellent illustration on how to model data with an interaction.
+We could investigate:</p>
+<ol style="list-style-type: decimal">
+<li>The difference in protein abundance between the atrium and
+ventriculum in the <strong>left</strong> heart.</li>
+<li>The difference in protein abundance between the atrium and
+ventriculum in the <strong>right</strong> heart.</li>
+<li>The difference in protein abundance between the atrium and
+ventriculum, <strong>averaged</strong> over the right and left heart.</li>
+<li>The interaction, whether the difference between atrium and
+ventriculum is affected by whether we focus on the left heart or
+the right heart.</li>
+</ol>
 </div>
 </div>
 <p style="text-align: center;">
@@ -6901,7 +6892,7 @@ do not make a heatmap for this contrast.</p>
 <a href="sec-mouse_diet.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-11-12
+2025-11-16
  using 
 R version 4.5.2 (2025-10-31)
 </p>

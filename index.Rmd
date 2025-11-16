@@ -150,6 +150,7 @@ BiocManager::install(c(
    "ComplexHeatmap",
    "dplyr",
    "ExploreModelMatrix",
+   "ggpattern",
    "ggplot2",
    "ggrepel",
    "impute",

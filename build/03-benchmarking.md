@@ -64,10 +64,11 @@ register(SerialParam())
 
 ## Data
 
-The [data](#sec-ecoli_data) were reanalysed using MaxQuant, which 
-generates results at three levels: the evidence file containing
-the [PSM table](#sec-psm_table), the 
-[peptides file](#sec-peptide_table), and the protein group file.
+We will reuse the data by [@Shen2018-gw] as in chapter
+\@ref(sec-basics). The [data](#sec-ecoli_data) were reanalysed using
+MaxQuant, which generates results at three levels: the evidence file
+containing the [PSM table](#sec-psm_table), the [peptides
+file](#sec-peptide_table), and the protein group file.
 
 ### Data files
 
@@ -456,7 +457,7 @@ results$contrast <- gsub("ridgeCondition", "", results$contrast)
 results$contrast <- gsub("^([B-E])$", "\\1 - A", results$contrast)
 ```
 
-## Performance benchmark
+## Performance benchmark{#sec-performance}
 
 We now can compare the performance of the different modelling 
 approaches. We will compare the approaches based on 4 objectives 
@@ -484,7 +485,7 @@ group_by(results, inputLevel) |>
     geom_bar(stat = "identity")
 ```
 
-![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png)
+![ ](figure/benchmarking_nfits-1.png)
 
 We can see that the approaches that fits least proteins is when
 starting from the protein-group file. However, all other four
@@ -507,9 +508,9 @@ comparison.
 
 ``` r
 tpFpTable <- group_by(results, inputLevel, contrast) |>
-    filter(!is.na(adjPval)) |>
-    summarise("True Positives" = sum(adjPval < 0.05 & isEcoli),
-              "False Positives" = sum(adjPval < 0.05 & !isEcoli)) |>
+    filter(adjPval < 0.05) |>
+    summarise("True Positives" = sum(isEcoli),
+              "False Positives" = sum(!isEcoli)) |>
     pivot_longer(cols = c("True Positives", "False Positives"))
 ```
 
@@ -530,7 +531,7 @@ ggplot(tpFpTable) +
     guides(fill = guide_legend(nrow = 3)) ## to avoid legend getting cropped
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png)
+![ ](figure/benchmarking_tp_fp-1.png)
 
 The plot clearly shows that starting from the protein groups leads to 
 a severe decrease in performance as the number of TP is systematically
@@ -632,7 +633,7 @@ ggplot(performance) +
     theme(legend.position = "bottom")
 ```
 
-![plot of chunk unnamed-chunk-24](figure/unnamed-chunk-24-1.png)
+![ ](figure/benchmarking_tpr_fdp_curve1-1.png)
 
 The results are in line with the previous bechmark criteria, that is
 starting from the protein group file lead to a severe backlash on
@@ -700,7 +701,7 @@ ggplot(results) +
   theme(legend.position = "bottom")
 ```
 
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26-1.png)
+![ ](figure/benchmarking_boxplot-1.png)
 
 For all approaches, the boxplots are roughly centred on the expected 
 value, indicating good model accuracy. Starting from MaxQuant's
@@ -740,6 +741,14 @@ indirectly generated using a summarisation approach (c.f.
 `msqrobAggregate()`).]. Therefore, we leave it to the user to decide
 whether the slight improvement in performance is worth the cost of
 more complex statistical analysis [@Sticker2020-rl].
+
+Hence, this chapter showed how to perform benchmarking on different
+types of data input. Note that the same framework could be used to
+compare different search and quantification engines. Similarly, this
+framework can also be applied to compare different instruments or
+analytical protocols and setups. In the [next
+chapter](sec-worflow_optimisation) we demonstrate how to compare the
+impact of analysis steps for the same data.
 
 In the remainder of this section, we provide a recap on how to perform
 a proteomics analysis from the evidence file^[We build on the concepts
@@ -886,8 +895,12 @@ evidence <- filterNA(evidence, i = "ions_log", pNA = (n - 4) / n)
 
 
 ``` r
-evidence <- normalize(
-  evidence, "ions_log", name = "ions_norm", method = "center.median"
+pseudoRef <- rowMeans(assay(evidence[["ions_log"]]), na.rm = TRUE)
+nfLog <- sweep(assay(evidence[["ions_log"]]), MARGIN = 1, pseudoRef) |> 
+  colMedians(na.rm = TRUE)
+evidence <- sweep(
+  evidence, MARGIN = 2, STATS = nfLog, 
+  i = "ions_log", name = "ions_norm"
 )
 ```
 
@@ -971,7 +984,7 @@ ggplot(resultsProtein) +
     ggtitle("Statistical inference for all pairwise comparisons") 
 ```
 
-![plot of chunk unnamed-chunk-43](figure/unnamed-chunk-43-1.png)
+![ ](figure/benchmarking_volcano_proteins-1.png)
 
 #### Modelling at the ion-level{#sec-ion_level_modelling}
 
@@ -1046,7 +1059,7 @@ ggplot(resultsIon) +
     ggtitle("Statistical inference for all pairwise comparisons") 
 ```
 
-![plot of chunk unnamed-chunk-48](figure/unnamed-chunk-48-1.png)
+![ ](figure/benchmarking_volcano_ion-1.png)
 
 ## Appendix
 
@@ -1086,7 +1099,7 @@ ggplot(performance_all) +
     ggtitle("TPR-FDP curves using all proteins in the data")
 ```
 
-![plot of chunk unnamed-chunk-49](figure/unnamed-chunk-49-1.png)
+![ ](figure/benchmarking_tpr_fdp_2-1.png)
 
 ### TPR-FDP curves using only the proteins fit by all approaches{#sec-appendix3_2}
 
@@ -1121,4 +1134,4 @@ ggplot(performance_common) +
     ggtitle("TPR-FDP curves using only the proteins fit by all approaches")
 ```
 
-![plot of chunk unnamed-chunk-50](figure/unnamed-chunk-50-1.png)
+![ ](figure/benchmarking_tpr_fdp_3-1.png)

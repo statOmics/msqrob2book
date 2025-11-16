@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 5 The francisella use case: a MaxQuant LFQ DDA dataset with technical replication | Statistical analysis of mass spectrometry-based proteomics data" />
+<meta property="og:title" content="6 The francisella use case: a MaxQuant LFQ DDA dataset with technical replication | Statistical analysis of mass spectrometry-based proteomics data" />
 <meta property="og:type" content="book" />
 
 
@@ -13,18 +13,18 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-11-12" />
+<meta name="date" content="2025-11-16" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script src="/usr/share/javascript/mathjax/MathJax.js" type="text/javascript"></script>
 
-<meta name="description" content="Chapter 5 The francisella use case: a MaxQuant LFQ DDA dataset with technical replication | Statistical analysis of mass spectrometry-based proteomics data">
+<meta name="description" content="6 The francisella use case: a MaxQuant LFQ DDA dataset with technical replication | Statistical analysis of mass spectrometry-based proteomics data">
 
-<title>Chapter 5 The francisella use case: a MaxQuant LFQ DDA dataset with technical replication | Statistical analysis of mass spectrometry-based proteomics data</title>
+<title>6 The francisella use case: a MaxQuant LFQ DDA dataset with technical replication | Statistical analysis of mass spectrometry-based proteomics data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/envisioned.css" rel="stylesheet" />
@@ -81,7 +81,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -139,7 +139,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -178,19 +177,20 @@ div.csl-indent {
 <a href="sec-basics.html" id="toc-sec-basics"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
 <a href="sec-advanced.html" id="toc-sec-advanced"><span class="toc-section-number">3</span> Advanced statistical analysis with msqrob2</a>
 <a href="sec-benchmarking.html" id="toc-sec-benchmarking"><span class="toc-section-number">4</span> Benchmarking workflows</a>
-<a id="active-page" href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">5</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a><ul class="toc-sections">
+<a href="sec-worflow_optimisation.html#sec-worflow_optimisation" id="toc-sec-worflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
+<a id="active-page" href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a><ul class="toc-sections">
 <li class="toc"><a href="#introduction"> Introduction</a></li>
-<li class="toc"><a href="#load-packages-3"> Load packages</a></li>
+<li class="toc"><a href="#load-packages-4"> Load packages</a></li>
 <li class="toc"><a href="#load-data"> Load data</a></li>
 <li class="toc"><a href="#data-preprocessing-2"> Data preprocessing</a></li>
 <li class="toc"><a href="#data-exploration-1"> Data exploration</a></li>
-<li class="toc"><a href="#data-modelling-1"> Data modelling</a></li>
+<li class="toc"><a href="#data-modelling-2"> Data modelling</a></li>
 <li class="toc"><a href="#statistical-inference-1"> Statistical inference</a></li>
-<li class="toc"><a href="#conclusion-2"> Conclusion</a></li>
+<li class="toc"><a href="#conclusion-3"> Conclusion</a></li>
 </ul>
-<a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">6</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
-<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">7</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
-<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">8</span> Usefull links and session information</a>
+<a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
+<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
+<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Usefull links and session information</a>
 </div>
 </li>
 </ul>
@@ -199,14 +199,14 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="sec-francisella" class="section level1" number="5">
+<div id="sec-francisella" class="section level1" number="6">
 <h1>
-<span class="header-section-number">Chapter 5</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</h1>
-<div id="introduction" class="section level2" number="5.1">
+<span class="header-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</h1>
+<div id="introduction" class="section level2" number="6.1">
 <h2>
-<span class="header-section-number">5.1</span> Introduction<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('introduction')" onmouseout="reset_tooltip('introduction-tooltip')"><span class="tooltiptext" id="introduction-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.1</span> Introduction<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('introduction')" onmouseout="reset_tooltip('introduction-tooltip')"><span class="tooltiptext" id="introduction-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
-<p>In this vignette we show how to analyse LFQ data with technical
+<p>In this chapter we show how to analyse LFQ data with technical
 replication. In the data analysis we have to acknowledge
 pseudo-replication, i.e. data for multiple technical replicates from
 the same biological repeat are correlated and we cannot treat these as
@@ -217,30 +217,30 @@ repeat.</p>
 <p>If you never used <code>msqrob2</code>, we suggest to familiarise yourself
 with the <a href="sec-basics.html#sec-basics">concepts chapter</a> first.</p>
 </div>
-<div id="load-packages-3" class="section level2" number="5.2">
+<div id="load-packages-4" class="section level2" number="6.2">
 <h2>
-<span class="header-section-number">5.2</span> Load packages<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-packages-3')" onmouseout="reset_tooltip('load-packages-3-tooltip')"><span class="tooltiptext" id="load-packages-3-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.2</span> Load packages<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-packages-4')" onmouseout="reset_tooltip('load-packages-4-tooltip')"><span class="tooltiptext" id="load-packages-4-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>First, we load the <code>msqrob2</code> package and additional packages for data
 manipulation and visualisation.</p>
-<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="sec-francisella.html#cb221-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"msqrob2"</span>)</span>
-<span id="cb221-2"><a href="sec-francisella.html#cb221-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb221-3"><a href="sec-francisella.html#cb221-3" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggrepel"</span>)</span>
-<span id="cb221-4"><a href="sec-francisella.html#cb221-4" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="sec-francisella.html#cb249-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"msqrob2"</span>)</span>
+<span id="cb249-2"><a href="sec-francisella.html#cb249-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb249-3"><a href="sec-francisella.html#cb249-3" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggrepel"</span>)</span>
+<span id="cb249-4"><a href="sec-francisella.html#cb249-4" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span></code></pre></div>
 <p>We also configure the <a href="sec-basics.html#sec-parallel">parallelisation</a> framework.</p>
-<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="sec-francisella.html#cb222-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocParallel"</span>)</span>
-<span id="cb222-2"><a href="sec-francisella.html#cb222-2" tabindex="-1"></a><span class="fu">register</span>(<span class="fu">SerialParam</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="sec-francisella.html#cb250-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocParallel"</span>)</span>
+<span id="cb250-2"><a href="sec-francisella.html#cb250-2" tabindex="-1"></a><span class="fu">register</span>(<span class="fu">SerialParam</span>())</span></code></pre></div>
 </div>
-<div id="load-data" class="section level2" number="5.3">
+<div id="load-data" class="section level2" number="6.3">
 <h2>
-<span class="header-section-number">5.3</span> Load data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-data')" onmouseout="reset_tooltip('load-data-tooltip')"><span class="tooltiptext" id="load-data-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.3</span> Load data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-data')" onmouseout="reset_tooltip('load-data-tooltip')"><span class="tooltiptext" id="load-data-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
-<div id="experimental-context-1" class="section level3" number="5.3.1">
+<div id="experimental-context-1" class="section level3" number="6.3.1">
 <h3>
-<span class="header-section-number">5.3.1</span> Experimental context<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('experimental-context-1')" onmouseout="reset_tooltip('experimental-context-1-tooltip')"><span class="tooltiptext" id="experimental-context-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.3.1</span> Experimental context<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('experimental-context-1')" onmouseout="reset_tooltip('experimental-context-1-tooltip')"><span class="tooltiptext" id="experimental-context-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>A study on the facultative pathogen Francisella tularensis was
-conceived by <span class="citation">(<label for="tufte-mn-17" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-17" class="margin-toggle">Ramond et al. 2015<span class="marginnote">Ramond, Elodie, Gael Gesbert, Ida Chiara Guerrera, Cerina Chhuon, Marion Dupuis, Mélanie Rigard, Thomas Henry, Monique Barel, and Alain Charbit. 2015. <span>“Importance of Host Cell Arginine Uptake in Francisella Phagosomal Escape and Ribosomal Protein Amounts.”</span> <em>Mol. Cell. Proteomics</em> 14 (4): 870–81.</span>)</span>. F. tularensis enters the cells of its
+conceived by <span class="citation">(<label for="tufte-mn-22" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-22" class="margin-toggle">Ramond et al. 2015<span class="marginnote">Ramond, Elodie, Gael Gesbert, Ida Chiara Guerrera, Cerina Chhuon, Marion Dupuis, Mélanie Rigard, Thomas Henry, Monique Barel, and Alain Charbit. 2015. <span>“Importance of Host Cell Arginine Uptake in Francisella Phagosomal Escape and Ribosomal Protein Amounts.”</span> <em>Mol. Cell. Proteomics</em> 14 (4): 870–81.</span>)</span>. F. tularensis enters the cells of its
 host by phagocytosis. The authors showed that F. tularensis is
 arginine deficient and imports arginine from the host cell via an
 arginine transporter, ArgP, in order to efficiently escape from the
@@ -252,27 +252,27 @@ bacterial cultures were grown in biological triplicate and each biorep
 was run in technical triplicate on a nanoRSLC-Q Exactive PLUS
 instrument.</p>
 </div>
-<div id="getting-the-data" class="section level3" number="5.3.2">
+<div id="getting-the-data" class="section level3" number="6.3.2">
 <h3>
-<span class="header-section-number">5.3.2</span> Getting the data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('getting-the-data')" onmouseout="reset_tooltip('getting-the-data-tooltip')"><span class="tooltiptext" id="getting-the-data-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.3.2</span> Getting the data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('getting-the-data')" onmouseout="reset_tooltip('getting-the-data-tooltip')"><span class="tooltiptext" id="getting-the-data-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>The data were searched with MaxQuant version 1.4.1.2. and are
 available on the PRIDE repository:
 <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD001584">PXD001584</a>.
-We download the peptides file<label for="tufte-sn-30" class="margin-toggle sidenote-number">30</label><input type="checkbox" id="tufte-sn-30" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">30</span> The file is
+We download the peptides file<label for="tufte-sn-33" class="margin-toggle sidenote-number">33</label><input type="checkbox" id="tufte-sn-33" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">33</span> The file is
 <a href="sec-advanced.html#sec-caching">locally cached</a></span>.</p>
 <p><strong>TODO</strong> put on Zenodo and use BiocFileCache</p>
-<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="sec-francisella.html#cb223-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocFileCache"</span>)</span>
-<span id="cb223-2"><a href="sec-francisella.html#cb223-2" tabindex="-1"></a>bfc <span class="ot">&lt;-</span> <span class="fu">BiocFileCache</span>()</span>
-<span id="cb223-3"><a href="sec-francisella.html#cb223-3" tabindex="-1"></a>pepFile <span class="ot">&lt;-</span> <span class="fu">bfcrpath</span>(bfc, <span class="st">"https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/master/Francisella/data/maxquant/peptides.txt"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="sec-francisella.html#cb251-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocFileCache"</span>)</span>
+<span id="cb251-2"><a href="sec-francisella.html#cb251-2" tabindex="-1"></a>bfc <span class="ot">&lt;-</span> <span class="fu">BiocFileCache</span>()</span>
+<span id="cb251-3"><a href="sec-francisella.html#cb251-3" tabindex="-1"></a>pepFile <span class="ot">&lt;-</span> <span class="fu">bfcrpath</span>(bfc, <span class="st">"https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/master/Francisella/data/maxquant/peptides.txt"</span>)</span></code></pre></div>
 <p>After downloading the files, we can load the <a href="%7B#sec-peptide_table%7D">peptide
 table</a>. Contrarily a <a href="sec-advanced.html#sec-psm_table">PSM
 table</a>, the peptide table is provided in a “wide
 format”, meaning that each row represents a single peptide and that
 each quantification column (that starts with <code>"Intensity"</code>) represents
 a single sample.</p>
-<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="sec-francisella.html#cb224-1" tabindex="-1"></a>peps <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(pepFile)</span>
-<span id="cb224-2"><a href="sec-francisella.html#cb224-2" tabindex="-1"></a>quantcols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"Intensity</span><span class="sc">\\</span><span class="st">."</span>, <span class="fu">names</span>(peps), <span class="at">value =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="sec-francisella.html#cb252-1" tabindex="-1"></a>peps <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(pepFile)</span>
+<span id="cb252-2"><a href="sec-francisella.html#cb252-2" tabindex="-1"></a>quantcols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"Intensity</span><span class="sc">\\</span><span class="st">."</span>, <span class="fu">names</span>(peps), <span class="at">value =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <table style="width:100%;">
 <colgroup>
 <col width="1%">
@@ -985,11 +985,11 @@ a single sample.</p>
 will build a table where each row in the annotation table contains
 information for one sample (the table below shows the first 6 rows).
 This information is extracted from the sample names.</p>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="sec-francisella.html#cb225-1" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">quantCols =</span> quantcols) <span class="sc">|&gt;</span> </span>
-<span id="cb225-2"><a href="sec-francisella.html#cb225-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"_20_"</span>, quantCols) <span class="sc">&amp;</span> <span class="fu">grepl</span>(<span class="st">"_n</span><span class="sc">\\</span><span class="st">d"</span>, quantCols)) <span class="sc">|&gt;</span> </span>
-<span id="cb225-3"><a href="sec-francisella.html#cb225-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">genotype  =</span> <span class="fu">substr</span>(quantCols, <span class="dv">12</span>, <span class="dv">13</span>), </span>
-<span id="cb225-4"><a href="sec-francisella.html#cb225-4" tabindex="-1"></a>         <span class="at">biorep  =</span> <span class="fu">paste0</span>(genotype, <span class="st">"_"</span>, <span class="fu">substr</span>(quantCols, <span class="dv">21</span>, <span class="dv">22</span>)),</span>
-<span id="cb225-5"><a href="sec-francisella.html#cb225-5" tabindex="-1"></a>         <span class="at">run =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(quantcols))</span></code></pre></div>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="sec-francisella.html#cb253-1" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">quantCols =</span> quantcols) <span class="sc">|&gt;</span> </span>
+<span id="cb253-2"><a href="sec-francisella.html#cb253-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"_20_"</span>, quantCols) <span class="sc">&amp;</span> <span class="fu">grepl</span>(<span class="st">"_n</span><span class="sc">\\</span><span class="st">d"</span>, quantCols)) <span class="sc">|&gt;</span> </span>
+<span id="cb253-3"><a href="sec-francisella.html#cb253-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">genotype  =</span> <span class="fu">substr</span>(quantCols, <span class="dv">12</span>, <span class="dv">13</span>), </span>
+<span id="cb253-4"><a href="sec-francisella.html#cb253-4" tabindex="-1"></a>         <span class="at">biorep  =</span> <span class="fu">paste0</span>(genotype, <span class="st">"_"</span>, <span class="fu">substr</span>(quantCols, <span class="dv">21</span>, <span class="dv">22</span>)),</span>
+<span id="cb253-5"><a href="sec-francisella.html#cb253-5" tabindex="-1"></a>         <span class="at">run =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(quantcols))</span></code></pre></div>
 <table>
 <thead><tr class="header">
 <th align="left">quantCols</th>
@@ -1037,14 +1037,14 @@ This information is extracted from the sample names.</p>
 </tbody>
 </table>
 </div>
-<div id="the-qfeatures-data-class" class="section level3" number="5.3.3">
+<div id="the-qfeatures-data-class" class="section level3" number="6.3.3">
 <h3>
-<span class="header-section-number">5.3.3</span> The <code>QFeatures</code> data class<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('the-qfeatures-data-class')" onmouseout="reset_tooltip('the-qfeatures-data-class-tooltip')"><span class="tooltiptext" id="the-qfeatures-data-class-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.3.3</span> The <code>QFeatures</code> data class<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('the-qfeatures-data-class')" onmouseout="reset_tooltip('the-qfeatures-data-class-tooltip')"><span class="tooltiptext" id="the-qfeatures-data-class-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We combine the two tables into a <a href="sec-basics.html#sec-qfeatures"><code>QFeatures</code> object</a>.</p>
-<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="sec-francisella.html#cb226-1" tabindex="-1"></a>(pe <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
-<span id="cb226-2"><a href="sec-francisella.html#cb226-2" tabindex="-1"></a>  peps, <span class="at">colData =</span> coldata, <span class="at">fnames =</span> <span class="st">"Sequence"</span>, <span class="at">name =</span> <span class="st">"peptides"</span></span>
-<span id="cb226-3"><a href="sec-francisella.html#cb226-3" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="sec-francisella.html#cb254-1" tabindex="-1"></a>(pe <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
+<span id="cb254-2"><a href="sec-francisella.html#cb254-2" tabindex="-1"></a>  peps, <span class="at">colData =</span> coldata, <span class="at">fnames =</span> <span class="st">"Sequence"</span>, <span class="at">name =</span> <span class="st">"peptides"</span></span>
+<span id="cb254-3"><a href="sec-francisella.html#cb254-3" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## An instance of class QFeatures (type: bulk) with 1 set:
 ## 
 ##  [1] peptides: SummarizedExperiment with 10693 rows and 18 columns</code></pre>
@@ -1052,51 +1052,49 @@ This information is extracted from the sample names.</p>
 (samples).</p>
 </div>
 </div>
-<div id="data-preprocessing-2" class="section level2" number="5.4">
+<div id="data-preprocessing-2" class="section level2" number="6.4">
 <h2>
-<span class="header-section-number">5.4</span> Data preprocessing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-preprocessing-2')" onmouseout="reset_tooltip('data-preprocessing-2-tooltip')"><span class="tooltiptext" id="data-preprocessing-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.4</span> Data preprocessing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-preprocessing-2')" onmouseout="reset_tooltip('data-preprocessing-2-tooltip')"><span class="tooltiptext" id="data-preprocessing-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p><code>msqrob2</code> relies on the <code>QFeatures</code> data structure, meaning that we
 can directly make use of <code>QFeatures</code>’ data preprocessing functionality
 (see also the <code>QFeatures</code>
 <a href="https://rformassspectrometry.github.io/QFeatures/articles/Processing.html">documentation</a>).</p>
-<div id="encoding-missing-values-1" class="section level3" number="5.4.1">
+<div id="encoding-missing-values-1" class="section level3" number="6.4.1">
 <h3>
-<span class="header-section-number">5.4.1</span> Encoding missing values<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('encoding-missing-values-1')" onmouseout="reset_tooltip('encoding-missing-values-1-tooltip')"><span class="tooltiptext" id="encoding-missing-values-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.4.1</span> Encoding missing values<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('encoding-missing-values-1')" onmouseout="reset_tooltip('encoding-missing-values-1-tooltip')"><span class="tooltiptext" id="encoding-missing-values-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Peptides with zero intensities should be
 <a href="sec-basics.html#sec-encode_missing">encoded</a> using <code>NA</code>.</p>
-<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="sec-francisella.html#cb228-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(pe, <span class="st">"peptides"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="sec-francisella.html#cb256-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(pe, <span class="st">"peptides"</span>)</span></code></pre></div>
 <p>We calculate how many non zero intensities we have per peptide and
 this is often useful for filtering.</p>
-<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="sec-francisella.html#cb229-1" tabindex="-1"></a>naResults <span class="ot">&lt;-</span> <span class="fu">nNA</span>(pe, <span class="st">"peptides"</span>)</span>
-<span id="cb229-2"><a href="sec-francisella.html#cb229-2" tabindex="-1"></a><span class="fu">data.frame</span>(naResults<span class="sc">$</span>nNArows) <span class="sc">|&gt;</span> </span>
-<span id="cb229-3"><a href="sec-francisella.html#cb229-3" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb229-4"><a href="sec-francisella.html#cb229-4" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> nNA) <span class="sc">+</span></span>
-<span id="cb229-5"><a href="sec-francisella.html#cb229-5" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-11-1.png" alt="plot of chunk unnamed-chunk-11"><div class="figcaption">plot of chunk unnamed-chunk-11</div>
+<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="sec-francisella.html#cb257-1" tabindex="-1"></a>naResults <span class="ot">&lt;-</span> <span class="fu">nNA</span>(pe, <span class="st">"peptides"</span>)</span>
+<span id="cb257-2"><a href="sec-francisella.html#cb257-2" tabindex="-1"></a><span class="fu">data.frame</span>(naResults<span class="sc">$</span>nNArows) <span class="sc">|&gt;</span> </span>
+<span id="cb257-3"><a href="sec-francisella.html#cb257-3" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb257-4"><a href="sec-francisella.html#cb257-4" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> nNA) <span class="sc">+</span></span>
+<span id="cb257-5"><a href="sec-francisella.html#cb257-5" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<p><img src="figure/francisella_nNA_hist-1.png"></p>
 </div>
-</div>
-<div id="peptide-filtering" class="section level3" number="5.4.2">
+<div id="peptide-filtering" class="section level3" number="6.4.2">
 <h3>
-<span class="header-section-number">5.4.2</span> Peptide filtering<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('peptide-filtering')" onmouseout="reset_tooltip('peptide-filtering-tooltip')"><span class="tooltiptext" id="peptide-filtering-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.4.2</span> Peptide filtering<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('peptide-filtering')" onmouseout="reset_tooltip('peptide-filtering-tooltip')"><span class="tooltiptext" id="peptide-filtering-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
-<p>We filter peptides based on 3 criteria (see <a href="sec-advanced.html#psm-filtering">PSM filtering</a>).</p>
+<p>We filter peptides based on 3 criteria (see <a href="sec-basics.html#sec-filter">PSM filtering</a>).</p>
 <ol style="list-style-type: decimal">
 <li>Remove failed protein inference</li>
 </ol>
 <p>We remove peptides that could not be uniquely mapped to a protein.</p>
-<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="sec-francisella.html#cb230-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe,</span>
-<span id="cb230-2"><a href="sec-francisella.html#cb230-2" tabindex="-1"></a>  <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
-<span id="cb230-3"><a href="sec-francisella.html#cb230-3" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins)) <span class="do">## Remove protein groups</span></span></code></pre></div>
+<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="sec-francisella.html#cb258-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe,</span>
+<span id="cb258-2"><a href="sec-francisella.html#cb258-2" tabindex="-1"></a>  <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
+<span id="cb258-3"><a href="sec-francisella.html#cb258-3" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins)) <span class="do">## Remove protein groups</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Remove reverse sequences and contaminants</li>
 </ol>
 <p>We now remove the contaminants and peptides that map to decoy
 sequences. These features bear no information of interest and will
 reduce the statistical power upon multiple test adjustment.</p>
-<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="sec-francisella.html#cb231-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe, <span class="sc">~</span> Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> Contaminant <span class="sc">!=</span> <span class="st">"+"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="sec-francisella.html#cb259-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe, <span class="sc">~</span> Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> Contaminant <span class="sc">!=</span> <span class="st">"+"</span>)</span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Drop peptides that were only identified in a single biorepeat</li>
 </ol>
@@ -1106,47 +1104,47 @@ performed using <code>filterNA()</code>). Here, we will require that a peptide i
 picked up in at least two biorepeats. We compute the number
 of biorepeats that were observed for each peptide (that is the number
 of biorepeats that contain at least one observed value).</p>
-<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="sec-francisella.html#cb232-1" tabindex="-1"></a><span class="fu">rowData</span>(pe[[<span class="st">"peptides"</span>]])<span class="sc">$</span>nNonZeroBiorep <span class="ot">&lt;-</span> <span class="fu">apply</span>(</span>
-<span id="cb232-2"><a href="sec-francisella.html#cb232-2" tabindex="-1"></a>  <span class="fu">assay</span>(pe[[<span class="st">"peptides"</span>]]), <span class="dv">1</span>, <span class="cf">function</span>(intensity)</span>
-<span id="cb232-3"><a href="sec-francisella.html#cb232-3" tabindex="-1"></a>    pe<span class="sc">$</span>biorep[<span class="sc">!</span><span class="fu">is.na</span>(intensity)] <span class="sc">|&gt;</span> </span>
-<span id="cb232-4"><a href="sec-francisella.html#cb232-4" tabindex="-1"></a>    <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb232-5"><a href="sec-francisella.html#cb232-5" tabindex="-1"></a>    <span class="fu">length</span>()</span>
-<span id="cb232-6"><a href="sec-francisella.html#cb232-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="sec-francisella.html#cb260-1" tabindex="-1"></a><span class="fu">rowData</span>(pe[[<span class="st">"peptides"</span>]])<span class="sc">$</span>nNonZeroBiorep <span class="ot">&lt;-</span> <span class="fu">apply</span>(</span>
+<span id="cb260-2"><a href="sec-francisella.html#cb260-2" tabindex="-1"></a>  <span class="fu">assay</span>(pe[[<span class="st">"peptides"</span>]]), <span class="dv">1</span>, <span class="cf">function</span>(intensity)</span>
+<span id="cb260-3"><a href="sec-francisella.html#cb260-3" tabindex="-1"></a>    pe<span class="sc">$</span>biorep[<span class="sc">!</span><span class="fu">is.na</span>(intensity)] <span class="sc">|&gt;</span> </span>
+<span id="cb260-4"><a href="sec-francisella.html#cb260-4" tabindex="-1"></a>    <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb260-5"><a href="sec-francisella.html#cb260-5" tabindex="-1"></a>    <span class="fu">length</span>()</span>
+<span id="cb260-6"><a href="sec-francisella.html#cb260-6" tabindex="-1"></a>)</span></code></pre></div>
 <p>We keep peptides that are observed in at least two biorepeats.</p>
-<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="sec-francisella.html#cb233-1" tabindex="-1"></a>(pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe, <span class="sc">~</span> nNonZeroBiorep <span class="sc">&gt;=</span> <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="sec-francisella.html#cb261-1" tabindex="-1"></a>(pe <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(pe, <span class="sc">~</span> nNonZeroBiorep <span class="sc">&gt;=</span> <span class="dv">2</span>))</span></code></pre></div>
 <pre><code>## An instance of class QFeatures (type: bulk) with 1 set:
 ## 
 ##  [1] peptides: SummarizedExperiment with 7542 rows and 18 columns</code></pre>
 <p>We keep 7542 peptides upon filtering.</p>
 </div>
-<div id="standard-preprocessing-workflow" class="section level3" number="5.4.3">
+<div id="standard-preprocessing-workflow" class="section level3" number="6.4.3">
 <h3>
-<span class="header-section-number">5.4.3</span> Standard preprocessing workflow<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('standard-preprocessing-workflow')" onmouseout="reset_tooltip('standard-preprocessing-workflow-tooltip')"><span class="tooltiptext" id="standard-preprocessing-workflow-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.4.3</span> Standard preprocessing workflow<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('standard-preprocessing-workflow')" onmouseout="reset_tooltip('standard-preprocessing-workflow-tooltip')"><span class="tooltiptext" id="standard-preprocessing-workflow-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We can now prepare the data for modelling. The workflow ensures the
 data complies to <code>msqrob2</code>’s requirements:</p>
 <ol style="list-style-type: decimal">
 <li>Intensities are <a href="sec-basics.html#sec-log2">log-transformed</a>.</li>
 </ol>
-<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="sec-francisella.html#cb235-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(pe, <span class="at">base =</span> <span class="dv">2</span>, <span class="at">i =</span> <span class="st">"peptides"</span>, <span class="at">name =</span> <span class="st">"peptides_log"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="sec-francisella.html#cb263-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(pe, <span class="at">base =</span> <span class="dv">2</span>, <span class="at">i =</span> <span class="st">"peptides"</span>, <span class="at">name =</span> <span class="st">"peptides_log"</span>)</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Normalisation with the Median of Ratios method.</li>
 </ol>
-<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="sec-francisella.html#cb236-1" tabindex="-1"></a>pseudoRef <span class="ot">&lt;-</span> <span class="fu">assay</span>(pe[[<span class="st">"peptides_log"</span>]]) <span class="sc">|&gt;</span> </span>
-<span id="cb236-2"><a href="sec-francisella.html#cb236-2" tabindex="-1"></a>  <span class="fu">rowMeans</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co">#1. Calculate the row means </span></span>
-<span id="cb236-3"><a href="sec-francisella.html#cb236-3" tabindex="-1"></a></span>
-<span id="cb236-4"><a href="sec-francisella.html#cb236-4" tabindex="-1"></a>nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
-<span id="cb236-5"><a href="sec-francisella.html#cb236-5" tabindex="-1"></a>  <span class="fu">assay</span>(pe[[<span class="st">"peptides_log"</span>]]), </span>
-<span id="cb236-6"><a href="sec-francisella.html#cb236-6" tabindex="-1"></a>  <span class="at">MARGIN =</span> <span class="dv">1</span>, </span>
-<span id="cb236-7"><a href="sec-francisella.html#cb236-7" tabindex="-1"></a>  pseudoRef) <span class="sc">|&gt;</span> <span class="co">#2. Subtract the row means row-by-row (MARGIN = 1)</span></span>
-<span id="cb236-8"><a href="sec-francisella.html#cb236-8" tabindex="-1"></a>  <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)  <span class="co">#3. Calculate the column median </span></span>
-<span id="cb236-9"><a href="sec-francisella.html#cb236-9" tabindex="-1"></a></span>
-<span id="cb236-10"><a href="sec-francisella.html#cb236-10" tabindex="-1"></a>pe <span class="ot">&lt;-</span> </span>
-<span id="cb236-11"><a href="sec-francisella.html#cb236-11" tabindex="-1"></a>  <span class="fu">sweep</span>(pe, </span>
-<span id="cb236-12"><a href="sec-francisella.html#cb236-12" tabindex="-1"></a>        <span class="at">MARGIN =</span> <span class="dv">2</span>, </span>
-<span id="cb236-13"><a href="sec-francisella.html#cb236-13" tabindex="-1"></a>        <span class="at">STATS =</span> nfLog , </span>
-<span id="cb236-14"><a href="sec-francisella.html#cb236-14" tabindex="-1"></a>        <span class="at">i =</span> <span class="st">"peptides_log"</span>, </span>
-<span id="cb236-15"><a href="sec-francisella.html#cb236-15" tabindex="-1"></a>        <span class="at">name =</span> <span class="st">"peptides_norm"</span>) <span class="co">#4. Subtract log2 norm factor column-by-column (MARGIN = 2)</span></span></code></pre></div>
+<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="sec-francisella.html#cb264-1" tabindex="-1"></a>pseudoRef <span class="ot">&lt;-</span> <span class="fu">assay</span>(pe[[<span class="st">"peptides_log"</span>]]) <span class="sc">|&gt;</span> </span>
+<span id="cb264-2"><a href="sec-francisella.html#cb264-2" tabindex="-1"></a>  <span class="fu">rowMeans</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co">#1. Calculate the row means </span></span>
+<span id="cb264-3"><a href="sec-francisella.html#cb264-3" tabindex="-1"></a></span>
+<span id="cb264-4"><a href="sec-francisella.html#cb264-4" tabindex="-1"></a>nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
+<span id="cb264-5"><a href="sec-francisella.html#cb264-5" tabindex="-1"></a>  <span class="fu">assay</span>(pe[[<span class="st">"peptides_log"</span>]]), </span>
+<span id="cb264-6"><a href="sec-francisella.html#cb264-6" tabindex="-1"></a>  <span class="at">MARGIN =</span> <span class="dv">1</span>, </span>
+<span id="cb264-7"><a href="sec-francisella.html#cb264-7" tabindex="-1"></a>  pseudoRef) <span class="sc">|&gt;</span> <span class="co">#2. Subtract the row means row-by-row (MARGIN = 1)</span></span>
+<span id="cb264-8"><a href="sec-francisella.html#cb264-8" tabindex="-1"></a>  <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)  <span class="co">#3. Calculate the column median </span></span>
+<span id="cb264-9"><a href="sec-francisella.html#cb264-9" tabindex="-1"></a></span>
+<span id="cb264-10"><a href="sec-francisella.html#cb264-10" tabindex="-1"></a>pe <span class="ot">&lt;-</span> </span>
+<span id="cb264-11"><a href="sec-francisella.html#cb264-11" tabindex="-1"></a>  <span class="fu">sweep</span>(pe, </span>
+<span id="cb264-12"><a href="sec-francisella.html#cb264-12" tabindex="-1"></a>        <span class="at">MARGIN =</span> <span class="dv">2</span>, </span>
+<span id="cb264-13"><a href="sec-francisella.html#cb264-13" tabindex="-1"></a>        <span class="at">STATS =</span> nfLog , </span>
+<span id="cb264-14"><a href="sec-francisella.html#cb264-14" tabindex="-1"></a>        <span class="at">i =</span> <span class="st">"peptides_log"</span>, </span>
+<span id="cb264-15"><a href="sec-francisella.html#cb264-15" tabindex="-1"></a>        <span class="at">name =</span> <span class="st">"peptides_norm"</span>) <span class="co">#4. Subtract log2 norm factor column-by-column (MARGIN = 2)</span></span></code></pre></div>
 <!--
 2. Samples are normalised by substracting the sample median (see [Normalisation])
 -->
@@ -1155,14 +1153,12 @@ confirm this, we will plot the intensity distributions for each
 biorepeat (francisella culture). <code>longForm()</code> seamlessly combines the quantification
 and annotation data into a table suitable for <code>ggplot2</code> visualisation.
 We also subset the object with the data before and after normalisation.</p>
-<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="sec-francisella.html#cb237-1" tabindex="-1"></a><span class="fu">longForm</span>(pe[, , <span class="fu">c</span>(<span class="st">"peptides_log"</span>, <span class="st">"peptides_norm"</span>)], <span class="at">colvar =</span> <span class="st">"biorep"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb237-2"><a href="sec-francisella.html#cb237-2" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb237-3"><a href="sec-francisella.html#cb237-3" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">group =</span> colname, <span class="at">color =</span> biorep) <span class="sc">+</span></span>
-<span id="cb237-4"><a href="sec-francisella.html#cb237-4" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
-<span id="cb237-5"><a href="sec-francisella.html#cb237-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> assay, <span class="at">scale =</span> <span class="st">"free"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-19-1.png" alt="plot of chunk unnamed-chunk-19"><div class="figcaption">plot of chunk unnamed-chunk-19</div>
-</div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="sec-francisella.html#cb265-1" tabindex="-1"></a><span class="fu">longForm</span>(pe[, , <span class="fu">c</span>(<span class="st">"peptides_log"</span>, <span class="st">"peptides_norm"</span>)], <span class="at">colvar =</span> <span class="st">"biorep"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb265-2"><a href="sec-francisella.html#cb265-2" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb265-3"><a href="sec-francisella.html#cb265-3" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">group =</span> colname, <span class="at">color =</span> biorep) <span class="sc">+</span></span>
+<span id="cb265-4"><a href="sec-francisella.html#cb265-4" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb265-5"><a href="sec-francisella.html#cb265-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> assay, <span class="at">scale =</span> <span class="st">"free"</span>)</span></code></pre></div>
+<p><img src="figure/francisella_after_norm-1.png"></p>
 <ol start="3" style="list-style-type: decimal">
 <li>
 <a href="sec-basics.html#sec-summarisation">Summarisation</a> to protein level.</li>
@@ -1171,51 +1167,48 @@ We also subset the object with the data before and after normalisation.</p>
 peptide-level data, accounting for the fact that different peptides
 have ionisation efficiencies hence leading to different intensity
 baselines.</p>
-<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="sec-francisella.html#cb238-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
-<span id="cb238-2"><a href="sec-francisella.html#cb238-2" tabindex="-1"></a>  pe, <span class="at">i =</span> <span class="st">"peptides_norm"</span>, <span class="at">fcol =</span> <span class="st">"Proteins"</span>, </span>
-<span id="cb238-3"><a href="sec-francisella.html#cb238-3" tabindex="-1"></a>  <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"proteins"</span></span>
-<span id="cb238-4"><a href="sec-francisella.html#cb238-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="sec-francisella.html#cb266-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
+<span id="cb266-2"><a href="sec-francisella.html#cb266-2" tabindex="-1"></a>  pe, <span class="at">i =</span> <span class="st">"peptides_norm"</span>, <span class="at">fcol =</span> <span class="st">"Proteins"</span>, </span>
+<span id="cb266-3"><a href="sec-francisella.html#cb266-3" tabindex="-1"></a>  <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"proteins"</span></span>
+<span id="cb266-4"><a href="sec-francisella.html#cb266-4" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 </div>
-<div id="data-exploration-1" class="section level2" number="5.5">
+<div id="data-exploration-1" class="section level2" number="6.5">
 <h2>
-<span class="header-section-number">5.5</span> Data exploration<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-exploration-1')" onmouseout="reset_tooltip('data-exploration-1-tooltip')"><span class="tooltiptext" id="data-exploration-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.5</span> Data exploration<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-exploration-1')" onmouseout="reset_tooltip('data-exploration-1-tooltip')"><span class="tooltiptext" id="data-exploration-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>We will explore the main sources of variation in the data using
 <a href="sec-basics.html#sec_data_exploration">MDS</a>.</p>
-<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="sec-francisella.html#cb239-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"scater"</span>)</span>
-<span id="cb239-2"><a href="sec-francisella.html#cb239-2" tabindex="-1"></a><span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb239-3"><a href="sec-francisella.html#cb239-3" tabindex="-1"></a>  <span class="fu">as</span>(<span class="st">"SingleCellExperiment"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb239-4"><a href="sec-francisella.html#cb239-4" tabindex="-1"></a>  <span class="fu">runMDS</span>(<span class="at">exprs_values =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb239-5"><a href="sec-francisella.html#cb239-5" tabindex="-1"></a>  <span class="fu">plotMDS</span>(<span class="at">colour_by =</span> <span class="st">"genotype"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-21-1.png" alt="plot of chunk unnamed-chunk-21"><div class="figcaption">plot of chunk unnamed-chunk-21</div>
-</div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="sec-francisella.html#cb267-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"scater"</span>)</span>
+<span id="cb267-2"><a href="sec-francisella.html#cb267-2" tabindex="-1"></a><span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb267-3"><a href="sec-francisella.html#cb267-3" tabindex="-1"></a>  <span class="fu">as</span>(<span class="st">"SingleCellExperiment"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb267-4"><a href="sec-francisella.html#cb267-4" tabindex="-1"></a>  <span class="fu">runMDS</span>(<span class="at">exprs_values =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb267-5"><a href="sec-francisella.html#cb267-5" tabindex="-1"></a>  <span class="fu">plotMDS</span>(<span class="at">colour_by =</span> <span class="st">"genotype"</span>)</span></code></pre></div>
+<p><img src="figure/francisella_mds-1.png"></p>
 <p>Note that the samples upon robust summarisation show a clear
 separation according to the genotype in the first dimension of the MDS
 plot.</p>
 </div>
-<div id="data-modelling-1" class="section level2" number="5.6">
+<div id="data-modelling-2" class="section level2" number="6.6">
 <h2>
-<span class="header-section-number">5.6</span> Data modelling<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-modelling-1')" onmouseout="reset_tooltip('data-modelling-1-tooltip')"><span class="tooltiptext" id="data-modelling-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.6</span> Data modelling<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-modelling-2')" onmouseout="reset_tooltip('data-modelling-2-tooltip')"><span class="tooltiptext" id="data-modelling-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>The preprocessed data can now be modelled to answer biologically
 relevant questions. As described above, samples (bacterial cultures)
 originate from either a wildtype (WT) or a ArgP knockout (D8). Each
 genotype was cultured in biological triplicate. Each biological
-triplicate was acquired in technical triplicate, leading to <span class="math inline">\(2 \times
-3 \times 3 = 18\)</span> samples. In this context, we are interested in the
+triplicate was acquired in technical triplicate, leading to <span class="math inline">\(2 \times 3 \times 3 = 18\)</span> samples. In this context, we are interested in the
 effects of genotype on the protein abundances.</p>
 <p>The table below confirms we have a balanced design
 for each condition and biological triplicate.</p>
-<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="sec-francisella.html#cb240-1" tabindex="-1"></a><span class="fu">table</span>(<span class="at">genotype =</span> pe<span class="sc">$</span>genotype, <span class="at">biorep =</span> pe<span class="sc">$</span>biorep)</span></code></pre></div>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="sec-francisella.html#cb268-1" tabindex="-1"></a><span class="fu">table</span>(<span class="at">genotype =</span> pe<span class="sc">$</span>genotype, <span class="at">biorep =</span> pe<span class="sc">$</span>biorep)</span></code></pre></div>
 <pre><code>##         biorep
 ## genotype D8_n3 D8_n4 D8_n5 WT_n3 WT_n4 WT_n5
 ##       D8     3     3     3     0     0     0
 ##       WT     0     0     0     3     3     3</code></pre>
-<div id="sources-of-variation-1" class="section level3" number="5.6.1">
+<div id="sources-of-variation-1" class="section level3" number="6.6.1">
 <h3>
-<span class="header-section-number">5.6.1</span> Sources of variation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('sources-of-variation-1')" onmouseout="reset_tooltip('sources-of-variation-1-tooltip')"><span class="tooltiptext" id="sources-of-variation-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.6.1</span> Sources of variation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('sources-of-variation-1')" onmouseout="reset_tooltip('sources-of-variation-1-tooltip')"><span class="tooltiptext" id="sources-of-variation-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We will model two <a href="sec-basics.html#sec-modelling">sources of variation</a>:</p>
 <ol style="list-style-type: decimal">
@@ -1235,15 +1228,13 @@ provide exactly the same sample material. These effects are typically
 modelled as random effects which are considered as a random sample
 from the population of all possible mice and are assumed to be
 i.i.d normally distributed with mean 0 and constant variance,
-<span class="math inline">\(u_{biorep} \sim
-N(0,\sigma^{2,\text{b}})\)</span>. The use of random effects thus
+<span class="math inline">\(u_{biorep} \sim N(0,\sigma^{2,\text{b}})\)</span>. The use of random effects thus
 models the correlation in the data, explicitly. We expect that
 intensities from the same bacterial culture are more alike than
 intensities between cultures.</p></li>
 </ol>
 <p>Hence, the variance-covariance matrix of the 18 protein abundance
-values <span class="math inline">\(\mathbf{Y}=(y_{wt\_n3,1}, y_{wt\_n3,2}, y_{wt\_n3,3},
-y_{wt\_n4,1} \ldots y_{d8\_n5,1}, y_{d8\_n5,2}, y_{d8\_n5,3})^T\)</span> is
+values <span class="math inline">\(\mathbf{Y}=(y_{wt\_n3,1}, y_{wt\_n3,2}, y_{wt\_n3,3}, y_{wt\_n4,1} \ldots y_{d8\_n5,1}, y_{d8\_n5,2}, y_{d8\_n5,3})^T\)</span> is
 assumed to have a block diagonal structure, with as variance
 <span class="math inline">\(\sigma_b^2 + \sigma_\epsilon^2\)</span> and the covariance between protein
 abundance values of technical replicates from the same biorepeat
@@ -1266,12 +1257,12 @@ term is needed to model the average difference between D8 and WT (See
 Section <a href="sec-basics.html#sec-inference">Statistical inference</a> below).</p>
 <p>Now we have identified the sources of variation in the experiment, we
 can define a model.</p>
-<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="sec-francisella.html#cb242-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="er">~</span> genotype <span class="sc">+</span> <span class="do">## (1) fixed effect for genotype</span></span>
-<span id="cb242-2"><a href="sec-francisella.html#cb242-2" tabindex="-1"></a>  (<span class="dv">1</span> <span class="sc">|</span> biorep)  <span class="do">## (2) random effect for biological replicate (culture)</span></span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="sec-francisella.html#cb270-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="er">~</span> genotype <span class="sc">+</span> <span class="do">## (1) fixed effect for genotype</span></span>
+<span id="cb270-2"><a href="sec-francisella.html#cb270-2" tabindex="-1"></a>  (<span class="dv">1</span> <span class="sc">|</span> biorep)  <span class="do">## (2) random effect for biological replicate (culture)</span></span></code></pre></div>
 </div>
-<div id="estimate-the-model" class="section level3" number="5.6.2">
+<div id="estimate-the-model" class="section level3" number="6.6.2">
 <h3>
-<span class="header-section-number">5.6.2</span> Estimate the model<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('estimate-the-model')" onmouseout="reset_tooltip('estimate-the-model-tooltip')"><span class="tooltiptext" id="estimate-the-model-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.6.2</span> Estimate the model<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('estimate-the-model')" onmouseout="reset_tooltip('estimate-the-model-tooltip')"><span class="tooltiptext" id="estimate-the-model-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We estimate the model with <code>msqrob()</code> (see <a href="sec-advanced.html#sec-run_model">the modelling
 section</a>). Recall that
@@ -1281,12 +1272,12 @@ also features ridge regression for stabilising the parameter
 estimation, but it is irrelevant in this context as the genotype
 factor only has 2 levels (WT and D8), so ridge regression . We will
 therefore leave the ridge regression disabled (default).</p>
-<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="sec-francisella.html#cb243-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(pe, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">formula =</span> model, <span class="at">robust =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="sec-francisella.html#cb271-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(pe, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">formula =</span> model, <span class="at">robust =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
 </div>
-<div id="statistical-inference-1" class="section level2" number="5.7">
+<div id="statistical-inference-1" class="section level2" number="6.7">
 <h2>
-<span class="header-section-number">5.7</span> Statistical inference<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('statistical-inference-1')" onmouseout="reset_tooltip('statistical-inference-1-tooltip')"><span class="tooltiptext" id="statistical-inference-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.7</span> Statistical inference<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('statistical-inference-1')" onmouseout="reset_tooltip('statistical-inference-1-tooltip')"><span class="tooltiptext" id="statistical-inference-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>Once the models are estimated, we can start answering biological
 questions by performing <a href="sec-basics.html#sec-inference">Statistical inference</a>. We must convert the
@@ -1299,23 +1290,21 @@ package. Note that with ExploreModelMatrix we can only visualise
 fixed effects part of the model. This is fine as the mean protein
 abundances can only systematically differ from each other according to
 the <code>genotype</code> (fixed effect).</p>
-<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="sec-francisella.html#cb244-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ExploreModelMatrix"</span>)</span>
-<span id="cb244-2"><a href="sec-francisella.html#cb244-2" tabindex="-1"></a>vd <span class="ot">&lt;-</span> <span class="fu">VisualizeDesign</span>(</span>
-<span id="cb244-3"><a href="sec-francisella.html#cb244-3" tabindex="-1"></a>    <span class="at">sampleData =</span>  <span class="fu">colData</span>(pe),</span>
-<span id="cb244-4"><a href="sec-francisella.html#cb244-4" tabindex="-1"></a>    <span class="at">designFormula =</span> <span class="sc">~</span> genotype,</span>
-<span id="cb244-5"><a href="sec-francisella.html#cb244-5" tabindex="-1"></a>    <span class="at">textSizeFitted =</span> <span class="dv">4</span></span>
-<span id="cb244-6"><a href="sec-francisella.html#cb244-6" tabindex="-1"></a>)</span>
-<span id="cb244-7"><a href="sec-francisella.html#cb244-7" tabindex="-1"></a>vd<span class="sc">$</span>plotlist</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="sec-francisella.html#cb272-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ExploreModelMatrix"</span>)</span>
+<span id="cb272-2"><a href="sec-francisella.html#cb272-2" tabindex="-1"></a>vd <span class="ot">&lt;-</span> <span class="fu">VisualizeDesign</span>(</span>
+<span id="cb272-3"><a href="sec-francisella.html#cb272-3" tabindex="-1"></a>    <span class="at">sampleData =</span>  <span class="fu">colData</span>(pe),</span>
+<span id="cb272-4"><a href="sec-francisella.html#cb272-4" tabindex="-1"></a>    <span class="at">designFormula =</span> <span class="sc">~</span> genotype,</span>
+<span id="cb272-5"><a href="sec-francisella.html#cb272-5" tabindex="-1"></a>    <span class="at">textSizeFitted =</span> <span class="dv">4</span></span>
+<span id="cb272-6"><a href="sec-francisella.html#cb272-6" tabindex="-1"></a>)</span>
+<span id="cb272-7"><a href="sec-francisella.html#cb272-7" tabindex="-1"></a>vd<span class="sc">$</span>plotlist</span></code></pre></div>
 <pre><code>## [[1]]</code></pre>
-<div class="float">
-<img src="figure/unnamed-chunk-25-1.png" alt="plot of chunk unnamed-chunk-25"><div class="figcaption">plot of chunk unnamed-chunk-25</div>
-</div>
+<p><img src="figure/francisella_VisualizeDesign-1.png"></p>
 <p>This plot shows that the average <span class="math inline">\(\log_2\)</span> protein intensity for the D8 group is
 modelled by <code>(Intercept)</code>, and the the average <span class="math inline">\(\log_2\)</span> protein intensity for
 the WT group is modelled by <code>(Intercept) + genotypeWT</code>.</p>
-<div id="hypothesis-testing-2" class="section level3" number="5.7.1">
+<div id="hypothesis-testing-1" class="section level3" number="6.7.1">
 <h3>
-<span class="header-section-number">5.7.1</span> Hypothesis testing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('hypothesis-testing-2')" onmouseout="reset_tooltip('hypothesis-testing-2-tooltip')"><span class="tooltiptext" id="hypothesis-testing-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.7.1</span> Hypothesis testing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('hypothesis-testing-1')" onmouseout="reset_tooltip('hypothesis-testing-1-tooltip')"><span class="tooltiptext" id="hypothesis-testing-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Hence we can translate the research hypothesis that there is an effect
 of the genotype on the protein abundance to the average log2 fold
@@ -1324,21 +1313,21 @@ change (<span class="math inline">\(\log_2 FC\)</span>) between the WT and D8 gr
 parameter. The null hypothesis of the hypothesis test for this
 contrast is that the average <span class="math inline">\(\log2 FC\)</span> between D8 knock-out and WT is
 zero, or in other words that the <code>genotypeWT</code> parameter is zero.</p>
-<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="sec-francisella.html#cb246-1" tabindex="-1"></a>hypothesis <span class="ot">&lt;-</span> <span class="st">"genotypeWT = 0"</span></span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="sec-francisella.html#cb274-1" tabindex="-1"></a>hypothesis <span class="ot">&lt;-</span> <span class="st">"genotypeWT = 0"</span></span></code></pre></div>
 <p>We next use <code>makeContrast()</code> to build the contrast matrix.</p>
-<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="sec-francisella.html#cb247-1" tabindex="-1"></a>(L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(hypothesis, <span class="at">parameterNames =</span> <span class="st">"genotypeWT"</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="sec-francisella.html#cb275-1" tabindex="-1"></a>(L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(hypothesis, <span class="at">parameterNames =</span> <span class="st">"genotypeWT"</span>))</span></code></pre></div>
 <pre><code>##            genotypeWT
 ## genotypeWT          1</code></pre>
 <p>In this case, the contrast matrix is trivial, but it becomes a matrix
 but for <a href="sec-basics.html#sec-multiple_contrasts">more complex designs</a>. We can now
 test our null hypothesis:</p>
-<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="sec-francisella.html#cb249-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(pe, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">contrast =</span> L)</span></code></pre></div>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="sec-francisella.html#cb277-1" tabindex="-1"></a>pe <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(pe, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">contrast =</span> L)</span></code></pre></div>
 <p>Let us retrieve the result table from the <code>rowData</code>. Note that the
 hypothesis testing results are stored in <code>rowData</code> columns named after
 the column names (here <code>genotypeWT</code>) of the contrast matrix <code>L</code>.</p>
-<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="sec-francisella.html#cb250-1" tabindex="-1"></a>inference <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)]]</span>
-<span id="cb250-2"><a href="sec-francisella.html#cb250-2" tabindex="-1"></a>inference<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)</span>
-<span id="cb250-3"><a href="sec-francisella.html#cb250-3" tabindex="-1"></a><span class="fu">head</span>(inference)</span></code></pre></div>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="sec-francisella.html#cb278-1" tabindex="-1"></a>inference <span class="ot">&lt;-</span> <span class="fu">rowData</span>(pe[[<span class="st">"proteins"</span>]])[[<span class="fu">colnames</span>(L)]]</span>
+<span id="cb278-2"><a href="sec-francisella.html#cb278-2" tabindex="-1"></a>inference<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)</span>
+<span id="cb278-3"><a href="sec-francisella.html#cb278-3" tabindex="-1"></a><span class="fu">head</span>(inference)</span></code></pre></div>
 <pre><code>##                    logFC         se        df          t         pval
 ## WP_003013731  0.08607313 0.13622311 14.515249  0.6318541 0.5373074487
 ## WP_003013860 -0.24361570 0.96333877  4.863216 -0.2528868 0.8106957489
@@ -1359,56 +1348,52 @@ not enough data was available for model fitting due to missing values
 in the quantitative data (see <a href="sec-advanced.html#sec-fiterror">how to deal with
 <code>fitError</code>s</a>).</p>
 </div>
-<div id="volcano-plot" class="section level3" number="5.7.2">
+<div id="volcano-plot" class="section level3" number="6.7.2">
 <h3>
-<span class="header-section-number">5.7.2</span> Volcano-plot<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('volcano-plot')" onmouseout="reset_tooltip('volcano-plot-tooltip')"><span class="tooltiptext" id="volcano-plot-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.7.2</span> Volcano-plot<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('volcano-plot')" onmouseout="reset_tooltip('volcano-plot-tooltip')"><span class="tooltiptext" id="volcano-plot-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Volcano plots are straightforward to generate from the inference table
 above. We also use <code>ggrepel</code> to annotate the 20 most significant
 proteins.</p>
-<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="sec-francisella.html#cb252-1" tabindex="-1"></a><span class="fu">ggplot</span>(inference) <span class="sc">+</span></span>
-<span id="cb252-2"><a href="sec-francisella.html#cb252-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
-<span id="cb252-3"><a href="sec-francisella.html#cb252-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb252-4"><a href="sec-francisella.html#cb252-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inference, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
-<span id="cb252-5"><a href="sec-francisella.html#cb252-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
-<span id="cb252-6"><a href="sec-francisella.html#cb252-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
-<span id="cb252-7"><a href="sec-francisella.html#cb252-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Statistical inference on differences between WT and D8"</span>,</span>
-<span id="cb252-8"><a href="sec-francisella.html#cb252-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L), <span class="st">"= 0"</span>))</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-30-1.png" alt="plot of chunk unnamed-chunk-30"><div class="figcaption">plot of chunk unnamed-chunk-30</div>
-</div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="sec-francisella.html#cb280-1" tabindex="-1"></a><span class="fu">ggplot</span>(inference) <span class="sc">+</span></span>
+<span id="cb280-2"><a href="sec-francisella.html#cb280-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> logFC, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval), <span class="at">color =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb280-3"><a href="sec-francisella.html#cb280-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb280-4"><a href="sec-francisella.html#cb280-4" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> <span class="fu">slice_min</span>(inference, adjPval, <span class="at">n =</span> <span class="dv">20</span>),</span>
+<span id="cb280-5"><a href="sec-francisella.html#cb280-5" tabindex="-1"></a>                  <span class="fu">aes</span>(<span class="at">label =</span> Protein)) <span class="sc">+</span></span>
+<span id="cb280-6"><a href="sec-francisella.html#cb280-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">alpha</span>(<span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>), <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
+<span id="cb280-7"><a href="sec-francisella.html#cb280-7" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Statistical inference on differences between WT and D8"</span>,</span>
+<span id="cb280-8"><a href="sec-francisella.html#cb280-8" tabindex="-1"></a>          <span class="fu">paste</span>(<span class="st">"Hypothesis test:"</span>, <span class="fu">colnames</span>(L), <span class="st">"= 0"</span>))</span></code></pre></div>
+<p><img src="figure/francisella_volcano-1.png"></p>
 <p>Note, that 195 proteins
 are found to be differentially abundant.</p>
 </div>
-<div id="heatmap" class="section level3" number="5.7.3">
+<div id="heatmap" class="section level3" number="6.7.3">
 <h3>
-<span class="header-section-number">5.7.3</span> Heatmap<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('heatmap')" onmouseout="reset_tooltip('heatmap-tooltip')"><span class="tooltiptext" id="heatmap-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.7.3</span> Heatmap<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('heatmap')" onmouseout="reset_tooltip('heatmap-tooltip')"><span class="tooltiptext" id="heatmap-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We can also build a <a href="sec-basics.html#sec-heatmaps">heatmap</a> for the significant
 proteins which are obtained by filtering the inference table. We first
 retrieve the data with proteins that are differentially abundant
 between the WT and the D8 genotype.</p>
-<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="sec-francisella.html#cb253-1" tabindex="-1"></a>sigNames <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein[<span class="sc">!</span><span class="fu">is.na</span>(inference<span class="sc">$</span>adjPval) <span class="sc">&amp;</span> inference<span class="sc">$</span>adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>]</span>
-<span id="cb253-2"><a href="sec-francisella.html#cb253-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>)[sigNames, ]</span></code></pre></div>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="sec-francisella.html#cb281-1" tabindex="-1"></a>sigNames <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein[<span class="sc">!</span><span class="fu">is.na</span>(inference<span class="sc">$</span>adjPval) <span class="sc">&amp;</span> inference<span class="sc">$</span>adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>]</span>
+<span id="cb281-2"><a href="sec-francisella.html#cb281-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(pe, <span class="st">"proteins"</span>)[sigNames, ]</span></code></pre></div>
 <p>We then plot the protein-wise standardised data as an annotated
 heatmap.</p>
-<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="sec-francisella.html#cb254-1" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
-<span id="cb254-2"><a href="sec-francisella.html#cb254-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ComplexHeatmap"</span>)</span>
-<span id="cb254-3"><a href="sec-francisella.html#cb254-3" tabindex="-1"></a>annotations <span class="ot">&lt;-</span> <span class="fu">columnAnnotation</span>(</span>
-<span id="cb254-4"><a href="sec-francisella.html#cb254-4" tabindex="-1"></a>  <span class="at">condition =</span> se<span class="sc">$</span>genotype</span>
-<span id="cb254-5"><a href="sec-francisella.html#cb254-5" tabindex="-1"></a>)</span>
-<span id="cb254-6"><a href="sec-francisella.html#cb254-6" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
-<span id="cb254-7"><a href="sec-francisella.html#cb254-7" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
-<span id="cb254-8"><a href="sec-francisella.html#cb254-8" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
-<span id="cb254-9"><a href="sec-francisella.html#cb254-9" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
-<span id="cb254-10"><a href="sec-francisella.html#cb254-10" tabindex="-1"></a>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-32-1.png" alt="plot of chunk unnamed-chunk-32"><div class="figcaption">plot of chunk unnamed-chunk-32</div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="sec-francisella.html#cb282-1" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
+<span id="cb282-2"><a href="sec-francisella.html#cb282-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ComplexHeatmap"</span>)</span>
+<span id="cb282-3"><a href="sec-francisella.html#cb282-3" tabindex="-1"></a>annotations <span class="ot">&lt;-</span> <span class="fu">columnAnnotation</span>(</span>
+<span id="cb282-4"><a href="sec-francisella.html#cb282-4" tabindex="-1"></a>  <span class="at">condition =</span> se<span class="sc">$</span>genotype</span>
+<span id="cb282-5"><a href="sec-francisella.html#cb282-5" tabindex="-1"></a>)</span>
+<span id="cb282-6"><a href="sec-francisella.html#cb282-6" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
+<span id="cb282-7"><a href="sec-francisella.html#cb282-7" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
+<span id="cb282-8"><a href="sec-francisella.html#cb282-8" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
+<span id="cb282-9"><a href="sec-francisella.html#cb282-9" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
+<span id="cb282-10"><a href="sec-francisella.html#cb282-10" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="figure/francisella_heatmap-1.png"></p>
 </div>
-</div>
-<div id="detail-plots-1" class="section level3" number="5.7.4">
+<div id="detail-plots-1" class="section level3" number="6.7.4">
 <h3>
-<span class="header-section-number">5.7.4</span> Detail plots<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('detail-plots-1')" onmouseout="reset_tooltip('detail-plots-1-tooltip')"><span class="tooltiptext" id="detail-plots-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.7.4</span> Detail plots<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('detail-plots-1')" onmouseout="reset_tooltip('detail-plots-1-tooltip')"><span class="tooltiptext" id="detail-plots-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>Let us visualise the most significant protein. We perform this with a
 little data manipulation pipeline:</p>
@@ -1422,30 +1407,28 @@ for plotting.</li>
 <li>We remove missing values for plotting.</li>
 <li>Plot the data with <code>ggplot2</code>.</li>
 </ol>
-<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="sec-francisella.html#cb255-1" tabindex="-1"></a>targetProtein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)[<span class="fu">which.min</span>(inference<span class="sc">$</span>adjPval)] <span class="co">#1</span></span>
-<span id="cb255-2"><a href="sec-francisella.html#cb255-2" tabindex="-1"></a>pe[targetProtein, , <span class="st">"proteins"</span>] <span class="sc">|&gt;</span> <span class="co">#2</span></span>
-<span id="cb255-3"><a href="sec-francisella.html#cb255-3" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="st">"genotype"</span>) <span class="sc">|&gt;</span>  <span class="co">#3</span></span>
-<span id="cb255-4"><a href="sec-francisella.html#cb255-4" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span></span>
-<span id="cb255-5"><a href="sec-francisella.html#cb255-5" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(value)) <span class="sc">|&gt;</span> <span class="co">#4</span></span>
-<span id="cb255-6"><a href="sec-francisella.html#cb255-6" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="co">#5</span></span>
-<span id="cb255-7"><a href="sec-francisella.html#cb255-7" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> colname,</span>
-<span id="cb255-8"><a href="sec-francisella.html#cb255-8" tabindex="-1"></a>      <span class="at">y =</span> value) <span class="sc">+</span></span>
-<span id="cb255-9"><a href="sec-francisella.html#cb255-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> genotype)) <span class="sc">+</span></span>
-<span id="cb255-10"><a href="sec-francisella.html#cb255-10" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Sample"</span>, <span class="at">y =</span> <span class="st">"log2 intensity"</span>) <span class="sc">+</span></span>
-<span id="cb255-11"><a href="sec-francisella.html#cb255-11" tabindex="-1"></a>  <span class="fu">ggtitle</span>(targetProtein) <span class="sc">+</span></span>
-<span id="cb255-12"><a href="sec-francisella.html#cb255-12" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">30</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-33-1.png" alt="plot of chunk unnamed-chunk-33"><div class="figcaption">plot of chunk unnamed-chunk-33</div>
+<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="sec-francisella.html#cb283-1" tabindex="-1"></a>targetProtein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)[<span class="fu">which.min</span>(inference<span class="sc">$</span>adjPval)] <span class="co">#1</span></span>
+<span id="cb283-2"><a href="sec-francisella.html#cb283-2" tabindex="-1"></a>pe[targetProtein, , <span class="st">"proteins"</span>] <span class="sc">|&gt;</span> <span class="co">#2</span></span>
+<span id="cb283-3"><a href="sec-francisella.html#cb283-3" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="st">"genotype"</span>) <span class="sc">|&gt;</span>  <span class="co">#3</span></span>
+<span id="cb283-4"><a href="sec-francisella.html#cb283-4" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb283-5"><a href="sec-francisella.html#cb283-5" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(value)) <span class="sc">|&gt;</span> <span class="co">#4</span></span>
+<span id="cb283-6"><a href="sec-francisella.html#cb283-6" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="co">#5</span></span>
+<span id="cb283-7"><a href="sec-francisella.html#cb283-7" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> colname,</span>
+<span id="cb283-8"><a href="sec-francisella.html#cb283-8" tabindex="-1"></a>      <span class="at">y =</span> value) <span class="sc">+</span></span>
+<span id="cb283-9"><a href="sec-francisella.html#cb283-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> genotype)) <span class="sc">+</span></span>
+<span id="cb283-10"><a href="sec-francisella.html#cb283-10" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Sample"</span>, <span class="at">y =</span> <span class="st">"log2 intensity"</span>) <span class="sc">+</span></span>
+<span id="cb283-11"><a href="sec-francisella.html#cb283-11" tabindex="-1"></a>  <span class="fu">ggtitle</span>(targetProtein) <span class="sc">+</span></span>
+<span id="cb283-12"><a href="sec-francisella.html#cb283-12" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">30</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+<p><img src="figure/francisella_detail_plot-1.png"></p>
 </div>
 </div>
-</div>
-<div id="conclusion-2" class="section level2" number="5.8">
+<div id="conclusion-3" class="section level2" number="6.8">
 <h2>
-<span class="header-section-number">5.8</span> Conclusion<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('conclusion-2')" onmouseout="reset_tooltip('conclusion-2-tooltip')"><span class="tooltiptext" id="conclusion-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">6.8</span> Conclusion<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('conclusion-3')" onmouseout="reset_tooltip('conclusion-3-tooltip')"><span class="tooltiptext" id="conclusion-3-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>In this chapter, we illustrated the analysis of a label-free
 proteomics data set with technical replication. We followed the
-workflow described in the previous chapter with minimal changes, with
+workflow described in the previous chapters with minimal changes, with
 a few exceptions.</p>
 <p>First, we removed peptides that were missing across biological
 replicates instead of across all samples. This filtering strategy uses
@@ -1475,11 +1458,11 @@ on the peptide_log assay with a formula <code>peptideModel &lt;- ~ genotype + (1
 </div>
 </div>
 <p style="text-align: center;">
-<a href="sec-benchmarking.html"><button class="btn btn-default">Previous</button></a>
+<a href="sec-worflow_optimisation.html"><button class="btn btn-default">Previous</button></a>
 <a href="sec-heart.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-11-12
+2025-11-16
  using 
 R version 4.5.2 (2025-10-31)
 </p>

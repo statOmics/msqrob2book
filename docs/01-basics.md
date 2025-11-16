@@ -4,8 +4,8 @@
 
 This chapter explains the main concepts for statistical analysis of
 proteomics data using `msqrob2`. To illustrate these concepts, we will
-use using a publicly available spike-in study (PRIDE identifier:
-PXD003881 Shen et al. [2018]). This is an excellent example dataset
+use using a publicly available spike-in study with PRIDE identifier
+PXD003881 [@Shen2018-gw]. This is an excellent example dataset
 since it contains ground truth information about which proteins are
 differentially abundant, enabling us to objectively demonstrate the
 performance of `msqrob2`. This dataset has a relatively simple
@@ -57,7 +57,7 @@ and every column contains information about the peptide and its
 quantification in one of the samples.
 
 <div class="figure">
-<img src="figs/lfq_workflow.png" alt="Overview of an LFQ-based proteomics workflow." width="40%" />
+<img src="figs/lfq_workflow.png" alt="Overview of an LFQ-based proteomics workflow." width="60%" />
 <p class="caption">Overview of an LFQ-based proteomics workflow.</p>
 </div>
 
@@ -528,60 +528,7 @@ function of the E. coli spike-in concentration. We first define a common
 plot from which we generate two plots, one without and the other with
 log2 transformation of the quantitative values.
 
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26-1.png)
-
-```
-## $ncol
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## $nrow
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## $byrow
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## $widths
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## $heights
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## $guides
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## $tag_level
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## $axes
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## $axis_titles
-## [1] "collect_x"
-## 
-## $design
-## list()
-## attr(,"class")
-## [1] "waiver"
-## 
-## attr(,"class")
-## [1] "plot_layout"
-```
+![MS-data is heteroskedastic, but log transformation achieves homoskedasticity. Peptide intensities (left) or log2 intensities (right) are plotted in function of spike-in concentration.](figure/basics_log_plot-1.png)
 
 We can see that the variation around the mean for each concentration slightly increases as the mean increases. This is known as heteroskedasticity.
 We will later see that `msqrob2` assumes that variance of the error
@@ -735,12 +682,10 @@ spikein[, , "peptides_log"] |> ## 1.
   aes(x = value,
       colour = condition,
       group = colname) +
-  geom_density() +
-  labs(title = "Intensity distribution for all samples",
-       subtitle = "Before normalisation")
+  geom_density()
 ```
 
-![plot of chunk unnamed-chunk-31](figure/unnamed-chunk-31-1.png)
+![Intensity distribution for all samples before normalisation.](figure/basics_before_norm-1.png)
 
 Even in this clean synthetic data set (same background with a small
 percentage of E. coli lysate), the marginal peptide intensity
@@ -788,8 +733,8 @@ spikein <- sweep( #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
 )
 ```
 
-Formally, the function applies the follow operation on each sample $i$
-across all PSMs $p$:
+Formally, the function applies the following operation on each sample
+$i$ across all PSMs $p$:
 
 $$
 y_{ip}^{\text{norm}} = y_{ip} - \hat{\mu}_i
@@ -807,12 +752,10 @@ spikein[, , "peptides_norm"] |> ## 1.
   aes(x = value,
       colour = condition,
       group = colname) +
-  geom_density() +
-  labs(title = "Intensity distribution for all samples",
-       subtitle = "After normalisation")
+  geom_density()
 ```
 
-![plot of chunk unnamed-chunk-33](figure/unnamed-chunk-33-1.png)
+![Intensity distribution for all samples after normalisation.](figure/basics_after_norm-1.png)
 
 Beware there exist numerous types of normalisation methods (see
 `?normalize`) and which method to use may be data set dependent. For
@@ -841,7 +784,7 @@ x axis and plot their log2 normalised intensities across samples on y
 axis. All the points belonging to the same sample are linked through a
 grey line.
 
-![plot of chunk unnamed-chunk-34](figure/unnamed-chunk-34-1.png)
+![Peptide-level data for E. coli protein P0AEE5. The data set has been subset for samples with condition a and e. Each point represents a measured peptide within a sample, and the points are connected when they belong to the same sample.](figure/basics_summarise-1.png)
 
 1. We can see that data for a protein can consist of many peptides, 
 hence the need for summarisation.
@@ -977,11 +920,10 @@ spikein["P0AEE5", , c("peptides_norm", "proteins")] |> ## 1.
   geom_line(linewidth = 0.1) +
   geom_point(aes(colour = condition)) +
   facet_grid(~ assay) +
-  theme(axis.text.x = element_blank()) +
-  ggtitle("Data for protein P0AEE5 before and after summarisation")
+  theme(axis.text.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-37](figure/unnamed-chunk-37-1.png)
+![Data for protein P0AEE5 before and after summarisation](figure/basics_summarisation_results-1.png)
 
 ### Protein filtering
 
@@ -1004,7 +946,7 @@ The data processing is complete.
 plot(spikein)
 ```
 
-![plot of chunk unnamed-chunk-39](figure/unnamed-chunk-39-1.png)
+![Overview of the `QFeatures` object and its processed sets.](figure/basics_qfeatures_plot-1.png)
 
 ## Data exploration{#sec_data_exploration}
 
@@ -1039,7 +981,7 @@ interest, here `condition`.
 plotMDS(se, colour_by = "condition") 
 ```
 
-![plot of chunk unnamed-chunk-42](figure/unnamed-chunk-42-1.png)
+![MDS visualisation of the spike-in data set. Each point represents a sample and is coloured by the spike-in condiion.](figure/basics_mds-1.png)
 
 This plot reveals interesting information. First, we see that the
 samples are nicely separated according to their spike-in condition.
@@ -1185,27 +1127,6 @@ using the `ExploreModelMatrix` package.
 library("ExploreModelMatrix")
 VisualizeDesign(
   sampleData =  colData(spikein),
-  designFormula = ~ condition,
-  textSizeFitted = 4
-)$plotlist
-```
-
-```
-## [[1]]
-```
-
-![plot of chunk unnamed-chunk-45](figure/unnamed-chunk-45-1.png)
-
-Spike-in condition `a` is the reference class. So the mean log2
-intensity for samples from condition a is `(Intercept)`. The mean
-log2 expression for samples from condition b is '(Intercept) +
-conditionB'. Hence, the average log2 fold change between conditionbB
-and condition a is modelled using the parameter 'conditionb'. 
-
-
-``` r
-VisualizeDesign(
-  sampleData =  colData(spikein),
   designFormula = model,
   textSizeFitted = 4
 )$plotlist
@@ -1215,7 +1136,13 @@ VisualizeDesign(
 ## [[1]]
 ```
 
-![plot of chunk unnamed-chunk-46](figure/unnamed-chunk-46-1.png)
+![Visualisation of the experimental design using the `ExploreModelMatrix` package.](figure/basics_VisualizeDesign-1.png)
+
+Spike-in condition `a` is the reference class. So the mean log2
+intensity for samples from condition a is `(Intercept)`. The mean
+log2 expression for samples from condition b is '(Intercept) +
+conditionB'. Hence, the average log2 fold change between conditionbB
+and condition a is modelled using the parameter 'conditionb'. 
 
 With `getCoef()`, we can retrieve the estimated model parameters. 
 We start with extracting the model output, stored as `StatModel`
@@ -1275,7 +1202,7 @@ the question is if we can conclude that the fold change between
 condition B and condition A is statistically significant based on the
 model output.
 
-### Hypothesis testing
+### Hypothesis testing{#sec-hypothesis_testing}
 
 As shown above, the average difference in log2 intensity between
 condition B and A after correcting for the lab effect is
@@ -1395,7 +1322,7 @@ inference |>
           paste0("H0: ", colnames(L), " = 0"))
 ```
 
-![plot of chunk unnamed-chunk-54](figure/unnamed-chunk-54-1.png)
+![Volcano plot of the statistical inference of the average difference between condition b and condition a.](figure/basics_volcano-1.png)
 
 We retrieve the proteins that are significantly differentially
 abundant based on the FDR-adjusted p-value (`adjPval`). Note that the
@@ -1478,7 +1405,7 @@ Heatmap(
 )
 ```
 
-![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-1.png)
+![Heatmap of the proteins that are significantly differentially abundant between condition b and condition a.](figure/basics_heatmap-1.png)
 
 ### Fold change distributions
 
@@ -1500,11 +1427,10 @@ ggplot(inference) +
     values = c("grey20", "firebrick"), name = "",
     labels = c("Human proteins", "E. coli proteins")
   ) +
-  ggtitle("Distribution of the log2 fold changes",
-          paste0("Hypothesis test: ", colnames(L), " = 0"))
+  ggtitle(paste0("Hypothesis test: ", colnames(L), " = 0"))
 ```
 
-![plot of chunk unnamed-chunk-60](figure/unnamed-chunk-60-1.png)
+![Distribution of the log2 fold changes between condition b and condition a. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins.](figure/basics_boxplots-1.png)
 
 Estimated log2 fold change for human proteins are closely distributed
 around 0, as expected. log2 fold changes for E. coli proteins are
@@ -1556,7 +1482,7 @@ spikein[targetProtein, , c("peptides_log", "proteins")] |> #1
   theme(axis.text.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-62](figure/unnamed-chunk-62-1.png)
+![Detail plot showing the peptide log intensities (left) and log-transformed normalised and summarised protein intensities (right). Every point is a sample, coloured by spike-in condition, and points belonging to the same feature (peptide or protein) are linked with a grey line.](figure/detail_plot-1.png)
 
 ## Going further
 
@@ -1700,11 +1626,10 @@ inferences |>
     values = c("grey20", "firebrick"), name = "",
     labels = c("Human proteins", "Ecoli spikein")
   ) +
-  facet_wrap(~ Comparison) +
-  ggtitle("Statistical inference for all pairwise comparisons") 
+  facet_wrap(~ Comparison)
 ```
 
-![plot of chunk unnamed-chunk-68](figure/unnamed-chunk-68-1.png)
+![Volcano plot of the statistical inference results for all pairwise comparisons.](figure/basics_volcano_multiple-1.png)
 
 Since we know the ground truth we can again evaluate the number of
 true positives, false positives and false discovery proportion.
@@ -1769,7 +1694,7 @@ inferences |>
   geom_hline(yintercept = 0)
 ```
 
-![plot of chunk unnamed-chunk-71](figure/unnamed-chunk-71-1.png)
+![Distribution of the log2 fold changes for all pairwise comparisons. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins.](figure/basics_boxplots_multiple-1.png)
 
 ### Model the spike-in concentration as a numeric
 
@@ -1825,12 +1750,10 @@ inference |>
   scale_color_manual(
     values = c("grey20", "firebrick"), name = "",
     labels = c("Human proteins", "Ecoli spikein")
-  ) +
-  ggtitle("Statistical inference results",
-          paste0("Hypothesis test: ", colnames(L), " = 0"))
+  )
 ```
 
-![plot of chunk unnamed-chunk-73](figure/unnamed-chunk-73-1.png)
+![Volcano plot of the statistical inference results when modelling the spike-in concentration as a continuous variable. `logFC` actually stands for the slope parameter.](figure/basics_volcano_continuous-1.png)
 
 Similarly, we plot the estimated log2 concentration slope against the 
 expected value.
@@ -1852,7 +1775,7 @@ inference |>
   geom_hline(yintercept = 1, color = "firebrick")
 ```
 
-![plot of chunk unnamed-chunk-74](figure/unnamed-chunk-74-1.png)
+![Distribution of the log2 fold changes for the slope parameter. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins.](figure/basics_boxplots_continuous-1.png)
 
 Note, that the slopes for the human and E. coli proteins are centered
 around 0 and 1, respectively. However, they seem to be slightly

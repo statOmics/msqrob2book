@@ -64,10 +64,11 @@ register(SerialParam())
 
 ## Data
 
-The [data](#sec-ecoli_data) were reanalysed using MaxQuant, which 
-generates results at three levels: the evidence file containing
-the [PSM table](#sec-psm_table), the 
-[peptides file](#sec-peptide_table), and the protein group file.
+We will reuse the data by [@Shen2018-gw] as in chapter
+\@ref(sec-basics). The [data](#sec-ecoli_data) were reanalysed using
+MaxQuant, which generates results at three levels: the evidence file
+containing the [PSM table](#sec-psm_table), the [peptides
+file](#sec-peptide_table), and the protein group file.
 
 ### Data files
 
@@ -433,7 +434,7 @@ results$contrast <- gsub("ridgeCondition", "", results$contrast)
 results$contrast <- gsub("^([B-E])$", "\\1 - A", results$contrast)
 ```
 
-## Performance benchmark
+## Performance benchmark{#sec-performance}
 
 We now can compare the performance of the different modelling 
 approaches. We will compare the approaches based on 4 objectives 
@@ -452,7 +453,7 @@ approach, where a model that fits more proteins is preferred. Note
 that the number of fits exceeds the number of measured proteins 
 because we summed the fits over all comparisons.
 
-```{r}
+```{r benchmarking_nfits, fig.cap=" "}
 group_by(results, inputLevel) |> 
     summarise(n = sum(!is.na(adjPval))) |> 
     ggplot() +
@@ -480,15 +481,15 @@ comparison.
 
 ```{r, fig.height=20, fig.width=6}
 tpFpTable <- group_by(results, inputLevel, contrast) |>
-    filter(!is.na(adjPval)) |>
-    summarise("True Positives" = sum(adjPval < 0.05 & isEcoli),
-              "False Positives" = sum(adjPval < 0.05 & !isEcoli)) |>
+    filter(adjPval < 0.05) |>
+    summarise("True Positives" = sum(isEcoli),
+              "False Positives" = sum(!isEcoli)) |>
     pivot_longer(cols = c("True Positives", "False Positives"))
 ```
 
 We then plot the table as a bar plot, facetting for every comparison. 
 
-```{r, fig.height=15, fig.width=4}
+```{r benchmarking_tp_fp, fig.height=15, fig.width=4, fig.cap=" "}
 ggplot(tpFpTable) +
     aes(x = inputLevel,
         y = value,
@@ -585,7 +586,7 @@ provide the performance over a range of FDP values, but we limit the
 plot to the $[0, 0.2]$ range because researchers are rarely interest
 in the performance when the FDP exceeds 20\%.
 
-```{r, fig.width=10, fig.height=8}
+```{r benchmarking_tpr_fdp_curve1, fig.width=10, fig.height=8, fig.cap=" "}
 ggplot(performance) +
     aes(y = fdp,
         x = tpr,
@@ -645,7 +646,7 @@ realLogFC$contrast <- gsub("^([B-E])$", "\\1 - A", realLogFC$contrast)
 We can now create the boxplots with the estimated log2-fold changes,
 adding horizontal lines with the corresponding target values.
 
-```{r, fig.height=15, fig.width=5}
+```{r benchmarking_boxplot, fig.height=15, fig.width=5, fig.cap=" "}
 ggplot(results) +
   aes(y = logFC,
       x = isEcoli,
@@ -700,6 +701,14 @@ indirectly generated using a summarisation approach (c.f.
 `msqrobAggregate()`).]. Therefore, we leave it to the user to decide
 whether the slight improvement in performance is worth the cost of
 more complex statistical analysis [@Sticker2020-rl].
+
+Hence, this chapter showed how to perform benchmarking on different
+types of data input. Note that the same framework could be used to
+compare different search and quantification engines. Similarly, this
+framework can also be applied to compare different instruments or
+analytical protocols and setups. In the [next
+chapter](sec-worflow_optimisation) we demonstrate how to compare the
+impact of analysis steps for the same data.
 
 In the remainder of this section, we provide a recap on how to perform
 a proteomics analysis from the evidence file^[We build on the concepts
@@ -813,8 +822,12 @@ evidence <- filterNA(evidence, i = "ions_log", pNA = (n - 4) / n)
 6. Normalisation
 
 ```{r}
-evidence <- normalize(
-  evidence, "ions_log", name = "ions_norm", method = "center.median"
+pseudoRef <- rowMeans(assay(evidence[["ions_log"]]), na.rm = TRUE)
+nfLog <- sweep(assay(evidence[["ions_log"]]), MARGIN = 1, pseudoRef) |> 
+  colMedians(na.rm = TRUE)
+evidence <- sweep(
+  evidence, MARGIN = 2, STATS = nfLog, 
+  i = "ions_log", name = "ions_norm"
 )
 ```
 
@@ -877,7 +890,7 @@ Note that this workflows closely follows the workflow described in the
 [basics chapter](#sec-multiple_contrasts). We can report the result
 using a volcano plot, for instance.
 
-```{r, fig.width=10, fig.height=6}
+```{r benchmarking_volcano_proteins, fig.width=10, fig.height=6, fig.cap=" "}
 ggplot(resultsProtein) +
     aes(x = logFC,
         y = -log10(pval),
@@ -945,7 +958,7 @@ resultsIon$isEcoli <- resultsIon$feature %in% ecoli
 
 We can report the result using a volcano plot, for instance.
 
-```{r, fig.width=10, fig.height=6}
+```{r benchmarking_volcano_ion, fig.width=10, fig.height=6, fig.cap=" "}
 ggplot(resultsIon) +
     aes(x = logFC,
         y = -log10(pval),
@@ -975,7 +988,7 @@ accounted for when computing the TPR and FDP. This will inevitably
 lead to a decrease in the maximum TPR, especially for approaches that
 estimated less proteins.
 
-```{r, fig.width=10, fig.height=8}
+```{r benchmarking_tpr_fdp_2, fig.width=10, fig.height=8, fig.cap=" "}
 performance_all <- group_by(results, inputLevel, contrast) |> 
     mutate(tpr = computeTPR(pval, isEcoli),
            fdp = computeFDP(pval, isEcoli)) |>
@@ -1004,7 +1017,7 @@ filtering step where we require, for each comparison, that p-values
 are not missing for all 5 approaches, effectively focusing on the set
 of proteins that have been estimated by all approaches. 
 
-```{r, fig.width=10, fig.height=8}
+```{r benchmarking_tpr_fdp_3, fig.width=10, fig.height=8, fig.cap=" "}
 performance_common <- group_by(results, feature, contrast) |> 
   filter(!is.na(adjPval),
          n() == 5) |> 

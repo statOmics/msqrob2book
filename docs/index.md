@@ -2,7 +2,7 @@
 title: "Statistical analysis of mass spectrometry-based proteomics data"
 subtitle: "A dive into the msqrob2 universe"
 author: "Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement"
-date: "2025-11-12"
+date: "2025-11-16"
 output:
   msmbstyle::msmb_html_book:
     highlight: tango
@@ -145,6 +145,7 @@ BiocManager::install(c(
    "ComplexHeatmap",
    "dplyr",
    "ExploreModelMatrix",
+   "ggpattern",
    "ggplot2",
    "ggrepel",
    "impute",

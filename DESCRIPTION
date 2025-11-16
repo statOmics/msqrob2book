@@ -28,6 +28,7 @@ Suggests:
     ComplexHeatmap,
     dplyr,
     ExploreModelMatrix,
+    ggpattern,
     ggplot2,
     ggrepel,
     impute,

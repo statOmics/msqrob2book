@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 4 Benchmarking workflows | Statistical analysis of mass spectrometry-based proteomics data" />
+<meta property="og:title" content="4 Benchmarking workflows | Statistical analysis of mass spectrometry-based proteomics data" />
 <meta property="og:type" content="book" />
 
 
@@ -13,18 +13,18 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-11-12" />
+<meta name="date" content="2025-11-16" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script src="/usr/share/javascript/mathjax/MathJax.js" type="text/javascript"></script>
 
-<meta name="description" content="Chapter 4 Benchmarking workflows | Statistical analysis of mass spectrometry-based proteomics data">
+<meta name="description" content="4 Benchmarking workflows | Statistical analysis of mass spectrometry-based proteomics data">
 
-<title>Chapter 4 Benchmarking workflows | Statistical analysis of mass spectrometry-based proteomics data</title>
+<title>4 Benchmarking workflows | Statistical analysis of mass spectrometry-based proteomics data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/envisioned.css" rel="stylesheet" />
@@ -81,7 +81,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -139,7 +139,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -182,14 +181,15 @@ div.csl-indent {
 <li class="toc"><a href="#data-1"> Data</a></li>
 <li class="toc"><a href="#data-preprocessing-1"> Data preprocessing</a></li>
 <li class="toc"><a href="#data-modelling"> Data modelling</a></li>
-<li class="toc"><a href="#performance-benchmark"> Performance benchmark</a></li>
+<li class="toc"><a href="#sec-performance"> Performance benchmark</a></li>
 <li class="toc"><a href="#NA"> Take home messages</a></li>
 <li class="toc"><a href="#appendix"> Appendix</a></li>
 </ul>
-<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">5</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
-<a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">6</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
-<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">7</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
-<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">8</span> Usefull links and session information</a>
+<a href="sec-worflow_optimisation.html#sec-worflow_optimisation" id="toc-sec-worflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
+<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
+<a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
+<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
+<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Usefull links and session information</a>
 </div>
 </li>
 </ul>
@@ -200,7 +200,7 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="sec-benchmarking" class="section level1" number="4">
 <h1>
-<span class="header-section-number">Chapter 4</span> Benchmarking workflows</h1>
+<span class="header-section-number">4</span> Benchmarking workflows</h1>
 <p>In the previous chapters we have seen three different approaches to
 model the data:</p>
 <ul>
@@ -242,60 +242,61 @@ section</a> for more accessible guidelines.</p>
 </h2>
 <p>We load the <code>msqrob2</code> package, along with additional packages for
 data manipulation and visualisation.</p>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="sec-benchmarking.html#cb172-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"msqrob2"</span>)</span>
-<span id="cb172-2"><a href="sec-benchmarking.html#cb172-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb172-3"><a href="sec-benchmarking.html#cb172-3" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyr"</span>)</span>
-<span id="cb172-4"><a href="sec-benchmarking.html#cb172-4" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
-<span id="cb172-5"><a href="sec-benchmarking.html#cb172-5" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb172-6"><a href="sec-benchmarking.html#cb172-6" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="sec-benchmarking.html#cb168-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"msqrob2"</span>)</span>
+<span id="cb168-2"><a href="sec-benchmarking.html#cb168-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb168-3"><a href="sec-benchmarking.html#cb168-3" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyr"</span>)</span>
+<span id="cb168-4"><a href="sec-benchmarking.html#cb168-4" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb168-5"><a href="sec-benchmarking.html#cb168-5" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb168-6"><a href="sec-benchmarking.html#cb168-6" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span></code></pre></div>
 <p><strong>TODO</strong>: move some functions from utils.R to msqrob2, eg
 msqrobCollect, pairwise contrasts</p>
 <p>We also configure the <a href="sec-basics.html#sec-parallel">parallelisation</a> framework.</p>
-<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="sec-benchmarking.html#cb173-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocParallel"</span>)</span>
-<span id="cb173-2"><a href="sec-benchmarking.html#cb173-2" tabindex="-1"></a><span class="fu">register</span>(<span class="fu">SerialParam</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="sec-benchmarking.html#cb169-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocParallel"</span>)</span>
+<span id="cb169-2"><a href="sec-benchmarking.html#cb169-2" tabindex="-1"></a><span class="fu">register</span>(<span class="fu">SerialParam</span>())</span></code></pre></div>
 </div>
 <div id="data-1" class="section level2" number="4.2">
 <h2>
 <span class="header-section-number">4.2</span> Data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-1')" onmouseout="reset_tooltip('data-1-tooltip')"><span class="tooltiptext" id="data-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
-<p>The <a href="sec-basics.html#sec-ecoli_data">data</a> were reanalysed using MaxQuant, which
-generates results at three levels: the evidence file containing
-the <a href="sec-advanced.html#sec-psm_table">PSM table</a>, the
-<a href="sec-basics.html#sec-peptide_table">peptides file</a>, and the protein group file.</p>
+<p>We will reuse the data by <span class="citation">(<label for="tufte-mn-17" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-17" class="margin-toggle">Shen et al. 2018<span class="marginnote">Shen, Xiaomeng, Shichen Shen, Jun Li, Qiang Hu, Lei Nie, Chengjian Tu, Xue Wang, et al. 2018. <span>“<span>IonStar</span> Enables High-Precision, Low-Missing-Data Proteomics Quantification in Large Biological Cohorts.”</span> <em>Proc. Natl. Acad. Sci. U. S. A.</em> 115 (21): E4767–76.</span>)</span> as in chapter
+<a href="sec-basics.html#sec-basics">2</a>. The <a href="sec-basics.html#sec-ecoli_data">data</a> were reanalysed using
+MaxQuant, which generates results at three levels: the evidence file
+containing the <a href="sec-advanced.html#sec-psm_table">PSM table</a>, the <a href="sec-basics.html#sec-peptide_table">peptides
+file</a>, and the protein group file.</p>
 <div id="data-files" class="section level3" number="4.2.1">
 <h3>
 <span class="header-section-number">4.2.1</span> Data files<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-files')" onmouseout="reset_tooltip('data-files-tooltip')"><span class="tooltiptext" id="data-files-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>We here retrieve those three data files.</p>
 <p><strong>TODO</strong>: put data on Zenodo or MsDataHub, and update code below</p>
-<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="sec-benchmarking.html#cb174-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"MsDataHub"</span>)</span>
-<span id="cb174-2"><a href="sec-benchmarking.html#cb174-2" tabindex="-1"></a><span class="co"># myurl &lt;- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/peptides.zip"</span></span>
-<span id="cb174-3"><a href="sec-benchmarking.html#cb174-3" tabindex="-1"></a><span class="co"># download.file(myurl,"data/sticker2020/peptides.zip", method = "curl", extra = "-L")</span></span>
-<span id="cb174-4"><a href="sec-benchmarking.html#cb174-4" tabindex="-1"></a><span class="co"># unzip("data/sticker2020/peptides.zip", exdir = "data/sticker2020/")</span></span>
-<span id="cb174-5"><a href="sec-benchmarking.html#cb174-5" tabindex="-1"></a><span class="co"># myurl &lt;- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/evidence.zip"</span></span>
-<span id="cb174-6"><a href="sec-benchmarking.html#cb174-6" tabindex="-1"></a><span class="co"># download.file(myurl,"data/sticker2020/evidence.zip", method = "curl", extra = "-L")</span></span>
-<span id="cb174-7"><a href="sec-benchmarking.html#cb174-7" tabindex="-1"></a><span class="co"># unzip("data/sticker2020/evidence.zip", exdir = "data/sticker2020/")</span></span>
-<span id="cb174-8"><a href="sec-benchmarking.html#cb174-8" tabindex="-1"></a><span class="co"># myurl &lt;- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/proteinGroups.zip"</span></span>
-<span id="cb174-9"><a href="sec-benchmarking.html#cb174-9" tabindex="-1"></a><span class="co"># download.file(myurl,"data/sticker2020/proteinGroups.zip", method = "curl", extra = "-L")</span></span>
-<span id="cb174-10"><a href="sec-benchmarking.html#cb174-10" tabindex="-1"></a><span class="co"># unzip("data/sticker2020/proteinGroups.zip", exdir = "data/sticker2020/")</span></span>
-<span id="cb174-11"><a href="sec-benchmarking.html#cb174-11" tabindex="-1"></a>evidenceFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/evidence.txt"</span></span>
-<span id="cb174-12"><a href="sec-benchmarking.html#cb174-12" tabindex="-1"></a>peptidesFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/peptides.txt"</span></span>
-<span id="cb174-13"><a href="sec-benchmarking.html#cb174-13" tabindex="-1"></a>proteinGroupsFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/proteinGroups.txt"</span></span></code></pre></div>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="sec-benchmarking.html#cb170-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"MsDataHub"</span>)</span>
+<span id="cb170-2"><a href="sec-benchmarking.html#cb170-2" tabindex="-1"></a><span class="co"># myurl &lt;- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/peptides.zip"</span></span>
+<span id="cb170-3"><a href="sec-benchmarking.html#cb170-3" tabindex="-1"></a><span class="co"># download.file(myurl,"data/sticker2020/peptides.zip", method = "curl", extra = "-L")</span></span>
+<span id="cb170-4"><a href="sec-benchmarking.html#cb170-4" tabindex="-1"></a><span class="co"># unzip("data/sticker2020/peptides.zip", exdir = "data/sticker2020/")</span></span>
+<span id="cb170-5"><a href="sec-benchmarking.html#cb170-5" tabindex="-1"></a><span class="co"># myurl &lt;- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/evidence.zip"</span></span>
+<span id="cb170-6"><a href="sec-benchmarking.html#cb170-6" tabindex="-1"></a><span class="co"># download.file(myurl,"data/sticker2020/evidence.zip", method = "curl", extra = "-L")</span></span>
+<span id="cb170-7"><a href="sec-benchmarking.html#cb170-7" tabindex="-1"></a><span class="co"># unzip("data/sticker2020/evidence.zip", exdir = "data/sticker2020/")</span></span>
+<span id="cb170-8"><a href="sec-benchmarking.html#cb170-8" tabindex="-1"></a><span class="co"># myurl &lt;- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/proteinGroups.zip"</span></span>
+<span id="cb170-9"><a href="sec-benchmarking.html#cb170-9" tabindex="-1"></a><span class="co"># download.file(myurl,"data/sticker2020/proteinGroups.zip", method = "curl", extra = "-L")</span></span>
+<span id="cb170-10"><a href="sec-benchmarking.html#cb170-10" tabindex="-1"></a><span class="co"># unzip("data/sticker2020/proteinGroups.zip", exdir = "data/sticker2020/")</span></span>
+<span id="cb170-11"><a href="sec-benchmarking.html#cb170-11" tabindex="-1"></a>evidenceFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/evidence.txt"</span></span>
+<span id="cb170-12"><a href="sec-benchmarking.html#cb170-12" tabindex="-1"></a>peptidesFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/peptides.txt"</span></span>
+<span id="cb170-13"><a href="sec-benchmarking.html#cb170-13" tabindex="-1"></a>proteinGroupsFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/proteinGroups.txt"</span></span></code></pre></div>
 <p>We also load the <a href="sec-basics.html#sec-annotation_table">annotation table</a>) that has
 been generated by the authors. Since the evidence, peptides and
 protein-groups tables all contain the same samples, the annotation
 table will be shared across the MaxQuant data tables.</p>
-<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="sec-benchmarking.html#cb175-1" tabindex="-1"></a>annotFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/sticker2020_annotation.csv"</span></span>
-<span id="cb175-2"><a href="sec-benchmarking.html#cb175-2" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(annotFile)</span></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="sec-benchmarking.html#cb171-1" tabindex="-1"></a>annotFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/sticker2020_annotation.csv"</span></span>
+<span id="cb171-2"><a href="sec-benchmarking.html#cb171-2" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(annotFile)</span></code></pre></div>
 <p>We retrieve all the E. coli protein identifiers to later identify
 which proteins are known to be differentially abundant (E. coli
 proteins) or constant (human) across condition.</p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="sec-benchmarking.html#cb176-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocFileCache"</span>)</span>
-<span id="cb176-2"><a href="sec-benchmarking.html#cb176-2" tabindex="-1"></a>bfc <span class="ot">&lt;-</span> <span class="fu">BiocFileCache</span>()</span>
-<span id="cb176-3"><a href="sec-benchmarking.html#cb176-3" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">bfcrpath</span>(bfc, <span class="st">"https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/refs/heads/master/spikein/data/fasta/ecoli_up000000625_7_06_2018.fasta"</span>)</span>
-<span id="cb176-4"><a href="sec-benchmarking.html#cb176-4" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">readLines</span>(ecoli)</span>
-<span id="cb176-5"><a href="sec-benchmarking.html#cb176-5" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> ecoli[<span class="fu">grepl</span>(<span class="st">"^&gt;"</span>, ecoli)]</span>
-<span id="cb176-6"><a href="sec-benchmarking.html#cb176-6" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&gt;sp</span><span class="sc">\\</span><span class="st">|(.*)</span><span class="sc">\\</span><span class="st">|.*"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1"</span>, ecoli)</span></code></pre></div>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="sec-benchmarking.html#cb172-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocFileCache"</span>)</span>
+<span id="cb172-2"><a href="sec-benchmarking.html#cb172-2" tabindex="-1"></a>bfc <span class="ot">&lt;-</span> <span class="fu">BiocFileCache</span>()</span>
+<span id="cb172-3"><a href="sec-benchmarking.html#cb172-3" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">bfcrpath</span>(bfc, <span class="st">"https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/refs/heads/master/spikein/data/fasta/ecoli_up000000625_7_06_2018.fasta"</span>)</span>
+<span id="cb172-4"><a href="sec-benchmarking.html#cb172-4" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">readLines</span>(ecoli)</span>
+<span id="cb172-5"><a href="sec-benchmarking.html#cb172-5" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> ecoli[<span class="fu">grepl</span>(<span class="st">"^&gt;"</span>, ecoli)]</span>
+<span id="cb172-6"><a href="sec-benchmarking.html#cb172-6" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&gt;sp</span><span class="sc">\\</span><span class="st">|(.*)</span><span class="sc">\\</span><span class="st">|.*"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1"</span>, ecoli)</span></code></pre></div>
 </div>
 <div id="convert-to-qfeatures" class="section level3" number="4.2.2">
 <h3>
@@ -306,29 +307,29 @@ proteins) or constant (human) across condition.</p>
 <ul>
 <li>Load and convert the evidence table.</li>
 </ul>
-<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="sec-benchmarking.html#cb177-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">fread</span>(evidenceFile, <span class="at">check.names =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb177-2"><a href="sec-benchmarking.html#cb177-2" tabindex="-1"></a>coldata<span class="sc">$</span>runCol <span class="ot">&lt;-</span> coldata<span class="sc">$</span>Raw.file</span>
-<span id="cb177-3"><a href="sec-benchmarking.html#cb177-3" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
-<span id="cb177-4"><a href="sec-benchmarking.html#cb177-4" tabindex="-1"></a>    evidence, <span class="at">colData =</span> coldata, <span class="at">runCol =</span> <span class="st">"Raw.file"</span>, </span>
-<span id="cb177-5"><a href="sec-benchmarking.html#cb177-5" tabindex="-1"></a>    <span class="at">quantCols =</span> <span class="st">"Intensity"</span></span>
-<span id="cb177-6"><a href="sec-benchmarking.html#cb177-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="sec-benchmarking.html#cb173-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">fread</span>(evidenceFile, <span class="at">check.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb173-2"><a href="sec-benchmarking.html#cb173-2" tabindex="-1"></a>coldata<span class="sc">$</span>runCol <span class="ot">&lt;-</span> coldata<span class="sc">$</span>Raw.file</span>
+<span id="cb173-3"><a href="sec-benchmarking.html#cb173-3" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
+<span id="cb173-4"><a href="sec-benchmarking.html#cb173-4" tabindex="-1"></a>    evidence, <span class="at">colData =</span> coldata, <span class="at">runCol =</span> <span class="st">"Raw.file"</span>, </span>
+<span id="cb173-5"><a href="sec-benchmarking.html#cb173-5" tabindex="-1"></a>    <span class="at">quantCols =</span> <span class="st">"Intensity"</span></span>
+<span id="cb173-6"><a href="sec-benchmarking.html#cb173-6" tabindex="-1"></a>)</span></code></pre></div>
 <ul>
 <li>Load and convert the peptide table.</li>
 </ul>
-<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="sec-benchmarking.html#cb178-1" tabindex="-1"></a>peptides <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(peptidesFile)</span>
-<span id="cb178-2"><a href="sec-benchmarking.html#cb178-2" tabindex="-1"></a>coldata<span class="sc">$</span>quantCols <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Intensity."</span>, coldata<span class="sc">$</span>Sample)</span>
-<span id="cb178-3"><a href="sec-benchmarking.html#cb178-3" tabindex="-1"></a>peptides <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
-<span id="cb178-4"><a href="sec-benchmarking.html#cb178-4" tabindex="-1"></a>    peptides, <span class="at">colData =</span> coldata, <span class="at">name =</span> <span class="st">"peptides"</span>, </span>
-<span id="cb178-5"><a href="sec-benchmarking.html#cb178-5" tabindex="-1"></a>    <span class="at">fnames =</span> <span class="st">"Sequence"</span></span>
-<span id="cb178-6"><a href="sec-benchmarking.html#cb178-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="sec-benchmarking.html#cb174-1" tabindex="-1"></a>peptides <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(peptidesFile)</span>
+<span id="cb174-2"><a href="sec-benchmarking.html#cb174-2" tabindex="-1"></a>coldata<span class="sc">$</span>quantCols <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Intensity."</span>, coldata<span class="sc">$</span>Sample)</span>
+<span id="cb174-3"><a href="sec-benchmarking.html#cb174-3" tabindex="-1"></a>peptides <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
+<span id="cb174-4"><a href="sec-benchmarking.html#cb174-4" tabindex="-1"></a>    peptides, <span class="at">colData =</span> coldata, <span class="at">name =</span> <span class="st">"peptides"</span>, </span>
+<span id="cb174-5"><a href="sec-benchmarking.html#cb174-5" tabindex="-1"></a>    <span class="at">fnames =</span> <span class="st">"Sequence"</span></span>
+<span id="cb174-6"><a href="sec-benchmarking.html#cb174-6" tabindex="-1"></a>)</span></code></pre></div>
 <ul>
 <li>Load and convert the protein-groups table</li>
 </ul>
-<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="sec-benchmarking.html#cb179-1" tabindex="-1"></a>proteinGroups <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(proteinGroupsFile)</span>
-<span id="cb179-2"><a href="sec-benchmarking.html#cb179-2" tabindex="-1"></a>proteinGroups <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
-<span id="cb179-3"><a href="sec-benchmarking.html#cb179-3" tabindex="-1"></a>    proteinGroups, <span class="at">colData =</span> coldata, <span class="at">name =</span> <span class="st">"proteinGroups"</span>,</span>
-<span id="cb179-4"><a href="sec-benchmarking.html#cb179-4" tabindex="-1"></a>    <span class="at">fnames =</span> <span class="st">"Protein.IDs"</span></span>
-<span id="cb179-5"><a href="sec-benchmarking.html#cb179-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="sec-benchmarking.html#cb175-1" tabindex="-1"></a>proteinGroups <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(proteinGroupsFile)</span>
+<span id="cb175-2"><a href="sec-benchmarking.html#cb175-2" tabindex="-1"></a>proteinGroups <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
+<span id="cb175-3"><a href="sec-benchmarking.html#cb175-3" tabindex="-1"></a>    proteinGroups, <span class="at">colData =</span> coldata, <span class="at">name =</span> <span class="st">"proteinGroups"</span>,</span>
+<span id="cb175-4"><a href="sec-benchmarking.html#cb175-4" tabindex="-1"></a>    <span class="at">fnames =</span> <span class="st">"Protein.IDs"</span></span>
+<span id="cb175-5"><a href="sec-benchmarking.html#cb175-5" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 </div>
 <div id="data-preprocessing-1" class="section level2" number="4.3">
@@ -385,65 +386,65 @@ peptide-level modelling.</li>
 <p>The workflow is implmented in a functions with one argument, <code>object</code>,
 which is the <code>QFeatures</code> we generated, either from the evidence file,
 the peptides file or the protein-groups file.</p>
-<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="sec-benchmarking.html#cb180-1" tabindex="-1"></a>preprocessing_workflow <span class="ot">&lt;-</span> <span class="cf">function</span>(object) {</span>
-<span id="cb180-2"><a href="sec-benchmarking.html#cb180-2" tabindex="-1"></a>    <span class="do">## 1. Encode missing values</span></span>
-<span id="cb180-3"><a href="sec-benchmarking.html#cb180-3" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">names</span>(object) <span class="do">## store the input set names</span></span>
-<span id="cb180-4"><a href="sec-benchmarking.html#cb180-4" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(object, i)</span>
-<span id="cb180-5"><a href="sec-benchmarking.html#cb180-5" tabindex="-1"></a>    <span class="do">## 2. Log transformation</span></span>
-<span id="cb180-6"><a href="sec-benchmarking.html#cb180-6" tabindex="-1"></a>    logName <span class="ot">&lt;-</span> <span class="fu">paste0</span>(i, <span class="st">"_log"</span>) <span class="do">## generate the log set names</span></span>
-<span id="cb180-7"><a href="sec-benchmarking.html#cb180-7" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(object, i, <span class="at">name =</span> logName, <span class="at">base =</span> <span class="dv">2</span>)</span>
-<span id="cb180-8"><a href="sec-benchmarking.html#cb180-8" tabindex="-1"></a>    <span class="do">## 3. PSM filtering (only for psm-level data)</span></span>
-<span id="cb180-9"><a href="sec-benchmarking.html#cb180-9" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(i) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
-<span id="cb180-10"><a href="sec-benchmarking.html#cb180-10" tabindex="-1"></a>        <span class="cf">for</span> (ii <span class="cf">in</span> logName) {</span>
-<span id="cb180-11"><a href="sec-benchmarking.html#cb180-11" tabindex="-1"></a>            rowdata <span class="ot">&lt;-</span> <span class="fu">rowData</span>(object[[ii]]) </span>
-<span id="cb180-12"><a href="sec-benchmarking.html#cb180-12" tabindex="-1"></a>            rowdata<span class="sc">$</span>ionID <span class="ot">&lt;-</span> <span class="fu">paste0</span>(rowdata<span class="sc">$</span>Sequence, rowdata<span class="sc">$</span>Charge) </span>
-<span id="cb180-13"><a href="sec-benchmarking.html#cb180-13" tabindex="-1"></a>            rowdata<span class="sc">$</span>rowSums <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">assay</span>(object[[ii]]), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb180-14"><a href="sec-benchmarking.html#cb180-14" tabindex="-1"></a>            rowdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(rowdata) <span class="sc">|&gt;</span></span>
-<span id="cb180-15"><a href="sec-benchmarking.html#cb180-15" tabindex="-1"></a>                <span class="fu">group_by</span>(ionID) <span class="sc">|&gt;</span></span>
-<span id="cb180-16"><a href="sec-benchmarking.html#cb180-16" tabindex="-1"></a>                <span class="fu">mutate</span>(<span class="at">psmRank =</span> <span class="fu">rank</span>(<span class="sc">-</span>rowSums))</span>
-<span id="cb180-17"><a href="sec-benchmarking.html#cb180-17" tabindex="-1"></a>            <span class="fu">rowData</span>(object[[ii]]) <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(rowdata)    </span>
-<span id="cb180-18"><a href="sec-benchmarking.html#cb180-18" tabindex="-1"></a>        }</span>
-<span id="cb180-19"><a href="sec-benchmarking.html#cb180-19" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(object, <span class="sc">~</span> psmRank <span class="sc">==</span> <span class="dv">1</span>, <span class="at">keep =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb180-20"><a href="sec-benchmarking.html#cb180-20" tabindex="-1"></a>        i <span class="ot">&lt;-</span> <span class="st">"evidence"</span></span>
-<span id="cb180-21"><a href="sec-benchmarking.html#cb180-21" tabindex="-1"></a>        joinName <span class="ot">&lt;-</span> <span class="fu">paste0</span>(i, <span class="st">"_log"</span>)</span>
-<span id="cb180-22"><a href="sec-benchmarking.html#cb180-22" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">joinAssays</span>(object, logName, joinName, <span class="st">"ionID"</span>)</span>
-<span id="cb180-23"><a href="sec-benchmarking.html#cb180-23" tabindex="-1"></a>        logName <span class="ot">&lt;-</span> joinName </span>
-<span id="cb180-24"><a href="sec-benchmarking.html#cb180-24" tabindex="-1"></a>    }</span>
-<span id="cb180-25"><a href="sec-benchmarking.html#cb180-25" tabindex="-1"></a>    <span class="do">## 4. Match protein identifiers across data levels</span></span>
-<span id="cb180-26"><a href="sec-benchmarking.html#cb180-26" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">==</span> <span class="st">"proteinGroups"</span>) { </span>
-<span id="cb180-27"><a href="sec-benchmarking.html#cb180-27" tabindex="-1"></a>        <span class="do">## We need to match the protein IDs in the evidence/peptide</span></span>
-<span id="cb180-28"><a href="sec-benchmarking.html#cb180-28" tabindex="-1"></a>        <span class="do">## table with the protiein IDs in the protein group table</span></span>
-<span id="cb180-29"><a href="sec-benchmarking.html#cb180-29" tabindex="-1"></a>        rowdata <span class="ot">&lt;-</span> <span class="fu">rbindRowData</span>(object, <span class="fu">names</span>(object))</span>
-<span id="cb180-30"><a href="sec-benchmarking.html#cb180-30" tabindex="-1"></a>        rowdata<span class="sc">$</span>Proteins <span class="ot">&lt;-</span> rowdata<span class="sc">$</span>Protein.IDs</span>
-<span id="cb180-31"><a href="sec-benchmarking.html#cb180-31" tabindex="-1"></a>        <span class="fu">rowData</span>(object) <span class="ot">&lt;-</span> <span class="fu">split</span>(rowdata, rowdata<span class="sc">$</span>assay)</span>
-<span id="cb180-32"><a href="sec-benchmarking.html#cb180-32" tabindex="-1"></a>    }</span>
-<span id="cb180-33"><a href="sec-benchmarking.html#cb180-33" tabindex="-1"></a>    <span class="do">## 5. Feature filtering</span></span>
-<span id="cb180-34"><a href="sec-benchmarking.html#cb180-34" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(</span>
-<span id="cb180-35"><a href="sec-benchmarking.html#cb180-35" tabindex="-1"></a>        object, <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
-<span id="cb180-36"><a href="sec-benchmarking.html#cb180-36" tabindex="-1"></a>          <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins) <span class="sc">&amp;</span> <span class="do">## Remove protein groups</span></span>
-<span id="cb180-37"><a href="sec-benchmarking.html#cb180-37" tabindex="-1"></a>          Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> <span class="do">## Remove decoys</span></span>
-<span id="cb180-38"><a href="sec-benchmarking.html#cb180-38" tabindex="-1"></a>          (Potential.contaminant <span class="sc">!=</span> <span class="st">"+"</span>) <span class="do">## Remove contaminants</span></span>
-<span id="cb180-39"><a href="sec-benchmarking.html#cb180-39" tabindex="-1"></a>    )</span>
-<span id="cb180-40"><a href="sec-benchmarking.html#cb180-40" tabindex="-1"></a>    <span class="do">## 6. Missing value filtering</span></span>
-<span id="cb180-41"><a href="sec-benchmarking.html#cb180-41" tabindex="-1"></a>    n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(object[[logName]])</span>
-<span id="cb180-42"><a href="sec-benchmarking.html#cb180-42" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(object, <span class="at">i =</span> logName, <span class="at">pNA =</span> (n <span class="sc">-</span> <span class="dv">4</span>) <span class="sc">/</span> n)</span>
-<span id="cb180-43"><a href="sec-benchmarking.html#cb180-43" tabindex="-1"></a>    <span class="do">## (The steps below are not for protein-group data)</span></span>
-<span id="cb180-44"><a href="sec-benchmarking.html#cb180-44" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">==</span> <span class="st">"proteinGroups"</span>) <span class="fu">return</span>(object)</span>
-<span id="cb180-45"><a href="sec-benchmarking.html#cb180-45" tabindex="-1"></a>    <span class="do">## 7. Normalisation</span></span>
-<span id="cb180-46"><a href="sec-benchmarking.html#cb180-46" tabindex="-1"></a>    normName <span class="ot">&lt;-</span> <span class="fu">paste0</span>(i, <span class="st">"_norm"</span>)</span>
-<span id="cb180-47"><a href="sec-benchmarking.html#cb180-47" tabindex="-1"></a>    pseudoRef <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">assay</span>(object[[logName]]), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb180-48"><a href="sec-benchmarking.html#cb180-48" tabindex="-1"></a>    nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(<span class="fu">assay</span>(object[[logName]]), <span class="at">MARGIN =</span> <span class="dv">1</span>, pseudoRef) <span class="sc">|&gt;</span> </span>
-<span id="cb180-49"><a href="sec-benchmarking.html#cb180-49" tabindex="-1"></a>      <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb180-50"><a href="sec-benchmarking.html#cb180-50" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
-<span id="cb180-51"><a href="sec-benchmarking.html#cb180-51" tabindex="-1"></a>      object, <span class="at">MARGIN =</span> <span class="dv">2</span>, <span class="at">STATS =</span> nfLog, <span class="at">i =</span> logName, <span class="at">name =</span> normName</span>
-<span id="cb180-52"><a href="sec-benchmarking.html#cb180-52" tabindex="-1"></a>    )</span>
-<span id="cb180-53"><a href="sec-benchmarking.html#cb180-53" tabindex="-1"></a>    <span class="do">## 8. Summarisation</span></span>
-<span id="cb180-54"><a href="sec-benchmarking.html#cb180-54" tabindex="-1"></a>    summName <span class="ot">&lt;-</span> <span class="fu">paste0</span>(i, <span class="st">"_proteins"</span>)</span>
-<span id="cb180-55"><a href="sec-benchmarking.html#cb180-55" tabindex="-1"></a>    <span class="fu">aggregateFeatures</span>(</span>
-<span id="cb180-56"><a href="sec-benchmarking.html#cb180-56" tabindex="-1"></a>        object, <span class="at">i =</span> normName, <span class="at">name =</span> summName, <span class="at">fcol =</span> <span class="st">"Proteins"</span>,</span>
-<span id="cb180-57"><a href="sec-benchmarking.html#cb180-57" tabindex="-1"></a>        <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary</span>
-<span id="cb180-58"><a href="sec-benchmarking.html#cb180-58" tabindex="-1"></a>    )</span>
-<span id="cb180-59"><a href="sec-benchmarking.html#cb180-59" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="sec-benchmarking.html#cb176-1" tabindex="-1"></a>preprocessing_workflow <span class="ot">&lt;-</span> <span class="cf">function</span>(object) {</span>
+<span id="cb176-2"><a href="sec-benchmarking.html#cb176-2" tabindex="-1"></a>    <span class="do">## 1. Encode missing values</span></span>
+<span id="cb176-3"><a href="sec-benchmarking.html#cb176-3" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">names</span>(object) <span class="do">## store the input set names</span></span>
+<span id="cb176-4"><a href="sec-benchmarking.html#cb176-4" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(object, i)</span>
+<span id="cb176-5"><a href="sec-benchmarking.html#cb176-5" tabindex="-1"></a>    <span class="do">## 2. Log transformation</span></span>
+<span id="cb176-6"><a href="sec-benchmarking.html#cb176-6" tabindex="-1"></a>    logName <span class="ot">&lt;-</span> <span class="fu">paste0</span>(i, <span class="st">"_log"</span>) <span class="do">## generate the log set names</span></span>
+<span id="cb176-7"><a href="sec-benchmarking.html#cb176-7" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(object, i, <span class="at">name =</span> logName, <span class="at">base =</span> <span class="dv">2</span>)</span>
+<span id="cb176-8"><a href="sec-benchmarking.html#cb176-8" tabindex="-1"></a>    <span class="do">## 3. PSM filtering (only for psm-level data)</span></span>
+<span id="cb176-9"><a href="sec-benchmarking.html#cb176-9" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(i) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb176-10"><a href="sec-benchmarking.html#cb176-10" tabindex="-1"></a>        <span class="cf">for</span> (ii <span class="cf">in</span> logName) {</span>
+<span id="cb176-11"><a href="sec-benchmarking.html#cb176-11" tabindex="-1"></a>            rowdata <span class="ot">&lt;-</span> <span class="fu">rowData</span>(object[[ii]]) </span>
+<span id="cb176-12"><a href="sec-benchmarking.html#cb176-12" tabindex="-1"></a>            rowdata<span class="sc">$</span>ionID <span class="ot">&lt;-</span> <span class="fu">paste0</span>(rowdata<span class="sc">$</span>Sequence, rowdata<span class="sc">$</span>Charge) </span>
+<span id="cb176-13"><a href="sec-benchmarking.html#cb176-13" tabindex="-1"></a>            rowdata<span class="sc">$</span>rowSums <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">assay</span>(object[[ii]]), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb176-14"><a href="sec-benchmarking.html#cb176-14" tabindex="-1"></a>            rowdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(rowdata) <span class="sc">|&gt;</span></span>
+<span id="cb176-15"><a href="sec-benchmarking.html#cb176-15" tabindex="-1"></a>                <span class="fu">group_by</span>(ionID) <span class="sc">|&gt;</span></span>
+<span id="cb176-16"><a href="sec-benchmarking.html#cb176-16" tabindex="-1"></a>                <span class="fu">mutate</span>(<span class="at">psmRank =</span> <span class="fu">rank</span>(<span class="sc">-</span>rowSums))</span>
+<span id="cb176-17"><a href="sec-benchmarking.html#cb176-17" tabindex="-1"></a>            <span class="fu">rowData</span>(object[[ii]]) <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(rowdata)    </span>
+<span id="cb176-18"><a href="sec-benchmarking.html#cb176-18" tabindex="-1"></a>        }</span>
+<span id="cb176-19"><a href="sec-benchmarking.html#cb176-19" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(object, <span class="sc">~</span> psmRank <span class="sc">==</span> <span class="dv">1</span>, <span class="at">keep =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb176-20"><a href="sec-benchmarking.html#cb176-20" tabindex="-1"></a>        i <span class="ot">&lt;-</span> <span class="st">"evidence"</span></span>
+<span id="cb176-21"><a href="sec-benchmarking.html#cb176-21" tabindex="-1"></a>        joinName <span class="ot">&lt;-</span> <span class="fu">paste0</span>(i, <span class="st">"_log"</span>)</span>
+<span id="cb176-22"><a href="sec-benchmarking.html#cb176-22" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">joinAssays</span>(object, logName, joinName, <span class="st">"ionID"</span>)</span>
+<span id="cb176-23"><a href="sec-benchmarking.html#cb176-23" tabindex="-1"></a>        logName <span class="ot">&lt;-</span> joinName </span>
+<span id="cb176-24"><a href="sec-benchmarking.html#cb176-24" tabindex="-1"></a>    }</span>
+<span id="cb176-25"><a href="sec-benchmarking.html#cb176-25" tabindex="-1"></a>    <span class="do">## 4. Match protein identifiers across data levels</span></span>
+<span id="cb176-26"><a href="sec-benchmarking.html#cb176-26" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">==</span> <span class="st">"proteinGroups"</span>) { </span>
+<span id="cb176-27"><a href="sec-benchmarking.html#cb176-27" tabindex="-1"></a>        <span class="do">## We need to match the protein IDs in the evidence/peptide</span></span>
+<span id="cb176-28"><a href="sec-benchmarking.html#cb176-28" tabindex="-1"></a>        <span class="do">## table with the protiein IDs in the protein group table</span></span>
+<span id="cb176-29"><a href="sec-benchmarking.html#cb176-29" tabindex="-1"></a>        rowdata <span class="ot">&lt;-</span> <span class="fu">rbindRowData</span>(object, <span class="fu">names</span>(object))</span>
+<span id="cb176-30"><a href="sec-benchmarking.html#cb176-30" tabindex="-1"></a>        rowdata<span class="sc">$</span>Proteins <span class="ot">&lt;-</span> rowdata<span class="sc">$</span>Protein.IDs</span>
+<span id="cb176-31"><a href="sec-benchmarking.html#cb176-31" tabindex="-1"></a>        <span class="fu">rowData</span>(object) <span class="ot">&lt;-</span> <span class="fu">split</span>(rowdata, rowdata<span class="sc">$</span>assay)</span>
+<span id="cb176-32"><a href="sec-benchmarking.html#cb176-32" tabindex="-1"></a>    }</span>
+<span id="cb176-33"><a href="sec-benchmarking.html#cb176-33" tabindex="-1"></a>    <span class="do">## 5. Feature filtering</span></span>
+<span id="cb176-34"><a href="sec-benchmarking.html#cb176-34" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(</span>
+<span id="cb176-35"><a href="sec-benchmarking.html#cb176-35" tabindex="-1"></a>        object, <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
+<span id="cb176-36"><a href="sec-benchmarking.html#cb176-36" tabindex="-1"></a>          <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins) <span class="sc">&amp;</span> <span class="do">## Remove protein groups</span></span>
+<span id="cb176-37"><a href="sec-benchmarking.html#cb176-37" tabindex="-1"></a>          Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> <span class="do">## Remove decoys</span></span>
+<span id="cb176-38"><a href="sec-benchmarking.html#cb176-38" tabindex="-1"></a>          (Potential.contaminant <span class="sc">!=</span> <span class="st">"+"</span>) <span class="do">## Remove contaminants</span></span>
+<span id="cb176-39"><a href="sec-benchmarking.html#cb176-39" tabindex="-1"></a>    )</span>
+<span id="cb176-40"><a href="sec-benchmarking.html#cb176-40" tabindex="-1"></a>    <span class="do">## 6. Missing value filtering</span></span>
+<span id="cb176-41"><a href="sec-benchmarking.html#cb176-41" tabindex="-1"></a>    n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(object[[logName]])</span>
+<span id="cb176-42"><a href="sec-benchmarking.html#cb176-42" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(object, <span class="at">i =</span> logName, <span class="at">pNA =</span> (n <span class="sc">-</span> <span class="dv">4</span>) <span class="sc">/</span> n)</span>
+<span id="cb176-43"><a href="sec-benchmarking.html#cb176-43" tabindex="-1"></a>    <span class="do">## (The steps below are not for protein-group data)</span></span>
+<span id="cb176-44"><a href="sec-benchmarking.html#cb176-44" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">==</span> <span class="st">"proteinGroups"</span>) <span class="fu">return</span>(object)</span>
+<span id="cb176-45"><a href="sec-benchmarking.html#cb176-45" tabindex="-1"></a>    <span class="do">## 7. Normalisation</span></span>
+<span id="cb176-46"><a href="sec-benchmarking.html#cb176-46" tabindex="-1"></a>    normName <span class="ot">&lt;-</span> <span class="fu">paste0</span>(i, <span class="st">"_norm"</span>)</span>
+<span id="cb176-47"><a href="sec-benchmarking.html#cb176-47" tabindex="-1"></a>    pseudoRef <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">assay</span>(object[[logName]]), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb176-48"><a href="sec-benchmarking.html#cb176-48" tabindex="-1"></a>    nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(<span class="fu">assay</span>(object[[logName]]), <span class="at">MARGIN =</span> <span class="dv">1</span>, pseudoRef) <span class="sc">|&gt;</span> </span>
+<span id="cb176-49"><a href="sec-benchmarking.html#cb176-49" tabindex="-1"></a>      <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb176-50"><a href="sec-benchmarking.html#cb176-50" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
+<span id="cb176-51"><a href="sec-benchmarking.html#cb176-51" tabindex="-1"></a>      object, <span class="at">MARGIN =</span> <span class="dv">2</span>, <span class="at">STATS =</span> nfLog, <span class="at">i =</span> logName, <span class="at">name =</span> normName</span>
+<span id="cb176-52"><a href="sec-benchmarking.html#cb176-52" tabindex="-1"></a>    )</span>
+<span id="cb176-53"><a href="sec-benchmarking.html#cb176-53" tabindex="-1"></a>    <span class="do">## 8. Summarisation</span></span>
+<span id="cb176-54"><a href="sec-benchmarking.html#cb176-54" tabindex="-1"></a>    summName <span class="ot">&lt;-</span> <span class="fu">paste0</span>(i, <span class="st">"_proteins"</span>)</span>
+<span id="cb176-55"><a href="sec-benchmarking.html#cb176-55" tabindex="-1"></a>    <span class="fu">aggregateFeatures</span>(</span>
+<span id="cb176-56"><a href="sec-benchmarking.html#cb176-56" tabindex="-1"></a>        object, <span class="at">i =</span> normName, <span class="at">name =</span> summName, <span class="at">fcol =</span> <span class="st">"Proteins"</span>,</span>
+<span id="cb176-57"><a href="sec-benchmarking.html#cb176-57" tabindex="-1"></a>        <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary</span>
+<span id="cb176-58"><a href="sec-benchmarking.html#cb176-58" tabindex="-1"></a>    )</span>
+<span id="cb176-59"><a href="sec-benchmarking.html#cb176-59" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="run-the-workflow" class="section level3" number="4.3.2">
 <h3>
@@ -453,10 +454,10 @@ the peptides file or the protein-groups file.</p>
 to each input data level: the ion data, the peptide data and the
 protein-group data. We then combine all the data in a single
 <code>QFeatures</code> object.</p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="sec-benchmarking.html#cb181-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">preprocessing_workflow</span>(evidence)</span>
-<span id="cb181-2"><a href="sec-benchmarking.html#cb181-2" tabindex="-1"></a>peptides <span class="ot">&lt;-</span> <span class="fu">preprocessing_workflow</span>(peptides)</span>
-<span id="cb181-3"><a href="sec-benchmarking.html#cb181-3" tabindex="-1"></a>proteinGroups <span class="ot">&lt;-</span> <span class="fu">preprocessing_workflow</span>(proteinGroups)</span>
-<span id="cb181-4"><a href="sec-benchmarking.html#cb181-4" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">c</span>(evidence, peptides, proteinGroups)</span></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="sec-benchmarking.html#cb177-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">preprocessing_workflow</span>(evidence)</span>
+<span id="cb177-2"><a href="sec-benchmarking.html#cb177-2" tabindex="-1"></a>peptides <span class="ot">&lt;-</span> <span class="fu">preprocessing_workflow</span>(peptides)</span>
+<span id="cb177-3"><a href="sec-benchmarking.html#cb177-3" tabindex="-1"></a>proteinGroups <span class="ot">&lt;-</span> <span class="fu">preprocessing_workflow</span>(proteinGroups)</span>
+<span id="cb177-4"><a href="sec-benchmarking.html#cb177-4" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">c</span>(evidence, peptides, proteinGroups)</span></code></pre></div>
 </div>
 </div>
 <div id="data-modelling" class="section level2" number="4.4">
@@ -487,24 +488,24 @@ intensities from different samples. The ion and peptide models
 therefore include a random effect for ion (<code>ionID</code>) and peptide
 (<code>Sequence</code>), and a random effect for sample (<code>Sample</code>). All three
 model definitions are stored in a list to streamline later access.</p>
-<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="sec-benchmarking.html#cb182-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb182-2"><a href="sec-benchmarking.html#cb182-2" tabindex="-1"></a>    <span class="at">protein =</span> <span class="sc">~</span> Condition,</span>
-<span id="cb182-3"><a href="sec-benchmarking.html#cb182-3" tabindex="-1"></a>    <span class="at">peptide =</span> <span class="sc">~</span> Condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Sample) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Sequence),</span>
-<span id="cb182-4"><a href="sec-benchmarking.html#cb182-4" tabindex="-1"></a>    <span class="at">ion =</span> <span class="sc">~</span> Condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Sample) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ionID)</span>
-<span id="cb182-5"><a href="sec-benchmarking.html#cb182-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="sec-benchmarking.html#cb178-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb178-2"><a href="sec-benchmarking.html#cb178-2" tabindex="-1"></a>    <span class="at">protein =</span> <span class="sc">~</span> Condition,</span>
+<span id="cb178-3"><a href="sec-benchmarking.html#cb178-3" tabindex="-1"></a>    <span class="at">peptide =</span> <span class="sc">~</span> Condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Sample) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Sequence),</span>
+<span id="cb178-4"><a href="sec-benchmarking.html#cb178-4" tabindex="-1"></a>    <span class="at">ion =</span> <span class="sc">~</span> Condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Sample) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ionID)</span>
+<span id="cb178-5"><a href="sec-benchmarking.html#cb178-5" tabindex="-1"></a>)</span></code></pre></div>
 <p>We will benchmark the performance of the modelling approaches by
 comparing all possible combination of 2 spike-in conditions<label for="tufte-sn-24" class="margin-toggle sidenote-number">24</label><input type="checkbox" id="tufte-sn-24" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">24</span> There are
 5 conditions, so 10 unique pairwise combinations.</span>. All models assess
 the same comparisons of conditions, hence the same contrasts. We
-therefore build a <a href="#sec-hypothesis_testing">contrast matrix</a> that is
+therefore build a <a href="sec-basics.html#sec-hypothesis_testing">contrast matrix</a> that is
 shared across all models.</p>
-<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="sec-benchmarking.html#cb183-1" tabindex="-1"></a>allContrasts <span class="ot">&lt;-</span> <span class="fu">createPairwiseContrasts</span>(</span>
-<span id="cb183-2"><a href="sec-benchmarking.html#cb183-2" tabindex="-1"></a>    models<span class="sc">$</span>protein, <span class="fu">colData</span>(spikein), <span class="at">var =</span> <span class="st">"Condition"</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb183-3"><a href="sec-benchmarking.html#cb183-3" tabindex="-1"></a>)</span>
-<span id="cb183-4"><a href="sec-benchmarking.html#cb183-4" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
-<span id="cb183-5"><a href="sec-benchmarking.html#cb183-5" tabindex="-1"></a>    allContrasts, </span>
-<span id="cb183-6"><a href="sec-benchmarking.html#cb183-6" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"ridgeConditionB"</span>, <span class="st">"ridgeConditionC"</span>, <span class="st">"ridgeConditionD"</span>, <span class="st">"ridgeConditionE"</span>)</span>
-<span id="cb183-7"><a href="sec-benchmarking.html#cb183-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="sec-benchmarking.html#cb179-1" tabindex="-1"></a>allContrasts <span class="ot">&lt;-</span> <span class="fu">createPairwiseContrasts</span>(</span>
+<span id="cb179-2"><a href="sec-benchmarking.html#cb179-2" tabindex="-1"></a>    models<span class="sc">$</span>protein, <span class="fu">colData</span>(spikein), <span class="at">var =</span> <span class="st">"Condition"</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
+<span id="cb179-3"><a href="sec-benchmarking.html#cb179-3" tabindex="-1"></a>)</span>
+<span id="cb179-4"><a href="sec-benchmarking.html#cb179-4" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
+<span id="cb179-5"><a href="sec-benchmarking.html#cb179-5" tabindex="-1"></a>    allContrasts, </span>
+<span id="cb179-6"><a href="sec-benchmarking.html#cb179-6" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"ridgeConditionB"</span>, <span class="st">"ridgeConditionC"</span>, <span class="st">"ridgeConditionD"</span>, <span class="st">"ridgeConditionE"</span>)</span>
+<span id="cb179-7"><a href="sec-benchmarking.html#cb179-7" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="modelling-workflow" class="section level3" number="4.4.2">
 <h3>
@@ -532,37 +533,37 @@ to model.</li>
 <code>modelLevel</code> indicates whether the model should be fit at the
 <code>"ion"</code>, <code>"peptide"</code> or <code>"protein"</code> level.</li>
 </ul>
-<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="sec-benchmarking.html#cb184-1" tabindex="-1"></a>modelling_workflow <span class="ot">&lt;-</span> <span class="cf">function</span>(object, i, model, L, modelLevel) {</span>
-<span id="cb184-2"><a href="sec-benchmarking.html#cb184-2" tabindex="-1"></a>    <span class="do">## 1. Estimate the model</span></span>
-<span id="cb184-3"><a href="sec-benchmarking.html#cb184-3" tabindex="-1"></a>    <span class="cf">if</span> (modelLevel <span class="sc">==</span> <span class="st">"protein"</span>) {</span>
-<span id="cb184-4"><a href="sec-benchmarking.html#cb184-4" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
-<span id="cb184-5"><a href="sec-benchmarking.html#cb184-5" tabindex="-1"></a>            object,  <span class="at">i =</span> i, <span class="at">formula =</span> model,</span>
-<span id="cb184-6"><a href="sec-benchmarking.html#cb184-6" tabindex="-1"></a>            <span class="at">ridge =</span> <span class="cn">TRUE</span>, <span class="at">robust =</span> <span class="cn">TRUE</span></span>
-<span id="cb184-7"><a href="sec-benchmarking.html#cb184-7" tabindex="-1"></a>        )</span>
-<span id="cb184-8"><a href="sec-benchmarking.html#cb184-8" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb184-9"><a href="sec-benchmarking.html#cb184-9" tabindex="-1"></a>        <span class="do">## 1a. Estimate</span></span>
-<span id="cb184-10"><a href="sec-benchmarking.html#cb184-10" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">msqrobAggregate</span>(</span>
-<span id="cb184-11"><a href="sec-benchmarking.html#cb184-11" tabindex="-1"></a>            object,  <span class="at">i =</span> i, <span class="at">formula =</span> model, </span>
-<span id="cb184-12"><a href="sec-benchmarking.html#cb184-12" tabindex="-1"></a>            <span class="at">fcol =</span> <span class="st">"Proteins"</span>, <span class="at">name =</span> <span class="st">"msqrob"</span>,</span>
-<span id="cb184-13"><a href="sec-benchmarking.html#cb184-13" tabindex="-1"></a>            <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb184-14"><a href="sec-benchmarking.html#cb184-14" tabindex="-1"></a>        )</span>
-<span id="cb184-15"><a href="sec-benchmarking.html#cb184-15" tabindex="-1"></a>        i <span class="ot">&lt;-</span> <span class="st">"msqrob"</span></span>
-<span id="cb184-16"><a href="sec-benchmarking.html#cb184-16" tabindex="-1"></a>        <span class="do">## 1b. Refit one-hit-wonders</span></span>
-<span id="cb184-17"><a href="sec-benchmarking.html#cb184-17" tabindex="-1"></a>        counts <span class="ot">&lt;-</span> <span class="fu">aggcounts</span>(object[[<span class="st">"msqrob"</span>]])</span>
-<span id="cb184-18"><a href="sec-benchmarking.html#cb184-18" tabindex="-1"></a>        oneHitProteins <span class="ot">&lt;-</span> <span class="fu">rownames</span>(counts)[<span class="fu">rowMax</span>(counts) <span class="sc">==</span> <span class="dv">1</span>]</span>
-<span id="cb184-19"><a href="sec-benchmarking.html#cb184-19" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">msqrobRefit</span>(</span>
-<span id="cb184-20"><a href="sec-benchmarking.html#cb184-20" tabindex="-1"></a>          object, <span class="at">i =</span> i, <span class="at">subset =</span> oneHitProteins,</span>
-<span id="cb184-21"><a href="sec-benchmarking.html#cb184-21" tabindex="-1"></a>          <span class="at">formula =</span> <span class="sc">~</span> Condition,</span>
-<span id="cb184-22"><a href="sec-benchmarking.html#cb184-22" tabindex="-1"></a>          <span class="at">fcol =</span> <span class="st">"Proteins"</span>, <span class="at">name =</span> <span class="st">"msqrob"</span>,</span>
-<span id="cb184-23"><a href="sec-benchmarking.html#cb184-23" tabindex="-1"></a>          <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb184-24"><a href="sec-benchmarking.html#cb184-24" tabindex="-1"></a>        )</span>
-<span id="cb184-25"><a href="sec-benchmarking.html#cb184-25" tabindex="-1"></a>    }</span>
-<span id="cb184-26"><a href="sec-benchmarking.html#cb184-26" tabindex="-1"></a>    <span class="do">## 2. Hypothesis testing</span></span>
-<span id="cb184-27"><a href="sec-benchmarking.html#cb184-27" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(object, i, <span class="at">contrast =</span> L)</span>
-<span id="cb184-28"><a href="sec-benchmarking.html#cb184-28" tabindex="-1"></a>    <span class="do">## 3. Collect the results</span></span>
-<span id="cb184-29"><a href="sec-benchmarking.html#cb184-29" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">msqrobCollect</span>(object[[i]], L, <span class="at">combine =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb184-30"><a href="sec-benchmarking.html#cb184-30" tabindex="-1"></a>    out</span>
-<span id="cb184-31"><a href="sec-benchmarking.html#cb184-31" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="sec-benchmarking.html#cb180-1" tabindex="-1"></a>modelling_workflow <span class="ot">&lt;-</span> <span class="cf">function</span>(object, i, model, L, modelLevel) {</span>
+<span id="cb180-2"><a href="sec-benchmarking.html#cb180-2" tabindex="-1"></a>    <span class="do">## 1. Estimate the model</span></span>
+<span id="cb180-3"><a href="sec-benchmarking.html#cb180-3" tabindex="-1"></a>    <span class="cf">if</span> (modelLevel <span class="sc">==</span> <span class="st">"protein"</span>) {</span>
+<span id="cb180-4"><a href="sec-benchmarking.html#cb180-4" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
+<span id="cb180-5"><a href="sec-benchmarking.html#cb180-5" tabindex="-1"></a>            object,  <span class="at">i =</span> i, <span class="at">formula =</span> model,</span>
+<span id="cb180-6"><a href="sec-benchmarking.html#cb180-6" tabindex="-1"></a>            <span class="at">ridge =</span> <span class="cn">TRUE</span>, <span class="at">robust =</span> <span class="cn">TRUE</span></span>
+<span id="cb180-7"><a href="sec-benchmarking.html#cb180-7" tabindex="-1"></a>        )</span>
+<span id="cb180-8"><a href="sec-benchmarking.html#cb180-8" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb180-9"><a href="sec-benchmarking.html#cb180-9" tabindex="-1"></a>        <span class="do">## 1a. Estimate</span></span>
+<span id="cb180-10"><a href="sec-benchmarking.html#cb180-10" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">msqrobAggregate</span>(</span>
+<span id="cb180-11"><a href="sec-benchmarking.html#cb180-11" tabindex="-1"></a>            object,  <span class="at">i =</span> i, <span class="at">formula =</span> model, </span>
+<span id="cb180-12"><a href="sec-benchmarking.html#cb180-12" tabindex="-1"></a>            <span class="at">fcol =</span> <span class="st">"Proteins"</span>, <span class="at">name =</span> <span class="st">"msqrob"</span>,</span>
+<span id="cb180-13"><a href="sec-benchmarking.html#cb180-13" tabindex="-1"></a>            <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
+<span id="cb180-14"><a href="sec-benchmarking.html#cb180-14" tabindex="-1"></a>        )</span>
+<span id="cb180-15"><a href="sec-benchmarking.html#cb180-15" tabindex="-1"></a>        i <span class="ot">&lt;-</span> <span class="st">"msqrob"</span></span>
+<span id="cb180-16"><a href="sec-benchmarking.html#cb180-16" tabindex="-1"></a>        <span class="do">## 1b. Refit one-hit-wonders</span></span>
+<span id="cb180-17"><a href="sec-benchmarking.html#cb180-17" tabindex="-1"></a>        counts <span class="ot">&lt;-</span> <span class="fu">aggcounts</span>(object[[<span class="st">"msqrob"</span>]])</span>
+<span id="cb180-18"><a href="sec-benchmarking.html#cb180-18" tabindex="-1"></a>        oneHitProteins <span class="ot">&lt;-</span> <span class="fu">rownames</span>(counts)[<span class="fu">rowMax</span>(counts) <span class="sc">==</span> <span class="dv">1</span>]</span>
+<span id="cb180-19"><a href="sec-benchmarking.html#cb180-19" tabindex="-1"></a>        object <span class="ot">&lt;-</span> <span class="fu">msqrobRefit</span>(</span>
+<span id="cb180-20"><a href="sec-benchmarking.html#cb180-20" tabindex="-1"></a>          object, <span class="at">i =</span> i, <span class="at">subset =</span> oneHitProteins,</span>
+<span id="cb180-21"><a href="sec-benchmarking.html#cb180-21" tabindex="-1"></a>          <span class="at">formula =</span> <span class="sc">~</span> Condition,</span>
+<span id="cb180-22"><a href="sec-benchmarking.html#cb180-22" tabindex="-1"></a>          <span class="at">fcol =</span> <span class="st">"Proteins"</span>, <span class="at">name =</span> <span class="st">"msqrob"</span>,</span>
+<span id="cb180-23"><a href="sec-benchmarking.html#cb180-23" tabindex="-1"></a>          <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
+<span id="cb180-24"><a href="sec-benchmarking.html#cb180-24" tabindex="-1"></a>        )</span>
+<span id="cb180-25"><a href="sec-benchmarking.html#cb180-25" tabindex="-1"></a>    }</span>
+<span id="cb180-26"><a href="sec-benchmarking.html#cb180-26" tabindex="-1"></a>    <span class="do">## 2. Hypothesis testing</span></span>
+<span id="cb180-27"><a href="sec-benchmarking.html#cb180-27" tabindex="-1"></a>    object <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(object, i, <span class="at">contrast =</span> L)</span>
+<span id="cb180-28"><a href="sec-benchmarking.html#cb180-28" tabindex="-1"></a>    <span class="do">## 3. Collect the results</span></span>
+<span id="cb180-29"><a href="sec-benchmarking.html#cb180-29" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">msqrobCollect</span>(object[[i]], L, <span class="at">combine =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb180-30"><a href="sec-benchmarking.html#cb180-30" tabindex="-1"></a>    out</span>
+<span id="cb180-31"><a href="sec-benchmarking.html#cb180-31" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="run-the-workflow-1" class="section level3" number="4.4.3">
 <h3>
@@ -583,10 +584,10 @@ peptides file using the normalised peptide data.</li>
 <li>Approach 5 (called <code>proteinGroups_log</code>): model the data from the
 protein groups file using the protein level data.</li>
 </ul>
-<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="sec-benchmarking.html#cb185-1" tabindex="-1"></a>(approaches <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb185-2"><a href="sec-benchmarking.html#cb185-2" tabindex="-1"></a>    <span class="at">inputLevel =</span> <span class="fu">c</span>(<span class="st">"evidence_proteins"</span>, <span class="st">"evidence_norm"</span>, <span class="st">"peptides_proteins"</span>, <span class="st">"peptides_norm"</span>, <span class="st">"proteinGroups_log"</span>),</span>
-<span id="cb185-3"><a href="sec-benchmarking.html#cb185-3" tabindex="-1"></a>    <span class="at">modelLevel =</span> <span class="fu">c</span>(<span class="st">"protein"</span>, <span class="st">"ion"</span>, <span class="st">"protein"</span>, <span class="st">"peptide"</span>, <span class="st">"protein"</span>)</span>
-<span id="cb185-4"><a href="sec-benchmarking.html#cb185-4" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="sec-benchmarking.html#cb181-1" tabindex="-1"></a>(approaches <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb181-2"><a href="sec-benchmarking.html#cb181-2" tabindex="-1"></a>    <span class="at">inputLevel =</span> <span class="fu">c</span>(<span class="st">"evidence_proteins"</span>, <span class="st">"evidence_norm"</span>, <span class="st">"peptides_proteins"</span>, <span class="st">"peptides_norm"</span>, <span class="st">"proteinGroups_log"</span>),</span>
+<span id="cb181-3"><a href="sec-benchmarking.html#cb181-3" tabindex="-1"></a>    <span class="at">modelLevel =</span> <span class="fu">c</span>(<span class="st">"protein"</span>, <span class="st">"ion"</span>, <span class="st">"protein"</span>, <span class="st">"peptide"</span>, <span class="st">"protein"</span>)</span>
+<span id="cb181-4"><a href="sec-benchmarking.html#cb181-4" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>##          inputLevel modelLevel
 ## 1 evidence_proteins    protein
 ## 2     evidence_norm        ion
@@ -598,27 +599,27 @@ run our data modelling workflow. Notice how every approach is run
 using the same code. Every <code>apply</code> iteration returns a table of
 statistical inference results for all pairwise comparisons. We combine
 all the tables in a single table for result exploration.</p>
-<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="sec-benchmarking.html#cb187-1" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">apply</span>(approaches, <span class="dv">1</span>, <span class="cf">function</span>(x) {</span>
-<span id="cb187-2"><a href="sec-benchmarking.html#cb187-2" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">modelling_workflow</span>(</span>
-<span id="cb187-3"><a href="sec-benchmarking.html#cb187-3" tabindex="-1"></a>        spikein, <span class="at">i =</span> x[[<span class="st">"inputLevel"</span>]], <span class="at">model =</span> models[[x[[<span class="st">"modelLevel"</span>]]]],</span>
-<span id="cb187-4"><a href="sec-benchmarking.html#cb187-4" tabindex="-1"></a>        <span class="at">L =</span> L, <span class="at">modelLevel =</span> x[[<span class="st">"modelLevel"</span>]]</span>
-<span id="cb187-5"><a href="sec-benchmarking.html#cb187-5" tabindex="-1"></a>    )</span>
-<span id="cb187-6"><a href="sec-benchmarking.html#cb187-6" tabindex="-1"></a>    out<span class="sc">$</span>inputLevel <span class="ot">&lt;-</span> x[[<span class="st">"inputLevel"</span>]]</span>
-<span id="cb187-7"><a href="sec-benchmarking.html#cb187-7" tabindex="-1"></a>    out<span class="sc">$</span>modelLevel <span class="ot">&lt;-</span> x[[<span class="st">"modelLevel"</span>]]</span>
-<span id="cb187-8"><a href="sec-benchmarking.html#cb187-8" tabindex="-1"></a>    out</span>
-<span id="cb187-9"><a href="sec-benchmarking.html#cb187-9" tabindex="-1"></a>})</span>
-<span id="cb187-10"><a href="sec-benchmarking.html#cb187-10" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, results)</span></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="sec-benchmarking.html#cb183-1" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">apply</span>(approaches, <span class="dv">1</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb183-2"><a href="sec-benchmarking.html#cb183-2" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">modelling_workflow</span>(</span>
+<span id="cb183-3"><a href="sec-benchmarking.html#cb183-3" tabindex="-1"></a>        spikein, <span class="at">i =</span> x[[<span class="st">"inputLevel"</span>]], <span class="at">model =</span> models[[x[[<span class="st">"modelLevel"</span>]]]],</span>
+<span id="cb183-4"><a href="sec-benchmarking.html#cb183-4" tabindex="-1"></a>        <span class="at">L =</span> L, <span class="at">modelLevel =</span> x[[<span class="st">"modelLevel"</span>]]</span>
+<span id="cb183-5"><a href="sec-benchmarking.html#cb183-5" tabindex="-1"></a>    )</span>
+<span id="cb183-6"><a href="sec-benchmarking.html#cb183-6" tabindex="-1"></a>    out<span class="sc">$</span>inputLevel <span class="ot">&lt;-</span> x[[<span class="st">"inputLevel"</span>]]</span>
+<span id="cb183-7"><a href="sec-benchmarking.html#cb183-7" tabindex="-1"></a>    out<span class="sc">$</span>modelLevel <span class="ot">&lt;-</span> x[[<span class="st">"modelLevel"</span>]]</span>
+<span id="cb183-8"><a href="sec-benchmarking.html#cb183-8" tabindex="-1"></a>    out</span>
+<span id="cb183-9"><a href="sec-benchmarking.html#cb183-9" tabindex="-1"></a>})</span>
+<span id="cb183-10"><a href="sec-benchmarking.html#cb183-10" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, results)</span></code></pre></div>
 <p>We also add whether each modelled protein is a E. Coli protein (known
 to be differentially abundant) or not. We also simplify the naming of
 the contrasts for visualisation.</p>
-<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="sec-benchmarking.html#cb188-1" tabindex="-1"></a>results<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> results<span class="sc">$</span>feature <span class="sc">%in%</span> ecoli</span>
-<span id="cb188-2"><a href="sec-benchmarking.html#cb188-2" tabindex="-1"></a>results<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgeCondition"</span>, <span class="st">""</span>, results<span class="sc">$</span>contrast)</span>
-<span id="cb188-3"><a href="sec-benchmarking.html#cb188-3" tabindex="-1"></a>results<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^([B-E])$"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 - A"</span>, results<span class="sc">$</span>contrast)</span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="sec-benchmarking.html#cb184-1" tabindex="-1"></a>results<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> results<span class="sc">$</span>feature <span class="sc">%in%</span> ecoli</span>
+<span id="cb184-2"><a href="sec-benchmarking.html#cb184-2" tabindex="-1"></a>results<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgeCondition"</span>, <span class="st">""</span>, results<span class="sc">$</span>contrast)</span>
+<span id="cb184-3"><a href="sec-benchmarking.html#cb184-3" tabindex="-1"></a>results<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^([B-E])$"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 - A"</span>, results<span class="sc">$</span>contrast)</span></code></pre></div>
 </div>
 </div>
-<div id="performance-benchmark" class="section level2" number="4.5">
+<div id="sec-performance" class="section level2" number="4.5">
 <h2>
-<span class="header-section-number">4.5</span> Performance benchmark<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('performance-benchmark')" onmouseout="reset_tooltip('performance-benchmark-tooltip')"><span class="tooltiptext" id="performance-benchmark-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+<span class="header-section-number">4.5</span> Performance benchmark<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('sec-performance')" onmouseout="reset_tooltip('sec-performance-tooltip')"><span class="tooltiptext" id="sec-performance-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>We now can compare the performance of the different modelling
 approaches. We will compare the approaches based on 4 objectives
@@ -638,14 +639,12 @@ threshold.</li>
 approach, where a model that fits more proteins is preferred. Note
 that the number of fits exceeds the number of measured proteins
 because we summed the fits over all comparisons.</p>
-<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="sec-benchmarking.html#cb189-1" tabindex="-1"></a><span class="fu">group_by</span>(results, inputLevel) <span class="sc">|&gt;</span> </span>
-<span id="cb189-2"><a href="sec-benchmarking.html#cb189-2" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval))) <span class="sc">|&gt;</span> </span>
-<span id="cb189-3"><a href="sec-benchmarking.html#cb189-3" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb189-4"><a href="sec-benchmarking.html#cb189-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> inputLevel, <span class="at">y =</span> n, <span class="at">fill =</span> inputLevel) <span class="sc">+</span></span>
-<span id="cb189-5"><a href="sec-benchmarking.html#cb189-5" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-18-1.png" alt="plot of chunk unnamed-chunk-18"><div class="figcaption">plot of chunk unnamed-chunk-18</div>
-</div>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="sec-benchmarking.html#cb185-1" tabindex="-1"></a><span class="fu">group_by</span>(results, inputLevel) <span class="sc">|&gt;</span> </span>
+<span id="cb185-2"><a href="sec-benchmarking.html#cb185-2" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval))) <span class="sc">|&gt;</span> </span>
+<span id="cb185-3"><a href="sec-benchmarking.html#cb185-3" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb185-4"><a href="sec-benchmarking.html#cb185-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> inputLevel, <span class="at">y =</span> n, <span class="at">fill =</span> inputLevel) <span class="sc">+</span></span>
+<span id="cb185-5"><a href="sec-benchmarking.html#cb185-5" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>)</span></code></pre></div>
+<p><img src="figure/benchmarking_nfits-1.png"></p>
 <p>We can see that the approaches that fits least proteins is when
 starting from the protein-group file. However, all other four
 approaches can fit the same number of proteins.</p>
@@ -665,26 +664,24 @@ proteins) considering a 5% false discovery rate (FDR) threshold, which
 is typically used. We will therefore first construct the table with
 TPs and FPs obtained from each data modelling approach for each
 comparison.</p>
-<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="sec-benchmarking.html#cb190-1" tabindex="-1"></a>tpFpTable <span class="ot">&lt;-</span> <span class="fu">group_by</span>(results, inputLevel, contrast) <span class="sc">|&gt;</span></span>
-<span id="cb190-2"><a href="sec-benchmarking.html#cb190-2" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval)) <span class="sc">|&gt;</span></span>
-<span id="cb190-3"><a href="sec-benchmarking.html#cb190-3" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="st">"True Positives"</span> <span class="ot">=</span> <span class="fu">sum</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> isEcoli),</span>
-<span id="cb190-4"><a href="sec-benchmarking.html#cb190-4" tabindex="-1"></a>              <span class="st">"False Positives"</span> <span class="ot">=</span> <span class="fu">sum</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="sc">!</span>isEcoli)) <span class="sc">|&gt;</span></span>
-<span id="cb190-5"><a href="sec-benchmarking.html#cb190-5" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"True Positives"</span>, <span class="st">"False Positives"</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="sec-benchmarking.html#cb186-1" tabindex="-1"></a>tpFpTable <span class="ot">&lt;-</span> <span class="fu">group_by</span>(results, inputLevel, contrast) <span class="sc">|&gt;</span></span>
+<span id="cb186-2"><a href="sec-benchmarking.html#cb186-2" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb186-3"><a href="sec-benchmarking.html#cb186-3" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="st">"True Positives"</span> <span class="ot">=</span> <span class="fu">sum</span>(isEcoli),</span>
+<span id="cb186-4"><a href="sec-benchmarking.html#cb186-4" tabindex="-1"></a>              <span class="st">"False Positives"</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span>isEcoli)) <span class="sc">|&gt;</span></span>
+<span id="cb186-5"><a href="sec-benchmarking.html#cb186-5" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"True Positives"</span>, <span class="st">"False Positives"</span>))</span></code></pre></div>
 <p>We then plot the table as a bar plot, facetting for every comparison.</p>
-<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="sec-benchmarking.html#cb191-1" tabindex="-1"></a><span class="fu">ggplot</span>(tpFpTable) <span class="sc">+</span></span>
-<span id="cb191-2"><a href="sec-benchmarking.html#cb191-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> inputLevel,</span>
-<span id="cb191-3"><a href="sec-benchmarking.html#cb191-3" tabindex="-1"></a>        <span class="at">y =</span> value,</span>
-<span id="cb191-4"><a href="sec-benchmarking.html#cb191-4" tabindex="-1"></a>        <span class="at">fill =</span> inputLevel) <span class="sc">+</span></span>
-<span id="cb191-5"><a href="sec-benchmarking.html#cb191-5" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
-<span id="cb191-6"><a href="sec-benchmarking.html#cb191-6" tabindex="-1"></a>    <span class="fu">facet_grid</span>(contrast <span class="sc">~</span> name, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb191-7"><a href="sec-benchmarking.html#cb191-7" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
-<span id="cb191-8"><a href="sec-benchmarking.html#cb191-8" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb191-9"><a href="sec-benchmarking.html#cb191-9" tabindex="-1"></a>          <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb191-10"><a href="sec-benchmarking.html#cb191-10" tabindex="-1"></a>          <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb191-11"><a href="sec-benchmarking.html#cb191-11" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">3</span>)) <span class="do">## to avoid legend getting cropped</span></span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-20-1.png" alt="plot of chunk unnamed-chunk-20"><div class="figcaption">plot of chunk unnamed-chunk-20</div>
-</div>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="sec-benchmarking.html#cb187-1" tabindex="-1"></a><span class="fu">ggplot</span>(tpFpTable) <span class="sc">+</span></span>
+<span id="cb187-2"><a href="sec-benchmarking.html#cb187-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> inputLevel,</span>
+<span id="cb187-3"><a href="sec-benchmarking.html#cb187-3" tabindex="-1"></a>        <span class="at">y =</span> value,</span>
+<span id="cb187-4"><a href="sec-benchmarking.html#cb187-4" tabindex="-1"></a>        <span class="at">fill =</span> inputLevel) <span class="sc">+</span></span>
+<span id="cb187-5"><a href="sec-benchmarking.html#cb187-5" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb187-6"><a href="sec-benchmarking.html#cb187-6" tabindex="-1"></a>    <span class="fu">facet_grid</span>(contrast <span class="sc">~</span> name, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb187-7"><a href="sec-benchmarking.html#cb187-7" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb187-8"><a href="sec-benchmarking.html#cb187-8" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb187-9"><a href="sec-benchmarking.html#cb187-9" tabindex="-1"></a>          <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb187-10"><a href="sec-benchmarking.html#cb187-10" tabindex="-1"></a>          <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb187-11"><a href="sec-benchmarking.html#cb187-11" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">3</span>)) <span class="do">## to avoid legend getting cropped</span></span></code></pre></div>
+<p><img src="figure/benchmarking_tp_fp-1.png"></p>
 <p>The plot clearly shows that starting from the protein groups leads to
 a severe decrease in performance as the number of TP is systematically
 lower compared to other approaches, while there is no dramatic
@@ -702,23 +699,22 @@ level, but these difference are subtle.</p>
 </h3>
 <p>Additionally, we construct true positive rate (TPR)-false discovery
 proportion (FDP) plots. TPR represents the fraction of truly DA
-proteins reported by the method, calculated as <span class="math inline">\(TPR =
-\frac{TP}{TP+FN}\)</span>, with FN false negatives (i.e., E. Coli proteins
+proteins reported by the method, calculated as <span class="math inline">\(TPR = \frac{TP}{TP+FN}\)</span>, with FN false negatives (i.e., E. Coli proteins
 that were not flagged as differential abundant). FDP denotes the
 proportion of false positives among all proteins flagged as
 differential abundant, calculated as <span class="math inline">\(FDP = \frac{FP}{TP + FP}\)</span>.</p>
 <p>So we first compute the FDP and TPR using the custom functions below:</p>
-<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="sec-benchmarking.html#cb192-1" tabindex="-1"></a>computeFDP <span class="ot">&lt;-</span> <span class="cf">function</span>(pval, tp) {</span>
-<span id="cb192-2"><a href="sec-benchmarking.html#cb192-2" tabindex="-1"></a>    ord <span class="ot">&lt;-</span> <span class="fu">order</span>(pval)</span>
-<span id="cb192-3"><a href="sec-benchmarking.html#cb192-3" tabindex="-1"></a>    fdp <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(<span class="sc">!</span>tp[ord]) <span class="sc">/</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(tp)</span>
-<span id="cb192-4"><a href="sec-benchmarking.html#cb192-4" tabindex="-1"></a>    fdp[<span class="fu">order</span>(ord)]</span>
-<span id="cb192-5"><a href="sec-benchmarking.html#cb192-5" tabindex="-1"></a>}</span>
-<span id="cb192-6"><a href="sec-benchmarking.html#cb192-6" tabindex="-1"></a>computeTPR <span class="ot">&lt;-</span> <span class="cf">function</span>(pval, tp, <span class="at">nTP =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb192-7"><a href="sec-benchmarking.html#cb192-7" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(nTP)) nTP <span class="ot">&lt;-</span> <span class="fu">sum</span>(tp)</span>
-<span id="cb192-8"><a href="sec-benchmarking.html#cb192-8" tabindex="-1"></a>    ord <span class="ot">&lt;-</span> <span class="fu">order</span>(pval)</span>
-<span id="cb192-9"><a href="sec-benchmarking.html#cb192-9" tabindex="-1"></a>    tpr <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(tp[ord]) <span class="sc">/</span> nTP</span>
-<span id="cb192-10"><a href="sec-benchmarking.html#cb192-10" tabindex="-1"></a>    tpr[<span class="fu">order</span>(ord)]</span>
-<span id="cb192-11"><a href="sec-benchmarking.html#cb192-11" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="sec-benchmarking.html#cb188-1" tabindex="-1"></a>computeFDP <span class="ot">&lt;-</span> <span class="cf">function</span>(pval, tp) {</span>
+<span id="cb188-2"><a href="sec-benchmarking.html#cb188-2" tabindex="-1"></a>    ord <span class="ot">&lt;-</span> <span class="fu">order</span>(pval)</span>
+<span id="cb188-3"><a href="sec-benchmarking.html#cb188-3" tabindex="-1"></a>    fdp <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(<span class="sc">!</span>tp[ord]) <span class="sc">/</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(tp)</span>
+<span id="cb188-4"><a href="sec-benchmarking.html#cb188-4" tabindex="-1"></a>    fdp[<span class="fu">order</span>(ord)]</span>
+<span id="cb188-5"><a href="sec-benchmarking.html#cb188-5" tabindex="-1"></a>}</span>
+<span id="cb188-6"><a href="sec-benchmarking.html#cb188-6" tabindex="-1"></a>computeTPR <span class="ot">&lt;-</span> <span class="cf">function</span>(pval, tp, <span class="at">nTP =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb188-7"><a href="sec-benchmarking.html#cb188-7" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(nTP)) nTP <span class="ot">&lt;-</span> <span class="fu">sum</span>(tp)</span>
+<span id="cb188-8"><a href="sec-benchmarking.html#cb188-8" tabindex="-1"></a>    ord <span class="ot">&lt;-</span> <span class="fu">order</span>(pval)</span>
+<span id="cb188-9"><a href="sec-benchmarking.html#cb188-9" tabindex="-1"></a>    tpr <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(tp[ord]) <span class="sc">/</span> nTP</span>
+<span id="cb188-10"><a href="sec-benchmarking.html#cb188-10" tabindex="-1"></a>    tpr[<span class="fu">order</span>(ord)]</span>
+<span id="cb188-11"><a href="sec-benchmarking.html#cb188-11" tabindex="-1"></a>}</span></code></pre></div>
 <p>Before computing these metrics, we first remove any failed
 inference<label for="tufte-sn-26" class="margin-toggle sidenote-number">26</label><input type="checkbox" id="tufte-sn-26" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">26</span> When statistical inference fails for a protein, <code>msqrob2</code>
 will fill the (adjusted) p-value and log2-fold change with missing
@@ -735,38 +731,36 @@ approaches based on a common set of proteins that has been fit by all
 approaches (see the following <a href="sec-benchmarking.html#sec-appendix3_2">appendix section</a>).</p>
 <p>We compute the TPR and FDP for each approach (given by <code>inputLevel</code>)
 and each pairwise spike-in comparison (given by <code>contrast</code>).</p>
-<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="sec-benchmarking.html#cb193-1" tabindex="-1"></a>performance <span class="ot">&lt;-</span> <span class="fu">group_by</span>(results, inputLevel, contrast) <span class="sc">|&gt;</span> </span>
-<span id="cb193-2"><a href="sec-benchmarking.html#cb193-2" tabindex="-1"></a>    <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
-<span id="cb193-3"><a href="sec-benchmarking.html#cb193-3" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">tpr =</span> <span class="fu">computeTPR</span>(pval, isEcoli),</span>
-<span id="cb193-4"><a href="sec-benchmarking.html#cb193-4" tabindex="-1"></a>           <span class="at">fdp =</span> <span class="fu">computeFDP</span>(pval, isEcoli)) <span class="sc">|&gt;</span></span>
-<span id="cb193-5"><a href="sec-benchmarking.html#cb193-5" tabindex="-1"></a>    <span class="fu">arrange</span>(fdp)</span></code></pre></div>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="sec-benchmarking.html#cb189-1" tabindex="-1"></a>performance <span class="ot">&lt;-</span> <span class="fu">group_by</span>(results, inputLevel, contrast) <span class="sc">|&gt;</span> </span>
+<span id="cb189-2"><a href="sec-benchmarking.html#cb189-2" tabindex="-1"></a>    <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
+<span id="cb189-3"><a href="sec-benchmarking.html#cb189-3" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">tpr =</span> <span class="fu">computeTPR</span>(pval, isEcoli),</span>
+<span id="cb189-4"><a href="sec-benchmarking.html#cb189-4" tabindex="-1"></a>           <span class="at">fdp =</span> <span class="fu">computeFDP</span>(pval, isEcoli)) <span class="sc">|&gt;</span></span>
+<span id="cb189-5"><a href="sec-benchmarking.html#cb189-5" tabindex="-1"></a>    <span class="fu">arrange</span>(fdp)</span></code></pre></div>
 <p>We also highlight the observed FDP at a 5% FDR threshold. Since the
 FDR represent the expected FDP, i.e. the average of the FDPs obtained
 when the spike-in experiment were to be repeated an infinite number of
 times, an observed FDP that is very far away from 5% is indicative
 for a workflow that provides poor FDR control.</p>
-<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="sec-benchmarking.html#cb194-1" tabindex="-1"></a>workPoints <span class="ot">&lt;-</span> <span class="fu">group_by</span>(performance, inputLevel, contrast) <span class="sc">|&gt;</span></span>
-<span id="cb194-2"><a href="sec-benchmarking.html#cb194-2" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
-<span id="cb194-3"><a href="sec-benchmarking.html#cb194-3" tabindex="-1"></a>    <span class="fu">slice_max</span>(adjPval) <span class="sc">|&gt;</span></span>
-<span id="cb194-4"><a href="sec-benchmarking.html#cb194-4" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(inputLevel))</span></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="sec-benchmarking.html#cb190-1" tabindex="-1"></a>workPoints <span class="ot">&lt;-</span> <span class="fu">group_by</span>(performance, inputLevel, contrast) <span class="sc">|&gt;</span></span>
+<span id="cb190-2"><a href="sec-benchmarking.html#cb190-2" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb190-3"><a href="sec-benchmarking.html#cb190-3" tabindex="-1"></a>    <span class="fu">slice_max</span>(adjPval) <span class="sc">|&gt;</span></span>
+<span id="cb190-4"><a href="sec-benchmarking.html#cb190-4" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(inputLevel))</span></code></pre></div>
 <p>We can now generate the TPR-FDP curves. The best performing approach
 is characterised by the largest area under the curve. These curves
 provide the performance over a range of FDP values, but we limit the
 plot to the <span class="math inline">\([0, 0.2]\)</span> range because researchers are rarely interest
 in the performance when the FDP exceeds 20%.</p>
-<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="sec-benchmarking.html#cb195-1" tabindex="-1"></a><span class="fu">ggplot</span>(performance) <span class="sc">+</span></span>
-<span id="cb195-2"><a href="sec-benchmarking.html#cb195-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> fdp,</span>
-<span id="cb195-3"><a href="sec-benchmarking.html#cb195-3" tabindex="-1"></a>        <span class="at">x =</span> tpr,</span>
-<span id="cb195-4"><a href="sec-benchmarking.html#cb195-4" tabindex="-1"></a>        <span class="at">colour =</span> inputLevel) <span class="sc">+</span></span>
-<span id="cb195-5"><a href="sec-benchmarking.html#cb195-5" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb195-6"><a href="sec-benchmarking.html#cb195-6" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> workPoints, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb195-7"><a href="sec-benchmarking.html#cb195-7" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb195-8"><a href="sec-benchmarking.html#cb195-8" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast) <span class="sc">+</span></span>
-<span id="cb195-9"><a href="sec-benchmarking.html#cb195-9" tabindex="-1"></a>    <span class="fu">coord_flip</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>)) <span class="sc">+</span></span>
-<span id="cb195-10"><a href="sec-benchmarking.html#cb195-10" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-24-1.png" alt="plot of chunk unnamed-chunk-24"><div class="figcaption">plot of chunk unnamed-chunk-24</div>
-</div>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="sec-benchmarking.html#cb191-1" tabindex="-1"></a><span class="fu">ggplot</span>(performance) <span class="sc">+</span></span>
+<span id="cb191-2"><a href="sec-benchmarking.html#cb191-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> fdp,</span>
+<span id="cb191-3"><a href="sec-benchmarking.html#cb191-3" tabindex="-1"></a>        <span class="at">x =</span> tpr,</span>
+<span id="cb191-4"><a href="sec-benchmarking.html#cb191-4" tabindex="-1"></a>        <span class="at">colour =</span> inputLevel) <span class="sc">+</span></span>
+<span id="cb191-5"><a href="sec-benchmarking.html#cb191-5" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb191-6"><a href="sec-benchmarking.html#cb191-6" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> workPoints, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb191-7"><a href="sec-benchmarking.html#cb191-7" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb191-8"><a href="sec-benchmarking.html#cb191-8" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast) <span class="sc">+</span></span>
+<span id="cb191-9"><a href="sec-benchmarking.html#cb191-9" tabindex="-1"></a>    <span class="fu">coord_flip</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>)) <span class="sc">+</span></span>
+<span id="cb191-10"><a href="sec-benchmarking.html#cb191-10" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div>
+<p><img src="figure/benchmarking_tpr_fdp_curve1-1.png"></p>
 <p>The results are in line with the previous bechmark criteria, that is
 starting from the protein group file lead to a severe backlash on
 performance. The other approaches show comparable performance,
@@ -801,30 +795,28 @@ proteins, the expected value is a log2-fold change of 0, as these
 proteins are experimentally known to be constant.</p>
 <p>We explore the results using boxplots of the estimated log2-fold
 changes, but we first create a small table with the expected values.</p>
-<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="sec-benchmarking.html#cb196-1" tabindex="-1"></a>realLogFC <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb196-2"><a href="sec-benchmarking.html#cb196-2" tabindex="-1"></a>  <span class="at">logFC =</span> <span class="fu">t</span>(L) <span class="sc">%*%</span> <span class="fu">lm</span>(<span class="fu">log2</span>(Concentration) <span class="sc">~</span> Condition, <span class="fu">colData</span>(spikein))<span class="sc">$</span>coef[<span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb196-3"><a href="sec-benchmarking.html#cb196-3" tabindex="-1"></a>)</span>
-<span id="cb196-4"><a href="sec-benchmarking.html#cb196-4" tabindex="-1"></a>realLogFC<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgeCondition"</span>,<span class="st">""</span>,<span class="fu">colnames</span>(L))</span>
-<span id="cb196-5"><a href="sec-benchmarking.html#cb196-5" tabindex="-1"></a>realLogFC<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^([B-E])$"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 - A"</span>, realLogFC<span class="sc">$</span>contrast)</span></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="sec-benchmarking.html#cb192-1" tabindex="-1"></a>realLogFC <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb192-2"><a href="sec-benchmarking.html#cb192-2" tabindex="-1"></a>  <span class="at">logFC =</span> <span class="fu">t</span>(L) <span class="sc">%*%</span> <span class="fu">lm</span>(<span class="fu">log2</span>(Concentration) <span class="sc">~</span> Condition, <span class="fu">colData</span>(spikein))<span class="sc">$</span>coef[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb192-3"><a href="sec-benchmarking.html#cb192-3" tabindex="-1"></a>)</span>
+<span id="cb192-4"><a href="sec-benchmarking.html#cb192-4" tabindex="-1"></a>realLogFC<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgeCondition"</span>,<span class="st">""</span>,<span class="fu">colnames</span>(L))</span>
+<span id="cb192-5"><a href="sec-benchmarking.html#cb192-5" tabindex="-1"></a>realLogFC<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^([B-E])$"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 - A"</span>, realLogFC<span class="sc">$</span>contrast)</span></code></pre></div>
 <p>We can now create the boxplots with the estimated log2-fold changes,
 adding horizontal lines with the corresponding target values.</p>
-<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="sec-benchmarking.html#cb197-1" tabindex="-1"></a><span class="fu">ggplot</span>(results) <span class="sc">+</span></span>
-<span id="cb197-2"><a href="sec-benchmarking.html#cb197-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
-<span id="cb197-3"><a href="sec-benchmarking.html#cb197-3" tabindex="-1"></a>      <span class="at">x =</span> isEcoli,</span>
-<span id="cb197-4"><a href="sec-benchmarking.html#cb197-4" tabindex="-1"></a>      <span class="at">colour =</span> isEcoli) <span class="sc">+</span></span>
-<span id="cb197-5"><a href="sec-benchmarking.html#cb197-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()  <span class="sc">+</span></span>
-<span id="cb197-6"><a href="sec-benchmarking.html#cb197-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb197-7"><a href="sec-benchmarking.html#cb197-7" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb197-8"><a href="sec-benchmarking.html#cb197-8" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"E. coli proteins"</span>)</span>
-<span id="cb197-9"><a href="sec-benchmarking.html#cb197-9" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb197-10"><a href="sec-benchmarking.html#cb197-10" tabindex="-1"></a>  <span class="fu">facet_grid</span>(contrast <span class="sc">~</span> inputLevel, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb197-11"><a href="sec-benchmarking.html#cb197-11" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> realLogFC, <span class="fu">aes</span>(<span class="at">yintercept =</span> logFC), </span>
-<span id="cb197-12"><a href="sec-benchmarking.html#cb197-12" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
-<span id="cb197-13"><a href="sec-benchmarking.html#cb197-13" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb197-14"><a href="sec-benchmarking.html#cb197-14" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-26-1.png" alt="plot of chunk unnamed-chunk-26"><div class="figcaption">plot of chunk unnamed-chunk-26</div>
-</div>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="sec-benchmarking.html#cb193-1" tabindex="-1"></a><span class="fu">ggplot</span>(results) <span class="sc">+</span></span>
+<span id="cb193-2"><a href="sec-benchmarking.html#cb193-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
+<span id="cb193-3"><a href="sec-benchmarking.html#cb193-3" tabindex="-1"></a>      <span class="at">x =</span> isEcoli,</span>
+<span id="cb193-4"><a href="sec-benchmarking.html#cb193-4" tabindex="-1"></a>      <span class="at">colour =</span> isEcoli) <span class="sc">+</span></span>
+<span id="cb193-5"><a href="sec-benchmarking.html#cb193-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()  <span class="sc">+</span></span>
+<span id="cb193-6"><a href="sec-benchmarking.html#cb193-6" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb193-7"><a href="sec-benchmarking.html#cb193-7" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb193-8"><a href="sec-benchmarking.html#cb193-8" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"E. coli proteins"</span>)</span>
+<span id="cb193-9"><a href="sec-benchmarking.html#cb193-9" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb193-10"><a href="sec-benchmarking.html#cb193-10" tabindex="-1"></a>  <span class="fu">facet_grid</span>(contrast <span class="sc">~</span> inputLevel, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb193-11"><a href="sec-benchmarking.html#cb193-11" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> realLogFC, <span class="fu">aes</span>(<span class="at">yintercept =</span> logFC), </span>
+<span id="cb193-12"><a href="sec-benchmarking.html#cb193-12" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
+<span id="cb193-13"><a href="sec-benchmarking.html#cb193-13" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb193-14"><a href="sec-benchmarking.html#cb193-14" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div>
+<p><img src="figure/benchmarking_boxplot-1.png"></p>
 <p>For all approaches, the boxplots are roughly centred on the expected
 value, indicating good model accuracy. Starting from MaxQuant’s
 protein-group data leads to wider boxplots, hence less stable
@@ -864,7 +856,14 @@ support the statistical outcome<label for="tufte-sn-27" class="margin-toggle sid
 indirectly generated using a summarisation approach (c.f.
 <code>msqrobAggregate()</code>).</span>. Therefore, we leave it to the user to decide
 whether the slight improvement in performance is worth the cost of
-more complex statistical analysis <span class="citation">(<label for="tufte-mn-16" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-16" class="margin-toggle">Sticker et al. 2020<span class="marginnote">Sticker, Adriaan, Ludger Goeminne, Lennart Martens, and Lieven Clement. 2020. <span>“Robust Summarization and Inference in Proteome-Wide Label-Free Quantification.”</span> <em>Mol. Cell. Proteomics</em> 19 (7): 1209–19.</span>)</span>.</p>
+more complex statistical analysis <span class="citation">(<label for="tufte-mn-18" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-18" class="margin-toggle">Sticker et al. 2020<span class="marginnote">Sticker, Adriaan, Ludger Goeminne, Lennart Martens, and Lieven Clement. 2020. <span>“Robust Summarization and Inference in Proteome-Wide Label-Free Quantification.”</span> <em>Mol. Cell. Proteomics</em> 19 (7): 1209–19.</span>)</span>.</p>
+<p>Hence, this chapter showed how to perform benchmarking on different
+types of data input. Note that the same framework could be used to
+compare different search and quantification engines. Similarly, this
+framework can also be applied to compare different instruments or
+analytical protocols and setups. In the <a href="sec-worflow_optimisation">next
+chapter</a> we demonstrate how to compare the
+impact of analysis steps for the same data.</p>
 <p>In the remainder of this section, we provide a recap on how to perform
 a proteomics analysis from the evidence file<label for="tufte-sn-28" class="margin-toggle sidenote-number">28</label><input type="checkbox" id="tufte-sn-28" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">28</span> We build on the concepts
 introduced in the <a href="sec-basics.html#sec-basics">basic concepts chapter</a> and the
@@ -881,7 +880,7 @@ MaxQuant’s evidence file.</p>
 <p>Here are the first 6 lines (first 6 samples) of the sample
 annotations, note we added <code>runCol</code> and <code>quantCol</code> that are required
 for the <a href="sec-advanced.html#sec_advanced_readqf">conversion to a <code>QFeatures</code> object</a>.</p>
-<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="sec-benchmarking.html#cb198-1" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(annotFile)</span></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="sec-benchmarking.html#cb194-1" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(annotFile)</span></code></pre></div>
 <table>
 <colgroup>
 <col width="67%">
@@ -937,7 +936,7 @@ for the <a href="sec-advanced.html#sec_advanced_readqf">conversion to a <code>QF
 <p>Here are the first 6 lines (first 6 PSMs) of the PSM table. The table
 contains many columns, most containing information about the
 identified peptide and the quality of the spectrum matching.</p>
-<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="sec-benchmarking.html#cb199-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">fread</span>(evidenceFile, <span class="at">check.names =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="sec-benchmarking.html#cb195-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">fread</span>(evidenceFile, <span class="at">check.names =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <table style="width:100%;">
 <colgroup>
 <col width="2%">
@@ -1460,11 +1459,11 @@ use the latter to link the sample annotation with the PSM table. We
 therefore need to add <code>runCol</code> to the sample annotation that will
 serve as the linker. We can then convert the tables to a <code>QFeatures</code>
 object.</p>
-<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="sec-benchmarking.html#cb200-1" tabindex="-1"></a>coldata<span class="sc">$</span>runCol <span class="ot">&lt;-</span> coldata<span class="sc">$</span>Raw.file</span>
-<span id="cb200-2"><a href="sec-benchmarking.html#cb200-2" tabindex="-1"></a>(evidence <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
-<span id="cb200-3"><a href="sec-benchmarking.html#cb200-3" tabindex="-1"></a>    evidence, <span class="at">colData =</span> coldata, <span class="at">runCol =</span> <span class="st">"Raw.file"</span>, </span>
-<span id="cb200-4"><a href="sec-benchmarking.html#cb200-4" tabindex="-1"></a>    <span class="at">quantCols =</span> <span class="st">"Intensity"</span></span>
-<span id="cb200-5"><a href="sec-benchmarking.html#cb200-5" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="sec-benchmarking.html#cb196-1" tabindex="-1"></a>coldata<span class="sc">$</span>runCol <span class="ot">&lt;-</span> coldata<span class="sc">$</span>Raw.file</span>
+<span id="cb196-2"><a href="sec-benchmarking.html#cb196-2" tabindex="-1"></a>(evidence <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
+<span id="cb196-3"><a href="sec-benchmarking.html#cb196-3" tabindex="-1"></a>    evidence, <span class="at">colData =</span> coldata, <span class="at">runCol =</span> <span class="st">"Raw.file"</span>, </span>
+<span id="cb196-4"><a href="sec-benchmarking.html#cb196-4" tabindex="-1"></a>    <span class="at">quantCols =</span> <span class="st">"Intensity"</span></span>
+<span id="cb196-5"><a href="sec-benchmarking.html#cb196-5" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## An instance of class QFeatures (type: bulk) with 20 sets:
 ## 
 ##  [1] B03_02_150304_human_ecoli_B_3ul_3um_column_95_HCD_OT_2hrs_30B_9B: SummarizedExperiment with 40057 rows and 1 columns 
@@ -1482,13 +1481,13 @@ spectrum across runs</span>.</p>
 <ol style="list-style-type: decimal">
 <li>Encoding missing values as zeros.</li>
 </ol>
-<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="sec-benchmarking.html#cb202-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(evidence, <span class="fu">names</span>(evidence))</span></code></pre></div>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="sec-benchmarking.html#cb198-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(evidence, <span class="fu">names</span>(evidence))</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Log2 transforming</li>
 </ol>
-<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="sec-benchmarking.html#cb203-1" tabindex="-1"></a>inputNames <span class="ot">&lt;-</span> <span class="fu">names</span>(evidence)</span>
-<span id="cb203-2"><a href="sec-benchmarking.html#cb203-2" tabindex="-1"></a>logNames <span class="ot">&lt;-</span> <span class="fu">paste0</span>(inputNames, <span class="st">"_log"</span>)</span>
-<span id="cb203-3"><a href="sec-benchmarking.html#cb203-3" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(evidence, inputNames, <span class="at">name =</span> logNames, <span class="at">base =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="sec-benchmarking.html#cb199-1" tabindex="-1"></a>inputNames <span class="ot">&lt;-</span> <span class="fu">names</span>(evidence)</span>
+<span id="cb199-2"><a href="sec-benchmarking.html#cb199-2" tabindex="-1"></a>logNames <span class="ot">&lt;-</span> <span class="fu">paste0</span>(inputNames, <span class="st">"_log"</span>)</span>
+<span id="cb199-3"><a href="sec-benchmarking.html#cb199-3" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(evidence, inputNames, <span class="at">name =</span> logNames, <span class="at">base =</span> <span class="dv">2</span>)</span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Keeping only the most intense PSM per ion (see
 <a href="sec-advanced.html#sec-duplicated_psms">here</a> for a step-by-step explanation of the
@@ -1496,45 +1495,49 @@ code). Upon this filtering every feature is unique to a ion
 identifier (peptide sequence + charge), and we hence can join sets
 using that identifier.</li>
 </ol>
-<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="sec-benchmarking.html#cb204-1" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> logNames) {</span>
-<span id="cb204-2"><a href="sec-benchmarking.html#cb204-2" tabindex="-1"></a>  rowdata <span class="ot">&lt;-</span> <span class="fu">rowData</span>(evidence[[i]]) </span>
-<span id="cb204-3"><a href="sec-benchmarking.html#cb204-3" tabindex="-1"></a>  rowdata<span class="sc">$</span>ionID <span class="ot">&lt;-</span> <span class="fu">paste0</span>(rowdata<span class="sc">$</span>Sequence, rowdata<span class="sc">$</span>Charge) </span>
-<span id="cb204-4"><a href="sec-benchmarking.html#cb204-4" tabindex="-1"></a>  rowdata<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">assay</span>(evidence[[i]])[, <span class="dv">1</span>]</span>
-<span id="cb204-5"><a href="sec-benchmarking.html#cb204-5" tabindex="-1"></a>  rowdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(rowdata) <span class="sc">|&gt;</span></span>
-<span id="cb204-6"><a href="sec-benchmarking.html#cb204-6" tabindex="-1"></a>    <span class="fu">group_by</span>(ionID) <span class="sc">|&gt;</span></span>
-<span id="cb204-7"><a href="sec-benchmarking.html#cb204-7" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">psmRank =</span> <span class="fu">rank</span>(<span class="sc">-</span>value))</span>
-<span id="cb204-8"><a href="sec-benchmarking.html#cb204-8" tabindex="-1"></a>  <span class="fu">rowData</span>(evidence[[i]])<span class="sc">$</span>psmRank <span class="ot">&lt;-</span> rowdata<span class="sc">$</span>psmRank</span>
-<span id="cb204-9"><a href="sec-benchmarking.html#cb204-9" tabindex="-1"></a>  <span class="fu">rowData</span>(evidence[[i]])<span class="sc">$</span>ionID <span class="ot">&lt;-</span> rowdata<span class="sc">$</span>ionID</span>
-<span id="cb204-10"><a href="sec-benchmarking.html#cb204-10" tabindex="-1"></a>}</span>
-<span id="cb204-11"><a href="sec-benchmarking.html#cb204-11" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(evidence, <span class="sc">~</span> psmRank <span class="sc">==</span> <span class="dv">1</span>, <span class="at">keep =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb204-12"><a href="sec-benchmarking.html#cb204-12" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">joinAssays</span>(evidence, logNames, <span class="st">"ions_log"</span>, <span class="st">"ionID"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="sec-benchmarking.html#cb200-1" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> logNames) {</span>
+<span id="cb200-2"><a href="sec-benchmarking.html#cb200-2" tabindex="-1"></a>  rowdata <span class="ot">&lt;-</span> <span class="fu">rowData</span>(evidence[[i]]) </span>
+<span id="cb200-3"><a href="sec-benchmarking.html#cb200-3" tabindex="-1"></a>  rowdata<span class="sc">$</span>ionID <span class="ot">&lt;-</span> <span class="fu">paste0</span>(rowdata<span class="sc">$</span>Sequence, rowdata<span class="sc">$</span>Charge) </span>
+<span id="cb200-4"><a href="sec-benchmarking.html#cb200-4" tabindex="-1"></a>  rowdata<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">assay</span>(evidence[[i]])[, <span class="dv">1</span>]</span>
+<span id="cb200-5"><a href="sec-benchmarking.html#cb200-5" tabindex="-1"></a>  rowdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(rowdata) <span class="sc">|&gt;</span></span>
+<span id="cb200-6"><a href="sec-benchmarking.html#cb200-6" tabindex="-1"></a>    <span class="fu">group_by</span>(ionID) <span class="sc">|&gt;</span></span>
+<span id="cb200-7"><a href="sec-benchmarking.html#cb200-7" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">psmRank =</span> <span class="fu">rank</span>(<span class="sc">-</span>value))</span>
+<span id="cb200-8"><a href="sec-benchmarking.html#cb200-8" tabindex="-1"></a>  <span class="fu">rowData</span>(evidence[[i]])<span class="sc">$</span>psmRank <span class="ot">&lt;-</span> rowdata<span class="sc">$</span>psmRank</span>
+<span id="cb200-9"><a href="sec-benchmarking.html#cb200-9" tabindex="-1"></a>  <span class="fu">rowData</span>(evidence[[i]])<span class="sc">$</span>ionID <span class="ot">&lt;-</span> rowdata<span class="sc">$</span>ionID</span>
+<span id="cb200-10"><a href="sec-benchmarking.html#cb200-10" tabindex="-1"></a>}</span>
+<span id="cb200-11"><a href="sec-benchmarking.html#cb200-11" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(evidence, <span class="sc">~</span> psmRank <span class="sc">==</span> <span class="dv">1</span>, <span class="at">keep =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb200-12"><a href="sec-benchmarking.html#cb200-12" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">joinAssays</span>(evidence, logNames, <span class="st">"ions_log"</span>, <span class="st">"ionID"</span>)</span></code></pre></div>
 <ol start="4" style="list-style-type: decimal">
 <li>Feature filtering</li>
 </ol>
-<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="sec-benchmarking.html#cb205-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(</span>
-<span id="cb205-2"><a href="sec-benchmarking.html#cb205-2" tabindex="-1"></a>        evidence, <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
-<span id="cb205-3"><a href="sec-benchmarking.html#cb205-3" tabindex="-1"></a>          <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins) <span class="sc">&amp;</span> <span class="do">## Remove protein groups</span></span>
-<span id="cb205-4"><a href="sec-benchmarking.html#cb205-4" tabindex="-1"></a>          Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> <span class="do">## Remove decoys</span></span>
-<span id="cb205-5"><a href="sec-benchmarking.html#cb205-5" tabindex="-1"></a>          (Potential.contaminant <span class="sc">!=</span> <span class="st">"+"</span>) <span class="do">## Remove contaminants</span></span>
-<span id="cb205-6"><a href="sec-benchmarking.html#cb205-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="sec-benchmarking.html#cb201-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(</span>
+<span id="cb201-2"><a href="sec-benchmarking.html#cb201-2" tabindex="-1"></a>        evidence, <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
+<span id="cb201-3"><a href="sec-benchmarking.html#cb201-3" tabindex="-1"></a>          <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins) <span class="sc">&amp;</span> <span class="do">## Remove protein groups</span></span>
+<span id="cb201-4"><a href="sec-benchmarking.html#cb201-4" tabindex="-1"></a>          Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> <span class="do">## Remove decoys</span></span>
+<span id="cb201-5"><a href="sec-benchmarking.html#cb201-5" tabindex="-1"></a>          (Potential.contaminant <span class="sc">!=</span> <span class="st">"+"</span>) <span class="do">## Remove contaminants</span></span>
+<span id="cb201-6"><a href="sec-benchmarking.html#cb201-6" tabindex="-1"></a>)</span></code></pre></div>
 <ol start="5" style="list-style-type: decimal">
 <li>Missing value filtering</li>
 </ol>
-<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="sec-benchmarking.html#cb206-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(evidence[[<span class="st">"ions_log"</span>]])</span>
-<span id="cb206-2"><a href="sec-benchmarking.html#cb206-2" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(evidence, <span class="at">i =</span> <span class="st">"ions_log"</span>, <span class="at">pNA =</span> (n <span class="sc">-</span> <span class="dv">4</span>) <span class="sc">/</span> n)</span></code></pre></div>
+<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="sec-benchmarking.html#cb202-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(evidence[[<span class="st">"ions_log"</span>]])</span>
+<span id="cb202-2"><a href="sec-benchmarking.html#cb202-2" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(evidence, <span class="at">i =</span> <span class="st">"ions_log"</span>, <span class="at">pNA =</span> (n <span class="sc">-</span> <span class="dv">4</span>) <span class="sc">/</span> n)</span></code></pre></div>
 <ol start="6" style="list-style-type: decimal">
 <li>Normalisation</li>
 </ol>
-<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="sec-benchmarking.html#cb207-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">normalize</span>(</span>
-<span id="cb207-2"><a href="sec-benchmarking.html#cb207-2" tabindex="-1"></a>  evidence, <span class="st">"ions_log"</span>, <span class="at">name =</span> <span class="st">"ions_norm"</span>, <span class="at">method =</span> <span class="st">"center.median"</span></span>
-<span id="cb207-3"><a href="sec-benchmarking.html#cb207-3" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="sec-benchmarking.html#cb203-1" tabindex="-1"></a>pseudoRef <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">assay</span>(evidence[[<span class="st">"ions_log"</span>]]), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb203-2"><a href="sec-benchmarking.html#cb203-2" tabindex="-1"></a>nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(<span class="fu">assay</span>(evidence[[<span class="st">"ions_log"</span>]]), <span class="at">MARGIN =</span> <span class="dv">1</span>, pseudoRef) <span class="sc">|&gt;</span> </span>
+<span id="cb203-3"><a href="sec-benchmarking.html#cb203-3" tabindex="-1"></a>  <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb203-4"><a href="sec-benchmarking.html#cb203-4" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
+<span id="cb203-5"><a href="sec-benchmarking.html#cb203-5" tabindex="-1"></a>  evidence, <span class="at">MARGIN =</span> <span class="dv">2</span>, <span class="at">STATS =</span> nfLog, </span>
+<span id="cb203-6"><a href="sec-benchmarking.html#cb203-6" tabindex="-1"></a>  <span class="at">i =</span> <span class="st">"ions_log"</span>, <span class="at">name =</span> <span class="st">"ions_norm"</span></span>
+<span id="cb203-7"><a href="sec-benchmarking.html#cb203-7" tabindex="-1"></a>)</span></code></pre></div>
 <ol start="7" style="list-style-type: decimal">
 <li>Summarisation</li>
 </ol>
-<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="sec-benchmarking.html#cb208-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
-<span id="cb208-2"><a href="sec-benchmarking.html#cb208-2" tabindex="-1"></a>  evidence, <span class="at">i =</span> <span class="st">"ions_norm"</span>, <span class="at">name =</span> <span class="st">"proteins"</span>, <span class="at">fcol =</span> <span class="st">"Proteins"</span>,</span>
-<span id="cb208-3"><a href="sec-benchmarking.html#cb208-3" tabindex="-1"></a>  <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary</span>
-<span id="cb208-4"><a href="sec-benchmarking.html#cb208-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="sec-benchmarking.html#cb204-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
+<span id="cb204-2"><a href="sec-benchmarking.html#cb204-2" tabindex="-1"></a>  evidence, <span class="at">i =</span> <span class="st">"ions_norm"</span>, <span class="at">name =</span> <span class="st">"proteins"</span>, <span class="at">fcol =</span> <span class="st">"Proteins"</span>,</span>
+<span id="cb204-3"><a href="sec-benchmarking.html#cb204-3" tabindex="-1"></a>  <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary</span>
+<span id="cb204-4"><a href="sec-benchmarking.html#cb204-4" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="modelling-the-preprocessed-data" class="section level3" number="4.6.2">
 <h3>
@@ -1544,13 +1547,13 @@ using that identifier.</li>
 Regardless of the modelling approach, we can readily generate the
 <a href="sec-basics.html#sec-multiple_contrasts">contrast matrix</a> to assess all pairwise
 comparisons between the experimental spike-in conditions.</p>
-<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="sec-benchmarking.html#cb209-1" tabindex="-1"></a>allContrasts <span class="ot">&lt;-</span> <span class="fu">createPairwiseContrasts</span>(</span>
-<span id="cb209-2"><a href="sec-benchmarking.html#cb209-2" tabindex="-1"></a>    <span class="sc">~</span> Condition, <span class="fu">colData</span>(evidence), <span class="at">var =</span> <span class="st">"Condition"</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb209-3"><a href="sec-benchmarking.html#cb209-3" tabindex="-1"></a>)</span>
-<span id="cb209-4"><a href="sec-benchmarking.html#cb209-4" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
-<span id="cb209-5"><a href="sec-benchmarking.html#cb209-5" tabindex="-1"></a>    allContrasts, </span>
-<span id="cb209-6"><a href="sec-benchmarking.html#cb209-6" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"ridgeConditionB"</span>, <span class="st">"ridgeConditionC"</span>, <span class="st">"ridgeConditionD"</span>, <span class="st">"ridgeConditionE"</span>)</span>
-<span id="cb209-7"><a href="sec-benchmarking.html#cb209-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="sec-benchmarking.html#cb205-1" tabindex="-1"></a>allContrasts <span class="ot">&lt;-</span> <span class="fu">createPairwiseContrasts</span>(</span>
+<span id="cb205-2"><a href="sec-benchmarking.html#cb205-2" tabindex="-1"></a>    <span class="sc">~</span> Condition, <span class="fu">colData</span>(evidence), <span class="at">var =</span> <span class="st">"Condition"</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
+<span id="cb205-3"><a href="sec-benchmarking.html#cb205-3" tabindex="-1"></a>)</span>
+<span id="cb205-4"><a href="sec-benchmarking.html#cb205-4" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
+<span id="cb205-5"><a href="sec-benchmarking.html#cb205-5" tabindex="-1"></a>    allContrasts, </span>
+<span id="cb205-6"><a href="sec-benchmarking.html#cb205-6" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"ridgeConditionB"</span>, <span class="st">"ridgeConditionC"</span>, <span class="st">"ridgeConditionD"</span>, <span class="st">"ridgeConditionE"</span>)</span>
+<span id="cb205-7"><a href="sec-benchmarking.html#cb205-7" tabindex="-1"></a>)</span></code></pre></div>
 <div id="modelling-at-the-protein-level" class="section level4" number="4.6.2.1">
 <h4>
 <span class="header-section-number">4.6.2.1</span> Modelling at the protein-level</h4>
@@ -1558,35 +1561,33 @@ comparisons between the experimental spike-in conditions.</p>
 the sources of variation in the data. For the protein-level data, the
 only potential source of variation identified from the experiment is
 the spike-in condition of interest. We model it as a fixed effect.</p>
-<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="sec-benchmarking.html#cb210-1" tabindex="-1"></a>modelProtein <span class="ot">&lt;-</span> <span class="er">~</span> Condition</span></code></pre></div>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="sec-benchmarking.html#cb206-1" tabindex="-1"></a>modelProtein <span class="ot">&lt;-</span> <span class="er">~</span> Condition</span></code></pre></div>
 <p>Then, we estimate the model.</p>
-<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="sec-benchmarking.html#cb211-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
-<span id="cb211-2"><a href="sec-benchmarking.html#cb211-2" tabindex="-1"></a>  evidence,  <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">formula =</span> modelProtein,</span>
-<span id="cb211-3"><a href="sec-benchmarking.html#cb211-3" tabindex="-1"></a>  <span class="at">ridge =</span> <span class="cn">TRUE</span>, <span class="at">robust =</span> <span class="cn">TRUE</span></span>
-<span id="cb211-4"><a href="sec-benchmarking.html#cb211-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="sec-benchmarking.html#cb207-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
+<span id="cb207-2"><a href="sec-benchmarking.html#cb207-2" tabindex="-1"></a>  evidence,  <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">formula =</span> modelProtein,</span>
+<span id="cb207-3"><a href="sec-benchmarking.html#cb207-3" tabindex="-1"></a>  <span class="at">ridge =</span> <span class="cn">TRUE</span>, <span class="at">robust =</span> <span class="cn">TRUE</span></span>
+<span id="cb207-4"><a href="sec-benchmarking.html#cb207-4" tabindex="-1"></a>)</span></code></pre></div>
 <p>And we perform statistical inference on the estimated model
 parameters.</p>
-<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="sec-benchmarking.html#cb212-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(evidence, <span class="st">"proteins"</span>, <span class="at">contrast =</span> L)</span>
-<span id="cb212-2"><a href="sec-benchmarking.html#cb212-2" tabindex="-1"></a>resultsProtein <span class="ot">&lt;-</span> <span class="fu">msqrobCollect</span>(evidence[[<span class="st">"proteins"</span>]], L, <span class="at">combine =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb212-3"><a href="sec-benchmarking.html#cb212-3" tabindex="-1"></a>resultsProtein<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> resultsProtein<span class="sc">$</span>feature <span class="sc">%in%</span> ecoli</span></code></pre></div>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="sec-benchmarking.html#cb208-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(evidence, <span class="st">"proteins"</span>, <span class="at">contrast =</span> L)</span>
+<span id="cb208-2"><a href="sec-benchmarking.html#cb208-2" tabindex="-1"></a>resultsProtein <span class="ot">&lt;-</span> <span class="fu">msqrobCollect</span>(evidence[[<span class="st">"proteins"</span>]], L, <span class="at">combine =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb208-3"><a href="sec-benchmarking.html#cb208-3" tabindex="-1"></a>resultsProtein<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> resultsProtein<span class="sc">$</span>feature <span class="sc">%in%</span> ecoli</span></code></pre></div>
 <p>Note that this workflows closely follows the workflow described in the
 <a href="sec-basics.html#sec-multiple_contrasts">basics chapter</a>. We can report the result
 using a volcano plot, for instance.</p>
-<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="sec-benchmarking.html#cb213-1" tabindex="-1"></a><span class="fu">ggplot</span>(resultsProtein) <span class="sc">+</span></span>
-<span id="cb213-2"><a href="sec-benchmarking.html#cb213-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
-<span id="cb213-3"><a href="sec-benchmarking.html#cb213-3" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval),</span>
-<span id="cb213-4"><a href="sec-benchmarking.html#cb213-4" tabindex="-1"></a>        <span class="at">shape =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>,</span>
-<span id="cb213-5"><a href="sec-benchmarking.html#cb213-5" tabindex="-1"></a>        <span class="at">color =</span> isEcoli) <span class="sc">+</span></span>
-<span id="cb213-6"><a href="sec-benchmarking.html#cb213-6" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb213-7"><a href="sec-benchmarking.html#cb213-7" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(</span>
-<span id="cb213-8"><a href="sec-benchmarking.html#cb213-8" tabindex="-1"></a>      <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb213-9"><a href="sec-benchmarking.html#cb213-9" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"HeLA background"</span>, <span class="st">"UPS standard"</span>)</span>
-<span id="cb213-10"><a href="sec-benchmarking.html#cb213-10" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb213-11"><a href="sec-benchmarking.html#cb213-11" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb213-12"><a href="sec-benchmarking.html#cb213-12" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Statistical inference for all pairwise comparisons"</span>) </span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-43-1.png" alt="plot of chunk unnamed-chunk-43"><div class="figcaption">plot of chunk unnamed-chunk-43</div>
-</div>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="sec-benchmarking.html#cb209-1" tabindex="-1"></a><span class="fu">ggplot</span>(resultsProtein) <span class="sc">+</span></span>
+<span id="cb209-2"><a href="sec-benchmarking.html#cb209-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
+<span id="cb209-3"><a href="sec-benchmarking.html#cb209-3" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval),</span>
+<span id="cb209-4"><a href="sec-benchmarking.html#cb209-4" tabindex="-1"></a>        <span class="at">shape =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>,</span>
+<span id="cb209-5"><a href="sec-benchmarking.html#cb209-5" tabindex="-1"></a>        <span class="at">color =</span> isEcoli) <span class="sc">+</span></span>
+<span id="cb209-6"><a href="sec-benchmarking.html#cb209-6" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb209-7"><a href="sec-benchmarking.html#cb209-7" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(</span>
+<span id="cb209-8"><a href="sec-benchmarking.html#cb209-8" tabindex="-1"></a>      <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb209-9"><a href="sec-benchmarking.html#cb209-9" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"HeLA background"</span>, <span class="st">"UPS standard"</span>)</span>
+<span id="cb209-10"><a href="sec-benchmarking.html#cb209-10" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb209-11"><a href="sec-benchmarking.html#cb209-11" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb209-12"><a href="sec-benchmarking.html#cb209-12" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Statistical inference for all pairwise comparisons"</span>) </span></code></pre></div>
+<p><img src="figure/benchmarking_volcano_proteins-1.png"></p>
 </div>
 <div id="sec-ion_level_modelling" class="section level4" number="4.6.2.2">
 <h4>
@@ -1599,48 +1600,46 @@ that intensities for the same ion will be more similar than
 intensities between ions of the same proteins. On top of the condition
 effect that we model as a fixed effect, we will account for these
 sample and ion effects using a random effect.</p>
-<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="sec-benchmarking.html#cb214-1" tabindex="-1"></a>modelIon <span class="ot">&lt;-</span> <span class="er">~</span> Condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Sample) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ionID)</span></code></pre></div>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="sec-benchmarking.html#cb210-1" tabindex="-1"></a>modelIon <span class="ot">&lt;-</span> <span class="er">~</span> Condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Sample) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ionID)</span></code></pre></div>
 <p>Then, we estimate the model using <code>msqrobAggregate()</code> instead of
 <code>msqrob()</code>.</p>
-<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="sec-benchmarking.html#cb215-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">msqrobAggregate</span>(</span>
-<span id="cb215-2"><a href="sec-benchmarking.html#cb215-2" tabindex="-1"></a>  evidence,  <span class="at">i =</span> <span class="st">"ions_norm"</span>, <span class="at">formula =</span> modelIon, </span>
-<span id="cb215-3"><a href="sec-benchmarking.html#cb215-3" tabindex="-1"></a>  <span class="at">fcol =</span> <span class="st">"Proteins"</span>, <span class="at">name =</span> <span class="st">"msqrob"</span>,</span>
-<span id="cb215-4"><a href="sec-benchmarking.html#cb215-4" tabindex="-1"></a>  <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb215-5"><a href="sec-benchmarking.html#cb215-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="sec-benchmarking.html#cb211-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">msqrobAggregate</span>(</span>
+<span id="cb211-2"><a href="sec-benchmarking.html#cb211-2" tabindex="-1"></a>  evidence,  <span class="at">i =</span> <span class="st">"ions_norm"</span>, <span class="at">formula =</span> modelIon, </span>
+<span id="cb211-3"><a href="sec-benchmarking.html#cb211-3" tabindex="-1"></a>  <span class="at">fcol =</span> <span class="st">"Proteins"</span>, <span class="at">name =</span> <span class="st">"msqrob"</span>,</span>
+<span id="cb211-4"><a href="sec-benchmarking.html#cb211-4" tabindex="-1"></a>  <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
+<span id="cb211-5"><a href="sec-benchmarking.html#cb211-5" tabindex="-1"></a>)</span></code></pre></div>
 <p>Because some proteins are only measured by a single ion, its
 corresponding sample and ion effects cannot be estimated and hence the
 model for those proteins will not be estimated. We therefore refit a
 simplified model for those proteins using the refitting workflow
 described in the <a href="sec-advanced.html#sec-msqrob_refit">advanced chapter</a>.</p>
-<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="sec-benchmarking.html#cb216-1" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">aggcounts</span>(evidence[[<span class="st">"msqrob"</span>]])</span>
-<span id="cb216-2"><a href="sec-benchmarking.html#cb216-2" tabindex="-1"></a>oneHitProteins <span class="ot">&lt;-</span> <span class="fu">rownames</span>(counts)[<span class="fu">rowMax</span>(counts) <span class="sc">==</span> <span class="dv">1</span>]</span>
-<span id="cb216-3"><a href="sec-benchmarking.html#cb216-3" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">msqrobRefit</span>(</span>
-<span id="cb216-4"><a href="sec-benchmarking.html#cb216-4" tabindex="-1"></a>  evidence, <span class="at">i =</span> <span class="st">"ions_norm"</span>, <span class="at">subset =</span> oneHitProteins,</span>
-<span id="cb216-5"><a href="sec-benchmarking.html#cb216-5" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span> Condition,</span>
-<span id="cb216-6"><a href="sec-benchmarking.html#cb216-6" tabindex="-1"></a>  <span class="at">fcol =</span> <span class="st">"Proteins"</span>, <span class="at">name =</span> <span class="st">"msqrob"</span>,</span>
-<span id="cb216-7"><a href="sec-benchmarking.html#cb216-7" tabindex="-1"></a>  <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb216-8"><a href="sec-benchmarking.html#cb216-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="sec-benchmarking.html#cb212-1" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">aggcounts</span>(evidence[[<span class="st">"msqrob"</span>]])</span>
+<span id="cb212-2"><a href="sec-benchmarking.html#cb212-2" tabindex="-1"></a>oneHitProteins <span class="ot">&lt;-</span> <span class="fu">rownames</span>(counts)[<span class="fu">rowMax</span>(counts) <span class="sc">==</span> <span class="dv">1</span>]</span>
+<span id="cb212-3"><a href="sec-benchmarking.html#cb212-3" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">msqrobRefit</span>(</span>
+<span id="cb212-4"><a href="sec-benchmarking.html#cb212-4" tabindex="-1"></a>  evidence, <span class="at">i =</span> <span class="st">"ions_norm"</span>, <span class="at">subset =</span> oneHitProteins,</span>
+<span id="cb212-5"><a href="sec-benchmarking.html#cb212-5" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span> Condition,</span>
+<span id="cb212-6"><a href="sec-benchmarking.html#cb212-6" tabindex="-1"></a>  <span class="at">fcol =</span> <span class="st">"Proteins"</span>, <span class="at">name =</span> <span class="st">"msqrob"</span>,</span>
+<span id="cb212-7"><a href="sec-benchmarking.html#cb212-7" tabindex="-1"></a>  <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
+<span id="cb212-8"><a href="sec-benchmarking.html#cb212-8" tabindex="-1"></a>)</span></code></pre></div>
 <p>And we perform statistical inference on the estimated model
 parameters (same as above).</p>
-<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="sec-benchmarking.html#cb217-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(evidence, <span class="st">"msqrob"</span>, <span class="at">contrast =</span> L)</span>
-<span id="cb217-2"><a href="sec-benchmarking.html#cb217-2" tabindex="-1"></a>resultsIon <span class="ot">&lt;-</span> <span class="fu">msqrobCollect</span>(evidence[[<span class="st">"msqrob"</span>]], L, <span class="at">combine =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb217-3"><a href="sec-benchmarking.html#cb217-3" tabindex="-1"></a>resultsIon<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> resultsIon<span class="sc">$</span>feature <span class="sc">%in%</span> ecoli</span></code></pre></div>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="sec-benchmarking.html#cb213-1" tabindex="-1"></a>evidence <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(evidence, <span class="st">"msqrob"</span>, <span class="at">contrast =</span> L)</span>
+<span id="cb213-2"><a href="sec-benchmarking.html#cb213-2" tabindex="-1"></a>resultsIon <span class="ot">&lt;-</span> <span class="fu">msqrobCollect</span>(evidence[[<span class="st">"msqrob"</span>]], L, <span class="at">combine =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb213-3"><a href="sec-benchmarking.html#cb213-3" tabindex="-1"></a>resultsIon<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> resultsIon<span class="sc">$</span>feature <span class="sc">%in%</span> ecoli</span></code></pre></div>
 <p>We can report the result using a volcano plot, for instance.</p>
-<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="sec-benchmarking.html#cb218-1" tabindex="-1"></a><span class="fu">ggplot</span>(resultsIon) <span class="sc">+</span></span>
-<span id="cb218-2"><a href="sec-benchmarking.html#cb218-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
-<span id="cb218-3"><a href="sec-benchmarking.html#cb218-3" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval),</span>
-<span id="cb218-4"><a href="sec-benchmarking.html#cb218-4" tabindex="-1"></a>        <span class="at">shape =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>,</span>
-<span id="cb218-5"><a href="sec-benchmarking.html#cb218-5" tabindex="-1"></a>        <span class="at">color =</span> isEcoli) <span class="sc">+</span></span>
-<span id="cb218-6"><a href="sec-benchmarking.html#cb218-6" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb218-7"><a href="sec-benchmarking.html#cb218-7" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(</span>
-<span id="cb218-8"><a href="sec-benchmarking.html#cb218-8" tabindex="-1"></a>      <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb218-9"><a href="sec-benchmarking.html#cb218-9" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"HeLA background"</span>, <span class="st">"UPS standard"</span>)</span>
-<span id="cb218-10"><a href="sec-benchmarking.html#cb218-10" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb218-11"><a href="sec-benchmarking.html#cb218-11" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb218-12"><a href="sec-benchmarking.html#cb218-12" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Statistical inference for all pairwise comparisons"</span>) </span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-48-1.png" alt="plot of chunk unnamed-chunk-48"><div class="figcaption">plot of chunk unnamed-chunk-48</div>
-</div>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="sec-benchmarking.html#cb214-1" tabindex="-1"></a><span class="fu">ggplot</span>(resultsIon) <span class="sc">+</span></span>
+<span id="cb214-2"><a href="sec-benchmarking.html#cb214-2" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
+<span id="cb214-3"><a href="sec-benchmarking.html#cb214-3" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval),</span>
+<span id="cb214-4"><a href="sec-benchmarking.html#cb214-4" tabindex="-1"></a>        <span class="at">shape =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>,</span>
+<span id="cb214-5"><a href="sec-benchmarking.html#cb214-5" tabindex="-1"></a>        <span class="at">color =</span> isEcoli) <span class="sc">+</span></span>
+<span id="cb214-6"><a href="sec-benchmarking.html#cb214-6" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb214-7"><a href="sec-benchmarking.html#cb214-7" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(</span>
+<span id="cb214-8"><a href="sec-benchmarking.html#cb214-8" tabindex="-1"></a>      <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb214-9"><a href="sec-benchmarking.html#cb214-9" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"HeLA background"</span>, <span class="st">"UPS standard"</span>)</span>
+<span id="cb214-10"><a href="sec-benchmarking.html#cb214-10" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb214-11"><a href="sec-benchmarking.html#cb214-11" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb214-12"><a href="sec-benchmarking.html#cb214-12" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Statistical inference for all pairwise comparisons"</span>) </span></code></pre></div>
+<p><img src="figure/benchmarking_volcano_ion-1.png"></p>
 </div>
 </div>
 </div>
@@ -1661,28 +1660,26 @@ the end (as if they were estimated at 1), meaning they will be
 accounted for when computing the TPR and FDP. This will inevitably
 lead to a decrease in the maximum TPR, especially for approaches that
 estimated less proteins.</p>
-<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="sec-benchmarking.html#cb219-1" tabindex="-1"></a>performance_all <span class="ot">&lt;-</span> <span class="fu">group_by</span>(results, inputLevel, contrast) <span class="sc">|&gt;</span> </span>
-<span id="cb219-2"><a href="sec-benchmarking.html#cb219-2" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">tpr =</span> <span class="fu">computeTPR</span>(pval, isEcoli),</span>
-<span id="cb219-3"><a href="sec-benchmarking.html#cb219-3" tabindex="-1"></a>           <span class="at">fdp =</span> <span class="fu">computeFDP</span>(pval, isEcoli)) <span class="sc">|&gt;</span></span>
-<span id="cb219-4"><a href="sec-benchmarking.html#cb219-4" tabindex="-1"></a>    <span class="fu">arrange</span>(fdp)</span>
-<span id="cb219-5"><a href="sec-benchmarking.html#cb219-5" tabindex="-1"></a>workPoints <span class="ot">&lt;-</span> <span class="fu">group_by</span>(performance_all, inputLevel, contrast) <span class="sc">|&gt;</span></span>
-<span id="cb219-6"><a href="sec-benchmarking.html#cb219-6" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
-<span id="cb219-7"><a href="sec-benchmarking.html#cb219-7" tabindex="-1"></a>    <span class="fu">slice_max</span>(adjPval) <span class="sc">|&gt;</span></span>
-<span id="cb219-8"><a href="sec-benchmarking.html#cb219-8" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(inputLevel))</span>
-<span id="cb219-9"><a href="sec-benchmarking.html#cb219-9" tabindex="-1"></a><span class="fu">ggplot</span>(performance_all) <span class="sc">+</span></span>
-<span id="cb219-10"><a href="sec-benchmarking.html#cb219-10" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> fdp,</span>
-<span id="cb219-11"><a href="sec-benchmarking.html#cb219-11" tabindex="-1"></a>        <span class="at">x =</span> tpr,</span>
-<span id="cb219-12"><a href="sec-benchmarking.html#cb219-12" tabindex="-1"></a>        <span class="at">colour =</span> inputLevel) <span class="sc">+</span></span>
-<span id="cb219-13"><a href="sec-benchmarking.html#cb219-13" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb219-14"><a href="sec-benchmarking.html#cb219-14" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> workPoints, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb219-15"><a href="sec-benchmarking.html#cb219-15" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb219-16"><a href="sec-benchmarking.html#cb219-16" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast) <span class="sc">+</span></span>
-<span id="cb219-17"><a href="sec-benchmarking.html#cb219-17" tabindex="-1"></a>    <span class="fu">coord_flip</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>)) <span class="sc">+</span></span>
-<span id="cb219-18"><a href="sec-benchmarking.html#cb219-18" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb219-19"><a href="sec-benchmarking.html#cb219-19" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"TPR-FDP curves using all proteins in the data"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-49-1.png" alt="plot of chunk unnamed-chunk-49"><div class="figcaption">plot of chunk unnamed-chunk-49</div>
-</div>
+<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="sec-benchmarking.html#cb215-1" tabindex="-1"></a>performance_all <span class="ot">&lt;-</span> <span class="fu">group_by</span>(results, inputLevel, contrast) <span class="sc">|&gt;</span> </span>
+<span id="cb215-2"><a href="sec-benchmarking.html#cb215-2" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">tpr =</span> <span class="fu">computeTPR</span>(pval, isEcoli),</span>
+<span id="cb215-3"><a href="sec-benchmarking.html#cb215-3" tabindex="-1"></a>           <span class="at">fdp =</span> <span class="fu">computeFDP</span>(pval, isEcoli)) <span class="sc">|&gt;</span></span>
+<span id="cb215-4"><a href="sec-benchmarking.html#cb215-4" tabindex="-1"></a>    <span class="fu">arrange</span>(fdp)</span>
+<span id="cb215-5"><a href="sec-benchmarking.html#cb215-5" tabindex="-1"></a>workPoints <span class="ot">&lt;-</span> <span class="fu">group_by</span>(performance_all, inputLevel, contrast) <span class="sc">|&gt;</span></span>
+<span id="cb215-6"><a href="sec-benchmarking.html#cb215-6" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb215-7"><a href="sec-benchmarking.html#cb215-7" tabindex="-1"></a>    <span class="fu">slice_max</span>(adjPval) <span class="sc">|&gt;</span></span>
+<span id="cb215-8"><a href="sec-benchmarking.html#cb215-8" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(inputLevel))</span>
+<span id="cb215-9"><a href="sec-benchmarking.html#cb215-9" tabindex="-1"></a><span class="fu">ggplot</span>(performance_all) <span class="sc">+</span></span>
+<span id="cb215-10"><a href="sec-benchmarking.html#cb215-10" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> fdp,</span>
+<span id="cb215-11"><a href="sec-benchmarking.html#cb215-11" tabindex="-1"></a>        <span class="at">x =</span> tpr,</span>
+<span id="cb215-12"><a href="sec-benchmarking.html#cb215-12" tabindex="-1"></a>        <span class="at">colour =</span> inputLevel) <span class="sc">+</span></span>
+<span id="cb215-13"><a href="sec-benchmarking.html#cb215-13" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb215-14"><a href="sec-benchmarking.html#cb215-14" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> workPoints, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb215-15"><a href="sec-benchmarking.html#cb215-15" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb215-16"><a href="sec-benchmarking.html#cb215-16" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast) <span class="sc">+</span></span>
+<span id="cb215-17"><a href="sec-benchmarking.html#cb215-17" tabindex="-1"></a>    <span class="fu">coord_flip</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>)) <span class="sc">+</span></span>
+<span id="cb215-18"><a href="sec-benchmarking.html#cb215-18" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb215-19"><a href="sec-benchmarking.html#cb215-19" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"TPR-FDP curves using all proteins in the data"</span>)</span></code></pre></div>
+<p><img src="figure/benchmarking_tpr_fdp_2-1.png"></p>
 </div>
 <div id="sec-appendix3_2" class="section level3" number="4.7.2">
 <h3>
@@ -1692,41 +1689,39 @@ estimated less proteins.</p>
 filtering step where we require, for each comparison, that p-values
 are not missing for all 5 approaches, effectively focusing on the set
 of proteins that have been estimated by all approaches.</p>
-<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="sec-benchmarking.html#cb220-1" tabindex="-1"></a>performance_common <span class="ot">&lt;-</span> <span class="fu">group_by</span>(results, feature, contrast) <span class="sc">|&gt;</span> </span>
-<span id="cb220-2"><a href="sec-benchmarking.html#cb220-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval),</span>
-<span id="cb220-3"><a href="sec-benchmarking.html#cb220-3" tabindex="-1"></a>         <span class="fu">n</span>() <span class="sc">==</span> <span class="dv">5</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb220-4"><a href="sec-benchmarking.html#cb220-4" tabindex="-1"></a>  <span class="fu">group_by</span>(inputLevel, contrast) <span class="sc">|&gt;</span> </span>
-<span id="cb220-5"><a href="sec-benchmarking.html#cb220-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tpr =</span> <span class="fu">computeTPR</span>(pval, isEcoli),</span>
-<span id="cb220-6"><a href="sec-benchmarking.html#cb220-6" tabindex="-1"></a>         <span class="at">fdp =</span> <span class="fu">computeFDP</span>(pval, isEcoli)) <span class="sc">|&gt;</span></span>
-<span id="cb220-7"><a href="sec-benchmarking.html#cb220-7" tabindex="-1"></a>  <span class="fu">arrange</span>(fdp)</span>
-<span id="cb220-8"><a href="sec-benchmarking.html#cb220-8" tabindex="-1"></a>workPoints <span class="ot">&lt;-</span> <span class="fu">group_by</span>(performance_common, inputLevel, contrast) <span class="sc">|&gt;</span></span>
-<span id="cb220-9"><a href="sec-benchmarking.html#cb220-9" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
-<span id="cb220-10"><a href="sec-benchmarking.html#cb220-10" tabindex="-1"></a>    <span class="fu">slice_max</span>(adjPval) <span class="sc">|&gt;</span></span>
-<span id="cb220-11"><a href="sec-benchmarking.html#cb220-11" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(inputLevel))</span>
-<span id="cb220-12"><a href="sec-benchmarking.html#cb220-12" tabindex="-1"></a><span class="fu">ggplot</span>(performance_common) <span class="sc">+</span></span>
-<span id="cb220-13"><a href="sec-benchmarking.html#cb220-13" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> fdp,</span>
-<span id="cb220-14"><a href="sec-benchmarking.html#cb220-14" tabindex="-1"></a>        <span class="at">x =</span> tpr,</span>
-<span id="cb220-15"><a href="sec-benchmarking.html#cb220-15" tabindex="-1"></a>        <span class="at">colour =</span> inputLevel) <span class="sc">+</span></span>
-<span id="cb220-16"><a href="sec-benchmarking.html#cb220-16" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb220-17"><a href="sec-benchmarking.html#cb220-17" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> workPoints, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb220-18"><a href="sec-benchmarking.html#cb220-18" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb220-19"><a href="sec-benchmarking.html#cb220-19" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast) <span class="sc">+</span></span>
-<span id="cb220-20"><a href="sec-benchmarking.html#cb220-20" tabindex="-1"></a>    <span class="fu">coord_flip</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>)) <span class="sc">+</span></span>
-<span id="cb220-21"><a href="sec-benchmarking.html#cb220-21" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb220-22"><a href="sec-benchmarking.html#cb220-22" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"TPR-FDP curves using only the proteins fit by all approaches"</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-50-1.png" alt="plot of chunk unnamed-chunk-50"><div class="figcaption">plot of chunk unnamed-chunk-50</div>
-</div>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="sec-benchmarking.html#cb216-1" tabindex="-1"></a>performance_common <span class="ot">&lt;-</span> <span class="fu">group_by</span>(results, feature, contrast) <span class="sc">|&gt;</span> </span>
+<span id="cb216-2"><a href="sec-benchmarking.html#cb216-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(adjPval),</span>
+<span id="cb216-3"><a href="sec-benchmarking.html#cb216-3" tabindex="-1"></a>         <span class="fu">n</span>() <span class="sc">==</span> <span class="dv">5</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb216-4"><a href="sec-benchmarking.html#cb216-4" tabindex="-1"></a>  <span class="fu">group_by</span>(inputLevel, contrast) <span class="sc">|&gt;</span> </span>
+<span id="cb216-5"><a href="sec-benchmarking.html#cb216-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tpr =</span> <span class="fu">computeTPR</span>(pval, isEcoli),</span>
+<span id="cb216-6"><a href="sec-benchmarking.html#cb216-6" tabindex="-1"></a>         <span class="at">fdp =</span> <span class="fu">computeFDP</span>(pval, isEcoli)) <span class="sc">|&gt;</span></span>
+<span id="cb216-7"><a href="sec-benchmarking.html#cb216-7" tabindex="-1"></a>  <span class="fu">arrange</span>(fdp)</span>
+<span id="cb216-8"><a href="sec-benchmarking.html#cb216-8" tabindex="-1"></a>workPoints <span class="ot">&lt;-</span> <span class="fu">group_by</span>(performance_common, inputLevel, contrast) <span class="sc">|&gt;</span></span>
+<span id="cb216-9"><a href="sec-benchmarking.html#cb216-9" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb216-10"><a href="sec-benchmarking.html#cb216-10" tabindex="-1"></a>    <span class="fu">slice_max</span>(adjPval) <span class="sc">|&gt;</span></span>
+<span id="cb216-11"><a href="sec-benchmarking.html#cb216-11" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(inputLevel))</span>
+<span id="cb216-12"><a href="sec-benchmarking.html#cb216-12" tabindex="-1"></a><span class="fu">ggplot</span>(performance_common) <span class="sc">+</span></span>
+<span id="cb216-13"><a href="sec-benchmarking.html#cb216-13" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> fdp,</span>
+<span id="cb216-14"><a href="sec-benchmarking.html#cb216-14" tabindex="-1"></a>        <span class="at">x =</span> tpr,</span>
+<span id="cb216-15"><a href="sec-benchmarking.html#cb216-15" tabindex="-1"></a>        <span class="at">colour =</span> inputLevel) <span class="sc">+</span></span>
+<span id="cb216-16"><a href="sec-benchmarking.html#cb216-16" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb216-17"><a href="sec-benchmarking.html#cb216-17" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> workPoints, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb216-18"><a href="sec-benchmarking.html#cb216-18" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb216-19"><a href="sec-benchmarking.html#cb216-19" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> contrast) <span class="sc">+</span></span>
+<span id="cb216-20"><a href="sec-benchmarking.html#cb216-20" tabindex="-1"></a>    <span class="fu">coord_flip</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>)) <span class="sc">+</span></span>
+<span id="cb216-21"><a href="sec-benchmarking.html#cb216-21" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb216-22"><a href="sec-benchmarking.html#cb216-22" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"TPR-FDP curves using only the proteins fit by all approaches"</span>)</span></code></pre></div>
+<p><img src="figure/benchmarking_tpr_fdp_3-1.png"></p>
 
 </div>
 </div>
 </div>
 <p style="text-align: center;">
 <a href="sec-advanced.html"><button class="btn btn-default">Previous</button></a>
-<a href="sec-francisella.html"><button class="btn btn-default">Next</button></a>
+<a href="sec-worflow_optimisation.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-11-12
+2025-11-16
  using 
 R version 4.5.2 (2025-10-31)
 </p>

@@ -13,15 +13,17 @@ all: $(HTML)
 
 # --- Rule: Knit Rmd -> build/md ---
 $(BUILD_DIR)/%.md: $(SRC_DIR)/%.Rmd | $(BUILD_DIR)
-	Rscript -e "knitr::knit('$<', output='$@', quiet=FALSE)"
+	Rscript -e "knitr::knit('$<', output='$@')"
 
 # --- Ensure build directory exists ---
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 # --- Rule: Render bookdown HTML from built md files ---
-$(HTML): $(MDS) _bookdown.yml | $(DOCS_DIR)
+$(HTML): $(MDS) _bookdown.yml refs.bib | $(DOCS_DIR)
 	cp refs.bib $(BUILD_DIR)/refs.bib
+	cp _bookdown.yml $(BUILD_DIR)/_bookdown.yml
+	cp figure/* $(BUILD_DIR)/figure
 	Rscript -e "setwd('$(BUILD_DIR)');bookdown::render_book('index.md', output_dir = '../$(DOCS_DIR)')"
 
 # --- Ensure docs directory exists ---

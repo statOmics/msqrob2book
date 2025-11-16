@@ -52,7 +52,7 @@ fingerprint originates from the same peptide across multiple samples.
 This leads to a signal boost for low abundant peptides and hence
 should improve data sensitivity and consistency.
 
-```{r, echo = FALSE, out.width = "40%", fig.cap = "Overview of an TMT-based proteomics workflow."}
+```{r, echo = FALSE, out.width = "60%", fig.cap = "Overview of an TMT-based proteomics workflow."}
 knitr::include_graphics("figs/tmt_workflow.png")
 ```
 
@@ -160,12 +160,12 @@ Now the files are downloaded, we can load the two tables.
 
 ### PSM table{#sec-psm_table}
 
-An MS experiment generates spectra. Each MS2 spectrum is used to infer 
-the peptide identity using a search engine. When
-an observed spectrum is matched to a theoretical peptide spectrum, we
-have a peptide-to-spectrum match (PSM). The identification software
-compiles all the PSMs inside a table. Hence, the PSM data is the
-lowest possible level to perform data modelling.
+An MS experiment generates spectra. Each MS2 spectrum is used to infer
+the peptide identity using a search engine. When an observed spectrum
+is matched to a theoretical peptide spectrum, we have a
+peptide-to-spectrum match (PSM). The identification software compiles
+all the PSMs inside a table. Hence, the PSM data is the lowest
+possible level to perform data modelling.
 
 Each row in the PSM data table contains information for one PSM (the
 table below shows the first 6 rows). The columns contains various
@@ -321,7 +321,7 @@ intensities and log2-intensities for one of the peptide ions, the
 triply charged DLLHVLAFSK, in function of the UPS spike-in dilution
 factor. 
 
-```{r, echo = FALSE}
+```{r advanced_log_plot, echo = FALSE, fig.cap=" "}
 ## Don't show the code because it is quite tedious to explain and only
 ## used to illustrate the concpet, this is not part of the workflow.
 dat <- filterFeatures(spikein, ~ Protein.Accessions == upsProteins[1]) |> 
@@ -368,7 +368,7 @@ using `subsetByColData()`.
 spikein <- subsetByColData(spikein, spikein$Condition != "Norm")
 ```
 
-### PSM filtering{#sec-filter}
+### PSM filtering
 
 Filtering removes low-quality and unreliable PSMs that would otherwise
 introduce noise and artefacts in the data. Conceptually, PSM filtering
@@ -586,7 +586,7 @@ across the samples (using the pipeline described in the [previous
 chapter](#sec-norm)). To facilitate interpretation, we facet the data
 by TMT mixture.
 
-```{r, fig.width=5, fig.height=6}
+```{r advanced_before_norm, fig.width=5, fig.height=6, fig.cap=" "}
 spikein[, , logNames] |>
     longForm(colvars = c("Mixture", "TechRepMixture")) |>
     data.frame() |>
@@ -621,7 +621,7 @@ data.
 And we confirm that the normalisation resulted in a better alignment
 of the intensity distribution across samples.
 
-```{r, fig.width=5, fig.height=6}
+```{r advanced_after_norm, fig.width=5, fig.height=6, fig.cap=" "}
 spikein[, , normNames] |>
     longForm(colvars = c("Mixture", "TechRepMixture")) |>
     data.frame() |>
@@ -667,7 +667,7 @@ axis and plot the log2 normalised intensities across samples on y
 axis. All the points belonging to the same sample are linked through a
 grey line.
 
-```{r, echo = FALSE, fig.height=6, fig.width=6}
+```{r advanced_summarise, echo = FALSE, fig.height=6, fig.width=6, fig.cap=" "}
 spikein[, , normNames] |>
     filterFeatures(~ Protein.Accessions == "P02787ups") |> 
     longForm(colvars = colnames(colData(spikein)), rowvars = "ionID") |> 
@@ -742,7 +742,7 @@ spikein <- joinAssays(
 We perform data exploration using MDS, using the same pipeline as
 in [the previous chapter](#sec_data_exploration).
 
-```{r}
+```{r advanced_mds, fig.width=8, fig.height=4, fig.cap=" "}
 library("scater")
 se <- getWithColData(spikein, "ions")
 se <- runMDS(as(se, "SingleCellExperiment"), exprs_values = 1)
@@ -761,7 +761,7 @@ As discussed above, the median polish summarisation should remove part
 of the run to run effect. We repeat the data exploration, but using
 the protein-level data.
 
-```{r}
+```{r advanced_mds_proteins, fig.width=8, fig.height=4, fig.cap=" "}
 se <- getWithColData(spikein, "proteins")
 se <- runMDS(as(se, "SingleCellExperiment"), exprs_values = 1)
 plotMDS(se, colour_by = "Condition") +
@@ -1198,8 +1198,9 @@ tradeoff. Another disadvantage of ridge is that it take more time to
 estimate.
 
 Note that ridge regression cannot be estimated when $\mathbf{X}$ 
-contains an intercept and a single covariate. We demonstrate this on
-the spike-in data by subsetting only spike-in condition `1` and `0.5`.
+contains an intercept and a single covariate. We demonstrate this by
+intentionally triggering an error after subsetting only spike-in
+condition `1` and `0.5`.
 
 ```{r}
 spikeinSubset <- subsetByColData(spikein, spikein$Condition %in% c("1", "0.5"))
@@ -1217,8 +1218,8 @@ try(msqrobAggregate(
 ))
 ```
 
-As the message suggests, the intercept must be suppressed in order to
-fit a variable with 2 levels using ridge regression.
+As the error message suggests, the intercept must be suppressed in
+order to fit a variable with 2 levels using ridge regression.
 
 **TODO** do we need to explain theoretically why a 1 covariate is not
 possible and why ridge is slower? I'm not convinced that showing the
@@ -1233,7 +1234,7 @@ condition affect the protein intensities?" into a statistical
 hypothesis. In other words, we need to define the [contrast](#sec-inference).
 We plot an overview of the model parameters.
 
-```{r}
+```{r advanced_VisualizeDesign, fig.cap=" "}
 library("ExploreModelMatrix")
 vd <- VisualizeDesign(
     sampleData =  colData(spikein),
@@ -1300,6 +1301,7 @@ inferences <- lapply(colnames(inferences), function(i) {
   inference$Protein <- rownames(inference)
   inference$isUps <- grepl("ups", inference$Protein)
   inference$Comparison <- gsub("ridgeCondition", "", i)
+  inference$Comparison <- gsub("^([0-9.]*)$", "\\1 - 0.125", inference$Comparison)
   inference
 })
 inferences <- do.call(rbind, inferences) ## combine in a single table
@@ -1307,7 +1309,7 @@ inferences <- do.call(rbind, inferences) ## combine in a single table
 
 Then, we plot the volcano plots with each comparison in a separate facet.
 
-```{r}
+```{r advanced_volcao, fig.cap=" "}
 ggplot(inferences) +
     aes(x = logFC,
         y = -log10(pval),
@@ -1326,23 +1328,34 @@ ggplot(inferences) +
 
 As this is a spike-in study with known ground truth, we can also plot
 the log2 fold change distributions against the expected values, in
-this case 0 for the HeLa proteins and 1 for the UPS standards.
+this case 0 for the HeLa proteins and the difference of the log
+concentration for the spiked-in UPS standards. We first create a small
+table with the real values.
 
 ```{r}
+realLogFC <- data.frame(Comparison = unique(inferences$Comparison))
+realLogFC$logFC <- paste0("log2(", gsub("-", "/", realLogFC$Comparison), ")") |> 
+  sapply(function(x) eval(parse(text = x)))
+```
+
+We can now create the boxplots with the estimated log2-fold changes,
+adding horizontal lines with the corresponding target values.
+
+
+```{r advanced_boxplot, fig.cap=" "}
 ggplot(inferences) +
     aes(y = logFC,
         x = isUps,
         colour = isUps) +
     geom_boxplot() +
-    geom_point( ## Adding the expected Log2 fold changes 
-        data = group_by(inferences, Comparison, isUps) |> 
-          summarise(logFC = ifelse(isUps, log2(eval(parse(text = sub("-", "/", Comparison)))), 0)),
-        shape = 10, size = 4
-    ) +
+  
     scale_color_manual(
         values = c("grey20", "firebrick"), name = "",
         labels = c("HeLA background", "UPS standard")
     ) +
+    geom_hline(data = realLogFC, aes(yintercept = logFC), 
+               colour = "firebrick") +
+    geom_hline(yintercept = 0) +
     facet_wrap(~ Comparison) +
     ggtitle("Distribution of the log2 fold changes")
 ```
@@ -1371,7 +1384,7 @@ according to UPS spike-in condition. Finally, we split the plot in
 facets, one for each mixture, to visualise the heterogeneity induced
 by sample preparation.
 
-```{r, fig.width=10, fig.height=3}
+```{r advanced_detail_plot, fig.width=10, fig.height=3, fig.cap=" "}
 spikein[targetProtein, , "ions"] |>
     longForm(colvars = colnames(colData(spikein)),
              rowvars = c("Protein.Accessions", "ionID")) |>
@@ -1406,7 +1419,7 @@ inferences <- rowData(spikein[["proteins"]])[, colnames(L)]
 
 We build the volcano using the same code as above:
 
-```{r}
+```{r advanced_volcano_proteins, fig.cap=" "}
 inferences <- lapply(colnames(inferences), function(i) {
   inference <- inferences[[i]]
   inference$Protein <- rownames(inference)
@@ -1432,7 +1445,7 @@ ggplot(inferences) +
 
 We plot the fold change distributions:
 
-```{r}
+```{r advanced_boxplot_proteins, fig.cap=" "}
 ggplot(inferences) +
     aes(y = logFC,
         x = isUps,
@@ -1456,7 +1469,7 @@ Exploring the intensities at the protein level is simplified compared
 to PSM-level exploration since every sample now contains a single
 observation, the protein intensity.
 
-```{r, fig.width=10, fig.height=3}
+```{r advanced_detail_plot_proteins, fig.width=10, fig.height=3, fig.cap=" "}
 spikein[targetProtein, , "proteins"] |>
     longForm(colvars = colnames(colData(spikein))) |>
     data.frame() |>
@@ -1568,7 +1581,7 @@ same `QFeatures` pipeline described above. We here plot the data in
 function of the `Label` (x-axis), `Condition` (colour) and `Mixture`
 (shape).
 
-```{r}
+```{r advanced_fiterror_manual, fig.cap=" "}
 spikein[proteinError, , "ions"] |>
     longForm(colvars = colnames(colData(spikein)),
                rowvars = c("Protein.Accessions", "ionID")) |>
