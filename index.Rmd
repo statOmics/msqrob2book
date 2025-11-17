@@ -29,14 +29,12 @@ This book provides comprehensive hands-on tutorials on how to apply the
 `msqrob2` software for the statistical analysis of mass spectrometry
 (MS)-based proteomics data. It includes the latest improvements of the
 software that enable statistical modelling for a wide panel of use
-cases. The book will first introduce the general concepts behind
-the statistical analysis of proteomics data and `msqrob2`. Further
+cases. The book first introduces general concepts of
+statistical proteomics data analysis and `msqrob2`. Further
 chapters will demonstrate the application of `msqrob2` for assessing
 different biological questions starting from datasets with different
 experimental designs, acquisition strategies, instruments, and search
-engines. The book aims to help proteomics researchers tailoring their
-statistical analysis workflow to their specific datasets and research
-questions.
+engines. The book aims to help proteomics researchers and data analysists tailoring their statistical analysis workflow to their specific datasets and research questions.
 
 ## Why msqrob2?
 
@@ -74,13 +72,10 @@ The book is divided in three parts.
 
 ### Concepts
 
-This parts introduces the user to the concepts for . It explains the
-theory behind proteomics data analysis and provides extensive
-description of the code. While this part is conceptual, the concepts
-are illustrated using a real spike-in study.
+This parts introduces the user to the key concepts in differential proteomics data analysis and provides extensive description of the code. While this part is conceptual, the concepts are illustrated using a real spike-in study.
 
 - Chapter \@ref(sec-basics) introduces the basic concepts for MS-based 
-  proteomics analysis. We **recommend** user to first read this 
+  proteomics analysis. We **recommend** our users to first read this 
   chapter before reading any other chapter. 
 - Chapter \@ref(sec-advanced) builds upon the previous chapter and 
   introduces more more concepts that will be used in later chapters
