@@ -7,20 +7,17 @@ source("R/knitr_setup.R")
 This chapter explains the main concepts for statistical analysis of
 proteomics data using `msqrob2`. To illustrate these concepts, we will
 use using a publicly available spike-in study with PRIDE identifier
-PXD003881 [@Shen2018-gw]. This is an excellent example dataset
-since it contains ground truth information about which proteins are
-differentially abundant, enabling us to objectively demonstrate the
-performance of `msqrob2`. This dataset has a relatively simple
+PXD003881 [@Shen2018-gw]. This dataset contains ground truth information about which proteins are differentially abundant, enabling us to objectively demonstrate the key aspects of differential proteomics data analysis and their implementation in `msqrob2`. This dataset has a relatively simple
 experimental design (which does not imply that the analysis is easy),
 allowing us to assess differential abundance using a data analysis
-workflow with a single factor for the spike-in condition. For a more
-advanced analysis with a more complex expiremental design, we refer to
-our [advanced concepts chapter](#sec-advanced)
+workflow with a single factor for the spike-in condition. For more
+advanced analyses with a more complex experimental design, we refer to
+our [advanced concepts chapter](#sec-advanced) and to the case studies. 
 
 ## Background 
 
 Mass spectrometry (MS)-based proteomics aims at characterising the
-proteome abundance of biological samples. The most popular approach is
+proteome abundance of biological samples. A popular approach is
 label-free quantification (LFQ), where every sample is analysed in a
 separate MS run. This section provides an overview of the analytical
 workflow and its main challenges regarding data modelling.
@@ -45,7 +42,7 @@ referred to as data dependent acquisition (DDA).]. This process is
 repeated for every sample so that every sample is acquired in one MS
 run. This provides the ion’s mass fingerprint. For LFQ workflows, the
 accumulated MS1 intensity over time, also known as the area under the
-curve, around the target mass is used as a quantitification measure.
+curve, around the target mass is used as a quantification measure.
 On the other hand, the ion mass fingerprint, called the MS2 spectrum,
 enables computational identification of the corresponding peptide
 using search engines (e.g. Andromeda has been used for this data set)
@@ -67,12 +64,12 @@ knitr::include_graphics("figs/lfq_workflow.png")
 Behind this workflow lies several challenges that will affect the data
 modelling:
 
-- MS-based proteomics doesn't measure proteins directly, but their 
+- MS-based proteomics does not measure proteins directly, but their 
 constituting **peptide ions**. The protein-level information needs
 to be reconstructed from the ion data. In this tutorial, we will
 start from the peptide data, which has been constructed from the ion
 data by MaxQuant.
-- All peptides cannot be ionised with the same efficiency. Poor 
+- All peptides do not ionise with the same efficiency. Poor 
 ionisation will lead to reduced signal as less ions will hit the
 detector, hence leading to a huge variability in intensity among
 different peptide species, even when they originate from the same
@@ -82,7 +79,7 @@ errors^[Improving peptide identification is outside the scope of
 this tutorial]. PSM misidentification leads to the assignment of a
 quantitative values from another peptide with likely another
 ionisation efficiency and relative abundance. Hence this misassigned
-value will become an outlier.
+values often lead to outliers.
 - Moreover, the ion selection for MS2 depends on its
 intensity^[Recall that only the top most intense ion peaks are send
 for MS2]. Therefore, the chance to measure and, subsequently, 
@@ -93,9 +90,7 @@ missingness not at random. Next to that, many reasons can lead to
 ions not being selected or identified irrespective of their 
 quantification value leading to missingness that is not related to
 its quantitative value. This is referred to as missingness 
-completely at random. The missingness issue is not negligible: only
-41\% of all proteins are quantified across all samples, and the 
-number drops to 6.6\% when considering peptides.
+completely at random. The missingness issue is not negligible: **TODO** CALCULATE MISSINGNESS FOR CHEN DATA. SHOULD WE NOT DO THIS ON THE FLY?
 - The identification issues lead to unbalanced peptide missingness
 across samples, and the patterns of missing values are potentially
 different for every peptide, highlighting the need for an
@@ -111,7 +106,7 @@ answering biological questions.
 
 The samples were synthetically constructed, starting from a
 trypsin-digested human background, hence human proteins are known to
-be constant across samples E. coli lysates were spiked at five
+be constant across samples. E. coli lysates were spiked at five
 different concentrations (3%, 4.5%, 6%, 7.5% and 9% wt/wt). So the E.
 coli proteins are known to be differentially abundant, and we know
 exactly in what amount they differ. There are four replicates per
@@ -133,8 +128,8 @@ protein-level differences between samples. To achieve this goal, we
 will apply an `msqrob2` workflow, a data processing and modelling
 workflow dedicated to the analysis of MS-based proteomics datasets. We
 will demonstrate how the workflow can retrieve the spiked-in proteins
-from the E. coli data set, along with explanation of the key
-statistical concepts behind proteomics data analysis. Before delving
+from the E. coli data set, while introducing the key
+statistical concepts of differential proteomics data analysis. Before delving
 into the analysis, we first set the concentrations for the different
 spike-ins, and will prepare our computational environment.
 
@@ -225,7 +220,7 @@ knitr::kable(head(peptides))
 Each row in the annotation table contains information about one
 sample. The columns contain various descriptors about the sample, such
 as the name of the sample or the MS run, the treatment (here the
-spike-in condition), the lab that acquired the sample or any other
+spike-in condition), or any other
 biological or technical information that may impact the data quality
 or the quantification. Without an annotation table, no analysis
 can be performed. The sample annotations are generated by the
@@ -345,7 +340,7 @@ knitr::kable(head(rowData(spikein[["peptides"]])))
 ```
 
 We can also retrieve the quantitative values for each set using 
-`assays()`.
+`assays()`. Here we only show the first 5 rows and columns of the intensity matrix. 
 
 ```{r}
 assay(spikein[[1]])[1:5, 1:5]
@@ -372,7 +367,7 @@ encoded with a zero because true zeros (the proteomic feature
 is absent from the sample) cannot be distinguished from technical
 zeros (the feature was missed by the instrument or could not be
 identified). We therefore replace any zero in the quantitative data
-with an `NA`.
+with an `NA`. 
 
 ```{r}
 spikein <- zeroIsNA(spikein, names(spikein))
@@ -396,7 +391,7 @@ options).
 
 ### Log2 transformation{#sec-log2}
 
-We need to log2 transform the intensities. We illustrate the rationale
+We typically start a MS-based proteomics data analysis by log2 transforming the intensities. We illustrate the rationale
 using the spike-in data. For this, we perform a short data
 manipulation pipeline:
 
@@ -414,12 +409,12 @@ include `Mixture` and `TechRepMixture` for filtering and colouring.
 ```{r}
 dat <- longForm(spikein, colvars = colnames(colData(spikein))) |> ## 1.
   data.frame() |> ## 2.
-  filter(rowname == "AEMSEYLFDK")
+  filter(rowname == "AEMSEYLFDK") ## 3.
 ```
 
 Next, we visualise the data using `ggplot2`. We will show the
 intensities and log2-intensities for one of the peptides, AALEELVK, in
-function of the E. coli spike-in concentration. We first define a common
+function of the known E. coli spike-in concentration. We first define a common
 plot from which we generate two plots, one without and the other with
 log2 transformation of the quantitative values.
 
@@ -439,23 +434,24 @@ p + aes(y = value) +
 
 We can see that the variation around the mean for each concentration slightly increases as the mean increases. This is known as heteroskedasticity.
 We will later see that `msqrob2` assumes that variance of the error
-should be consistent across the different conditions. Upon,
-log2-transformation we can see that the problem of unequal variation
+is equal across the different conditions. Upon,
+log2-transformation we can see that the problem of unequal variability
 is solved.
 
 Another advantages of log2-transformation is that it provides a scale
 that directly relates to biological interpretation. In biology, a
 change induced by some condition often results in a fold change in
 concentration. Interestingly, the log2 fold change (logFC), which is
-the log of the ratio between two conditions, is identical to the
+the log2 of the ratio between two conditions, is identical to the
 difference between the log of each condition.
 
 $$log_2FC_{b-a} = log_2b - log_2a = log_2 \frac{b}{a}$$
 
 This simplifies the modelling since the effects are now additive and
-it simplifies the interpretation since a logFC of 1 means that the
-abundances are $2\times$ higher in $b$ than in $a$, a logFC of 2
-means an increase of $4\times$, for instance.
+it provides a straightforward interpretation, i.e. a logFC of 1 means that the
+abundances are on average $2\times$ higher in $b$ than in $a$, a logFC of 2
+means an average increase of $4\times$, for instance.
+Also, note that the averages calculated at the log2-scale have the interpretation of log2-transformed geometric means. 
 
 We perform log2-transformation with `logTransform()` from the
 `QFeatures` package.
@@ -491,7 +487,7 @@ each feature (row) in each set across the object. If the filter
 returns `TRUE`, the corresponding row is retained, otherwise it is
 removed. Defining a filter through a formula offers a flexible
 approach, allowing for any customised filter. This dataset requires an
-extensive PSM filtering which is an ideal use case to demonstrate the
+extensive PSM filtering, which is an ideal use case to demonstrate the
 customisation of a filtering workflow.
 
 #### Remove failed protein inference
@@ -524,8 +520,8 @@ contaminants are human or animal keratins (deposited by the
 experimenter) or trypsin (used for protein digestion). It is important
 to remove these peptides before performing statistical modelling,
 otherwise these proteins will be accounted for during the multiple
-test adjustment which will cause an unnecessary decrease of
-statistical power. Note, that the column name of the contaminants in the peptides file differs according to the MaxQuant version. In our peptide.txt the contaminants are indicated in the column `Potential.contaminant`. 
+test adjustment, which will cause an unnecessary decrease of
+statistical power. Note, that the column name of the contaminants in the peptides file differs according to the MaxQuant version. In our peptide.txt file decoys and contaminants are indicated with a "+" character in the column `Reverse` and `Potential.contaminant`, respectively. 
 
 ```{r}
 spikein <- filterFeatures(spikein, ~ Reverse != "+" & ## Remove decoys
@@ -533,6 +529,8 @@ spikein <- filterFeatures(spikein, ~ Reverse != "+" & ## Remove decoys
 ```
 
 #### Remove highly missing peptides
+
+**TODO** DO WE USE THE SAME STRATEGY AS IN EDGER? Observe in at least as many samples as in the smallest group or in the minimum of 1/leverage for more complex designs?  minSampleSize <- 1/max(hat(design))
 
 We keep peptides that were observed at last 4 times out of the $n
 = 20$ samples, so that we can estimate the peptide characteristics. We tolerate the following proportion of NAs:
@@ -562,12 +560,11 @@ intensity distribution. We can this explore as follows:
 performed using `QFeatures`' 3-way subsetting^[We will explain this
 with more details at the end of the [summarisation step](#sec-summarisation)].
 2. We use `longForm()` to convert the `QFeatures` object into a long
-table, including `lab` and `concentration` for filtering and
+table, including `condition` and `concentration` for filtering and
 colouring.
 3. We visualise the density of the quantitative values within each
 sample. We colour each sample based on its spike-in condition.
-Remember that each spike-in concentration has been acquired in
-triplicate for each lab.
+
 
 ```{r basics_before_norm, fig.cap="Intensity distribution for all samples before normalisation."}
 spikein[, , "peptides_log"] |> ## 1.
@@ -587,11 +584,9 @@ effect will increase the noise and reduce the statistical power of the
 experiment, and may also, in case of unbalanced designs, introduce
 confounding effects that will bias the results.
 
-Therefore, normalisation will transform the data to put all the
-distributions on the same location, such as centering on the mean or
-the median, so that the distributions better coincide and overlap.
+Therefore, normalisation will transform the data to make the intensities of the different samples comparable, e.g. by centering the distributions using the median, so that the distributions better coincide and overlap.
 
-Here, we will use the Median of Ratios method of DESeq2: 
+Here, we will use the Median of Ratios method of DESeq2, which was originally developed for RNA-seq data analysis and can also correct for differences in composition of the proteomes in the different samples:
 
 1. We first create a pseudo-reference sample (row-wise mean of log2 
 intensities, which corresponds to the log2 transformed geometric 
@@ -600,7 +595,7 @@ mean).
 pseudo-reference 
 3. Subsequently take the column wise median of these log2 ratios to 
 obtain the sample based normalisation factor on the log2 scale.
-4. Subtract the norm factors from the intensities of each 
+4. Subtract these log2-norm factors from the intensities of each 
 corresponding column of the assay data and store the result in the
 new assay peptides_norm. (We adopt the sweep function to the
 `peptides_log` assay of the spikein QFeatures object with as
@@ -632,8 +627,8 @@ $$
 y_{ip}^{\text{norm}} = y_{ip} - \hat{\mu}_i
 $$
 
-with $\hat{\mu}_i$ the norm factor. Upon normalisation, we can see
-that the distribution nicely overlap (using the same code as above)
+with $y_ip$ the log2-transformed intensities and $\hat{\mu}_i$ the log2-transformed norm factor. Upon normalisation, we can see
+that the distribution of the $y_{ip}^{\text{norm}}$ nicely overlap (using the same code as above)
 
 ```{r basics_after_norm, fig.cap="Intensity distribution for all samples after normalisation."}
 spikein[, , "peptides_norm"] |> ## 1.
@@ -666,7 +661,7 @@ for example. Dedicated normalisation strategies are then required.
 
 The objective of summarisation (also referred to as aggregation) is to
 summarise the peptide-level intensities into a protein expression value.
-We illustrate the motivation behind summarisation using all peptide-level data for
+We illustrate the motivation for summarisation using all peptide-level data for
 one of the E. coli proteins. We also focus on the lowest (a) and highest (e)
 spike-in conditions. We illustrate the different peptides on the
 x axis and plot their log2 normalised intensities across samples on y
@@ -808,6 +803,8 @@ spikein["P0AEE5", , c("peptides_norm", "proteins")] |> ## 1.
 
 ### Protein filtering
 
+**TODO** Again use the same edgeR rationale to define the minimum sample size? 
+
 As a final step, we filter the protein data to keep proteins if they
 are picked up in at least 4 samples so that most proteins have
 observations in more than one group. So we tolerate a proportion of
@@ -870,8 +867,8 @@ We model the preprocessed data to answer biologically relevant
 questions. As described above, each sample has been synthetically
 created to contain a constant human background where E. coli lysates
 were spiked in at five different concentration. Each sample
-preparation has been replicated three times and each replicate has
-been sent to three different labs. So, the research quest is "can our
+preparation has been replicated four times. 
+So, the key question is "can our
 model retrieve the proteins that have been spiked in across the
 conditions?" Moreover, since we know the expected protein abundance in
 each sample, we will also be able to assess how accurate the model can
@@ -904,7 +901,7 @@ $$
 y_i = \mathbf{x}^T_i \boldsymbol{\beta} + \epsilon_i
 $$
 
-with $y_i$ the $\log_2$-normalised protein intensities in sample $i$;
+with $y_i$ the $\log_2$-normalised and summarised protein intensities in sample $i$;
 $\mathbf{x}_i$ a vector with the covariate pattern for the sample
 encoding the intercept, spike-in condition^[Categorical
 variables are encoded using dummy coding.], or other experimental factors; $\boldsymbol{\beta}$ the
@@ -949,9 +946,8 @@ spikein <- msqrob(
 
 We enable M-estimation (`robust = TRUE`) for improved robustness
 against outliers. We also enable ridge regression (`ridge = TRUE`).
-Ridge regression stabilises the parameter estimation of fixed effects
-in case where the number of parameters are close to the number of
-available samples. The next chapter provides more details on [robust
+Ridge regression stabilises the parameter estimation of fixed effects. 
+**However, this is only possible if there are more than two slope terms in the model, e.g. designs with more than two groups or designs involving multiple covariates.** The next chapter provides more details on [robust
 regression](#sec-robust) and [ridge regression](#sec-ridge).
 
 The fitting results are available in the `msqrobModels` column of the
@@ -983,10 +979,10 @@ VisualizeDesign(
 )$plotlist
 ```
 
-Spike-in condition `a` is the reference class. So the mean log2
+Spike-in condition `a` is the reference group. So the mean log2
 intensity for samples from condition a is `(Intercept)`. The mean
 log2 expression for samples from condition b is '(Intercept) +
-conditionB'. Hence, the average log2 fold change between conditionbB
+conditionb'. Hence, the average log2 fold change between condition b
 and condition a is modelled using the parameter 'conditionb'. 
 
 With `getCoef()`, we can retrieve the estimated model parameters. 
@@ -1010,9 +1006,10 @@ parameters that model the effect of `condition`.
 params[grep("condition", names(params))]
 ```
 
-For this protein we can see that the effects of condition are zero, as
+For this protein we can see that the effects of condition are small, as
 expected since the protein is part of the human constant background.
-However, we can explore the parameters for one of the E. coli
+Note, however, that because of the ridge penalisation they are shrunken to zero.
+We now explore the parameters for one of the E. coli
 proteins.
 
 ```{r}
@@ -1026,16 +1023,11 @@ $log_2(0.74) - log_2(0.25) = 1.566$. The average log2 difference in
 intensity between condition B and condition A that has been estimated
 by the model is `r params[["ridgeconditionb"]]`, rather close. Now,
 the question is if we can conclude that the fold change between
-condition B and condition A is statistically significant based on the
+condition B and condition A is statistically significant for this protein based on the
 model output.
 
 ### Hypothesis testing{#sec-hypothesis_testing}
 
-As shown above, the average difference in log2 intensity between
-condition B and A after correcting for the lab effect is
-`ridgeconditionb`. This combination of parameters is also called a
-contrast. Thus, we assess the following nul hypothesis for this
-contrast: 'ridgeconditionb = 0' with our statistical test.
 
 As shown above, the average difference in log2 intensity between
 condition b and a after correcting for the lab effect is
@@ -1050,7 +1042,7 @@ contrast <- "ridgeconditionb = 0"
 `makeContrast()` converts the hypothesis into a formal contrast matrix
 with parameter names as rows and hypotheses in columns^[Note, that we only need to specify the names of the model parameters that are involved in the contrast when using the make contrast function. The hypothesisTest function below will then subset the relevant part from the model output. Also, note that the contrast matrix in this example is trivial. However, we will
 [later](#sec-multiple_contrasts) show how to asses multiple hypotheses
-at once and then the constrast matrix consists of multiple
+at once and then the contrast matrix consists of multiple
 columns, with one column for each contrast].
 
 ```{r}
@@ -1071,7 +1063,7 @@ spikein <- hypothesisTest(spikein, i = "proteins", contrast = L)
 
 The results are stored in the set containing the model, here
 `proteins`. We retrieve the results from the `rowData`.
-We also add variable `isEcoli` to indicate if the protein is spiked 
+Note, that for this spike-in study we also know the ground truth, so we also add variable `isEcoli` to indicate if the protein is spiked 
 (from E. coli).
 
 ```{r}
@@ -1133,7 +1125,7 @@ table(is_significant = inference$adjPval < 0.05,
 
 Because we known the ground truth, we can also provide a list with
 false positives, true positives and the false discovery proprotion
-(FP/(FP+TP)) at a nominal 5% FDR level.
+(FP/(FP+TP)) at a nominal 5% FDR level and observe that the FDP for this contrast is close to the 5% FDR, which is an estimate of the expected FDP if all assumptions made in the data analysis are valid.
 
 ```{r}
 inference |> 
@@ -1186,10 +1178,12 @@ Heatmap(
 )
 ```
 
+We observe that the majority of the returned proteins are indeed upregulated in the higher spike-in condition b. 
+
 ### Fold change distributions
 
 As this is a spike-in study with known ground truth, we can also plot
-the log2 fold change distributions against the expected values, in
+the log2 fold change distributions against its true values, in
 this case 0 for the human proteins and `r round(log2(1.5),3)` for the
 E. coli proteins.
 
@@ -1211,7 +1205,7 @@ ggplot(inference) +
 Estimated log2 fold change for human proteins are closely distributed
 around 0, as expected. log2 fold changes for E. coli proteins are
 distributed around the fold changes induced by the experimental
-design.
+design, indicating that msqrob2 is providing unbiased fold change estimates. 
 
 ### Detail plots{#sec-detail_plot}
 
@@ -1258,7 +1252,7 @@ spikein[targetProtein, , c("peptides_log", "proteins")] |> #1
 
 We showed how to perform a hypothesis test to answer the question 
 "which proteins change in abundance between condition b and condition 
-c?". However, since we have 5 conditions, we can do further 
+a?". However, since we have 5 conditions, we can do further 
 comparisons.  `msqrob2` can assess multiple hypothesis at once. Like
 above we must provide which hypotheses we want to compare. 
 `createPairwiseContrasts()` will generate all possible comparisons
@@ -1353,6 +1347,8 @@ inferences |>
     fdp = round(mean(!isEcoli)*100,2))
 ```
 
+We observe that the FDPs for the different contrasts nicely fluctuate around the nominal FDR that was set at 5%. 
+
 We can also assess the fold changes, but we first create a small table
 with the real values.
 
@@ -1383,6 +1379,7 @@ inferences |>
              colour = "firebrick") +
   geom_hline(yintercept = 0)
 ```
+We again observe that the log2 fold change estimates are close to the real spike-in fold changes induced by the experimental design.
 
 ### Model the spike-in concentration as a numeric
 
@@ -1459,9 +1456,7 @@ inference |>
 ```
 
 Note, that the slopes for the human and E. coli proteins are centered
-around 0 and 1, respectively. However, they seem to be slightly
-biased. Probably again because of ion supression effects in the high
-spike in conditions.
+around 0 and 1, respectively. 
 
 ## Conclusion
 
@@ -1481,14 +1476,14 @@ differentially abundant proteins. We explored statistical results
 through volcano plots and boxplots of the log2 fold changes and
 visually validated the results for one protein by plotting the input
 data. We have shown the inference pipeline can be streamlined when
-having multiple hypotheses to test. In this example, the spike-in
+assessing multiple hypotheses. In this example, the spike-in
 condition can be encoded as a categorical variable or a numeric
 variable, and we showed how to model and interpret the results for 
 both cases. 
 
-This chapter hence provides a general framework for analysing simple
+This chapter thus provides a general framework for analysing simple
 experimental designs for label-free proteomics experiments. Remember,
 this book provides [an overview](#sec-overview_use_cases) of different
-use cases with more complex designs. In the next chapter, we will
+use-cases with more complex designs. In the next chapter, we will
 illustrate advanced concepts of proteomics data analysis, illustrated
 by the analysis of a TMT-labelled spike-in experiment.
