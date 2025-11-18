@@ -437,6 +437,8 @@ tpFpTable |>
   theme_bw()
 ```
 
+**TODO** Cannot see in the FP and TP plots what the summarisation methods are. Also provide interpretation of the plots. 
+
 We also plot the FDP at 5% FDR across comparisons and workflows using
 bar plots.
 
@@ -452,6 +454,8 @@ ggplot(tpFpTable) +
   coord_cartesian(ylim = c(0, 0.45)) +
   theme_bw()
 ```
+
+**TODO** INTERPRETATION OF THE CURVES 
 
 ### TPR-FDP curves
 
@@ -496,6 +500,10 @@ ggplot(performance) +
     theme(legend.position = "bottom")
 ```
 
+The TPR-FDP curves clearly indicate a suboptimal performance (lower sensitivity at the same false discovery proportion) of median summarisation. This can be easily explained as the summarisation step in this workflow does not account for the fact that different PSMs are often observed for a protein in the different samples and that their corresponding intensities largely fluctuating according to the differences in the PSM characteristics. 
+
+Moreover, we also observe a benefit of the MedianOfRatios normalisation, which seems to improve the FDR control accross the board^[the dots indicating the sensitivity and FDP when using a 5% FDR cut-off are much closer to the empirical 5% FDP] as well as the sensitivity in contrasts involving the higher spike-in conditions. 
+
 
 ### Fold change boxplots
 
@@ -519,6 +527,8 @@ filter(inferences, isEcoli) |>
              linetype = "dashed") +
   theme(legend.position = "bottom", axis.text.x = element_blank())
 ```
+
+The plots show that median summarisation produces biased fold change estimates, again because it does not account for the differences in the characteristics of the PSMs that are observed in the different samples. 
 
 ## Conclusion
 
