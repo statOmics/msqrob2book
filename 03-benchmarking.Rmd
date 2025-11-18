@@ -197,7 +197,7 @@ Here is an overview of the data processing workflow:
    data prior to normalisation will be used for ion-level and
    peptide-level modelling. 
 
-The workflow is implmented in a functions with one argument, `object`,
+The workflow is implemented in a functions with one argument, `object`,
 which is the `QFeatures` we generated, either from the evidence file, 
 the peptides file or the protein-groups file. 
 
@@ -503,7 +503,7 @@ ggplot(tpFpTable) +
     guides(fill = guide_legend(nrow = 3)) ## to avoid legend getting cropped
 ```
 
-The plot clearly shows that starting from the protein groups leads to 
+The plot clearly shows that starting from MaxQuant's proteinGroups file leads to 
 a severe decrease in performance as the number of TP is systematically
 lower compared to other approaches, while there is no dramatic
 difference with the number of FPs. 
@@ -600,10 +600,10 @@ ggplot(performance) +
 ```
 
 The results are in line with the previous bechmark criteria, that is
-starting from the protein group file lead to a severe backlash on
+starting from the proteinGroups file lead to a severe backlash on
 performance. The other approaches show comparable performance,
 although for challenging comparisons where the performance is
-generally low (C-B, D-C, ED) we find a subtle increase in performance 
+generally low (C-B, D-C, E-D) we find a subtle increase in performance 
 for ion/peptide level models.
 
 Overal, we find that all approaches lead to a good FDR control. A
@@ -622,8 +622,7 @@ not depend on the set of proteins considered.
 Next to correctly prioritising the differentially abundant proteins,
 another object is to correctly estimate the log2-fold change between
 conditions. Since every condition contains E. Coli proteins that have
-been spiked in experimentally controlled amounts, we now what is the
-expected log2-fold change between any two condtions. We will explore
+been spiked in experimentally controlled amounts, we know real log2-fold change between any two conditions. We will explore
 the model accuracy, i.e. how close the estimations are from the
 expected value on average, and the model precision, i.e. how narrow
 the estimations are spread around the average estimation. In this data
