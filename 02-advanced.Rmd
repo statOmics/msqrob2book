@@ -4,7 +4,7 @@
 source("R/knitr_setup.R")
 ```
 
-This chapter builds upon the [basics](#sec-basics) of proteomics data
+This chapter builds upon the chapter with the [basics](#sec-basics) of differential proteomics data
 analysis and provides more advanced concepts using `msqrob2`. To
 illustrate these advanced concepts, we will use the spike-in study
 published by @Huang2020-lu. We chose this data set because:
@@ -14,8 +14,8 @@ published by @Huang2020-lu. We chose this data set because:
    different analysis strategies.
 2. It has been acquired with a TMT-labelling strategy that require a
    complex experimental design. This provides an excellent example
-   to explain the different sources of variability in an MS experiment
-   and demonstrate the flexibility of `msqrob2` to model this
+   to explain different sources of variability in an MS experiment
+   and demonstrate the flexibility of `msqrob2` to model these sources of
    variability.
 
 ## Background 
@@ -816,14 +816,14 @@ $$
 y_r = \mathbf{x}^T_r \boldsymbol{\beta} + \epsilon_r,
 $$
 
-with $y_r$ the $\log_2$-normalized protein intensities in run r;
+with $y_r$ the $\log_2$-normalised protein intensities in run r;
 $\mathbf{x}_r$ a vector with the covariate pattern for the sample in
 run $r$ encoding the intercept, treatment, potential batch effects and
 confounders; $\boldsymbol{\beta}$ the vector of parameters that model
 the association between the covariates and the outcome; and
 $\epsilon_r$ the residuals reflecting variation that is not captured
 by the fixed effects. Note that $\mathbf{x}_r$ allows for a flexible
-parameterization of the treatment beyond a single covariate, i.e.
+parameterisation of the treatment beyond a single covariate, i.e.
 including a 1 for the intercept, continuous and categorical variables
 as well as their interactions. For all models considered in this work,
 we assume the residuals to be independent and identically distributed
@@ -831,8 +831,8 @@ we assume the residuals to be independent and identically distributed
 variance, i.e. $\epsilon_{r} \sim N(0,\sigma_\epsilon^2)$, that can
 differ from protein to protein.
 
-Now we defined a model, we must estimate from the data. Using 
-`msqrob()` (described in the [previous chapter](#sec-msqrob)), the
+We could estimate this model from the data using 
+`msqrob()` (described in the [previous chapter](#sec-msqrob)), i.e. the
 model translates into the following code:
 
 ```{r run_msqrob_protein1, eval = FALSE}
@@ -843,18 +843,19 @@ spikein <- msqrob(
 )
 ```
 
-This model is however incomplete and relying on its results would lead
-to incorrect conclusions as we are still missing important source of 
-variation. We did therefore not run the modelling command and will
+This model, however, does not model all sources of variation in the experiment and relying on its results would lead
+to incorrect conclusions. We therefore did not run the modelling command and will
 expand the model.
 
 ### Effect of TMT label{#sec-random_effect}
+
+**TODO** DISCUSS, misschien makkelijker om label als laatste te introduceren???
 
 The data analysis of labeled experiments, e.g. using TMT multiplexing,
 has to account for label-specific effects, explicitly. If TMT label
 swaps are performed so as to avoid confounding between label and
 treatment, then the model parameters can be estimated using fixed
-label effects. Indeed, for these designs run acts as a blocking
+label effects. Indeed, for these designs label acts as a blocking
 variable as all treatment effects can be estimated within each label.
 
 However, for more complex designs this is no longer possible and the
@@ -866,7 +867,7 @@ the population of all TMT labelling aliquotes, which are assumed to be
 i.i.d normally distributed with mean 0 and constant variance,
 $u_{label} \sim N(0,\sigma^2_\text{label})$. The use of random
 effects thus models the correlation in the data, explicitly. Indeed,
-protein intensities that are measured within the same label will be
+protein intensities that are measured with the same label will be
 more similar than protein intensities between labels.
 
 Hence, the model is extended to:
@@ -956,14 +957,14 @@ spikein <- msqrob(
     )
 ```
 
-This model is still incomplete and is no executed as we still need to 
+This model is still incomplete and is not executed as we still need to 
 account that multiple samples are acquired within the same run.
 
 ### Effect of run
 
 As label-free experiments contain only a single sample per run,
 run-specific effects will be absorbed in the residuals. However, for
-labeled experiments involving multiple, we also need to account for
+labeled experiments involving multiple samples per run, we also need to account for
 run-specific effects. We will model the run effect using random
 effects and consider that the run effects are a random sample from the
 population of all possible runs, which are assumed to be i.i.d
@@ -1063,7 +1064,7 @@ y_{rlmp} =
 u_r^\text{run} + u_m^\text{mix}  +
 u_{rl}^\text{label} + u_{rp}^\text{PSM} + \epsilon_{rlmp}
 $$
-with $y_{rlmp}$ the $\log_2$-normalized PSM intensities for run $r$
+with $y_{rlmp}$ the $\log_2$-normalised PSM intensities for run $r$
 with label $l$ in mixture $m$ and peptide ion $p$. Note, that the
 peptide ion random effect is also nested within each run since each
 spectrum is described by run-specific characteristics.
@@ -1123,7 +1124,7 @@ $$
 where $\rho(z)$ is a symmetric function with a minimum at $\rho(0) =
 0$ and increases as $|z|$ increases. So the robust regression through
 M-estimation minimises the maximal bias of the estimators as the 
-derivative of $\rho$ is bounded. The most popular function for robust
+derivative of $\rho$ is bounded. A popular function for robust
 regression (and which is used by `msqrob2`) is the Huber function:
 
 $$
@@ -1136,8 +1137,12 @@ k (|e| - k/2), & \text{if}\ |e| \gt k  \\
 $$
 where $k$ is a tuning constant (defaults to $k = 1.345$)
 
-The estimation is performed using iteratively reweighted least square,
-where the weigths for each iteration are defined for each data point 
+The estimation is performed using iteratively reweighted least square, i.e. 
+
+$$
+\sum\limits_{i = 1}^n w_i\left(y_i - \mathbf{x}_i^T \boldsymbol{\beta}\right)^2
+$$
+where the weigths $w_i$ for each iteration are defined for each data point 
 using the function : 
 
 $$
@@ -1160,45 +1165,34 @@ estimation, we can use the same statistical testing framework as for
 OLS, although the tests and confidence intervals are based on
 asymptotic theory.
 
+Note, that robust regression also extends to linear mixed models, by adopting weighted maximum likelihood e.g. **TODO** ref https://www.tandfonline.com/doi/abs/10.1080/03610920802677216.
+
 ### Why ridge regression?{#sec-ridge}
 
-`msqrob2` also allows for ridge regression (when `ridge = TRUE`). In 
-ridge regression, model parameters are estimated by minimising a 
-penalised extension of the OLS loss:
+`msqrob2` also allows for ridge regression (when `ridge = TRUE`). In ridge regression, model parameters are estimated by minimising a 
+penalised version of the OLS loss:
 
 $$
-\sum\limits_{i = 1}^n \left(y_i - \mathbf{x}_i^T \boldsymbol{\beta}\right)^2 + \lambda||\boldsymbol{\beta}||^2
+\sum\limits_{i = 1}^n \left(y_i - \mathbf{x}_i^T \boldsymbol{\beta}\right)^2 + \lambda \boldsymbol{\beta}^T\mathbf{D}\boldsymbol{\beta},
 $$
+with $\mathbf{D}$ a diagonal matrix that include a 1 on the diagonal elements for the model parameters that are penalised and a 0 otherwise. 
 
-Where $||\boldsymbol{\beta}||$ is the frobenius norm of
-$\boldsymbol{\beta}$, i.e. $||\boldsymbol{\beta}|| =
-\sqrt{\sum\limits_{j = 1}^p \beta_j^2}$. 
+Note, that in msqrob2 we leave the intercept $\beta_0$ unpenalised so the first diagonal element of $\mathbf{D}$ is set at zero and we only penalise the remaining $m-1$ slope parameters $\boldsymbol{\beta}_s=[\beta_1 \ldots \beta_{m-1}]^T$. Hence, 
+$\boldsymbol{\beta}^T\mathbf{D}\boldsymbol{\beta}$ reduces to the  squared L2 norm of
+$\boldsymbol{\beta}_s$, i.e. $||\boldsymbol{\beta}_s||_2^2 =
+\sum\limits_{j = 1}^{m-1} \beta_j^2$. 
 
-Due to the penalisation term $\lambda||\boldsymbol{\beta}||^2$ in the
-loss function, the estimates of $\boldsymbol{\beta}$ will tend to be
-pushed towards zero, especially for irrelevant covariates in
+Due to the penality term in the loss function, the estimates of penalised slope terms $\boldsymbol{\beta}_s$ will be
+shrunken towards zero, especially for irrelevant covariates in
 $\mathbf{X}$. In other words, the parameters are stabilised by 
-reducing the variance of the estimation:
+reducing the variance of the estimation, which prevents overfitting. Note, that the penalty term in the loss
+function thus implies that the estimates of $\boldsymbol{\beta}$ will be biased towards zero. This is known as the variance-bias trade-off. In our experience, msqrob's ridge regression mainly shrinks the log2-fold change estimates ($\beta$) for features with low evidence for differential abundance to zero while leaving those for features with high evidence for differential abundance largely unaltered.
 
-Ridge regression is particularly useful when dealing with near
-covariates that contain similar information about the samples
-(colinearity) or when there are multiple irrelevant covariates (soft
-feature selection). Hence, ridge prevents overfitting by reducing the
-the variance of estimation, as the variance-covariance matrix of the
-estimation of $\beta$ is
+Interestingly, there exists a link between Bayesian regression, ridge regression and mixed models, i.e. the ridge regression can be adopted by placing a normal prior on the slope terms that have to be penalised, i.e. $\beta_j \sim N(0,\sigma_\beta^2)$ for $j= 1 \ldots m-1$. It can than be shown that the best linear unbiased predictor from the linear mixed model with the slope terms defined as random effects provides the ridge regression estimates with a ridge penalty $\lambda = \hat{\sigma}^2_\epsilon/\hat{\sigma}^2_\beta$). Hence, mixed model software can be used to tune the ridge penalty in a data driven way.
+Note, that this comes at price of increased computational complexity. msqrob2 estimation with ridge regression will thus be slower than without ridge regression. 
 
-$$
-\hat{\sigma}^2_\beta = (\mathbf{X}^T\mathbf{X}+\lambda \mathbf{I})^{-1} \mathbf{X}^T\mathbf{X} (\mathbf{X}^T\mathbf{X}+\lambda \mathbf{I})^{-1} \hat{\sigma}_\epsilon^2
-$$
-while $\hat{\sigma}^{2, OLS}_\beta = \mathbf{X}^T\mathbf{X} 
-\hat{\sigma}_\epsilon^2$. However, the penalty term in the loss
-function also implies that the estimates of $\boldsymbol{\beta}$ will
-be biased towards smaller values. This is known as the variance-bias
-tradeoff. Another disadvantage of ridge is that it take more time to
-estimate.
-
-Note that ridge regression cannot be estimated when $\mathbf{X}$ 
-contains an intercept and a single covariate. We demonstrate this by
+Also note, that ridge regression cannot be performed when $\mathbf{X}$ 
+contains an intercept and a single covariate. Indeed, based on a single slope term the random effect variance $\sigma^2_\beta$ cannot be estimated. We demonstrate this by
 intentionally triggering an error after subsetting only spike-in
 condition `1` and `0.5`.
 
@@ -1218,14 +1212,8 @@ try(msqrobAggregate(
 ))
 ```
 
-As the error message suggests, the intercept must be suppressed in
-order to fit a variable with 2 levels using ridge regression.
-
-**TODO** do we need to explain theoretically why a 1 covariate is not
-possible and why ridge is slower? I'm not convinced that showing the
-code is necessary.
-
-**TODO**: discuss/show link between ridge and mixed models? 
+As the error message suggests, either the ridge argument has to be set at FALSE to obtain an unpenalised fit, or the intercept can be suppressed in
+order to obtain a fit with two slope terms (one for each group) so as to enable the estimation of the ridge penalty. 
 
 ## Statistical inference
 
@@ -1362,8 +1350,8 @@ ggplot(inferences) +
 
 Estimated log2 fold change for HeLa proteins are closely distributed
 around 0, as expected. log2 fold changes for UPS standard proteins are
-distributed toward 1, although it is underestimated as reported
-previously [@Savitski2011-qi].
+biased towards zero probably due to ratio compression effects, as reported
+previously for labeled strategies [@Savitski2011-qi].
 
 ### Detail plots
 
@@ -1407,9 +1395,8 @@ spikein[targetProtein, , "ions"] |>
 We here show how to perform a two-step approach, where the data are 
 first summarised then modelled. We perform the same statistical
 workflow as above, but starting from the protein level model estimated
-in [the section above](#sec-tmt_protein_model)^[Note that the inference
-pipeline is exactly the same whether the model was estimated with
-`msqrob()` or `msqrobAggregate()`, and we don't need to build a new 
+in [the section above](#sec-tmt_protein_model)^[Note that the contrasts remain the same, as the fixed effect part of the model (spike-in treatment effect)is the same for the models estimated with
+`msqrob()` or `msqrobAggregate()`, so we do not need to build a new 
 contrast matrix.].
 
 ```{r}
@@ -1504,7 +1491,7 @@ rowData(spikein[["proteins_msqrob"]])[["msqrobModels"]] |>
     table()
 ```
 
-We suggest 3 strategies for dealing with these `fitError`s.
+We suggest 3 strategies for dealing with these `fitErrors`.
 
 ### Removing the random effect of sample{#sec-msqrob_refit}
 
@@ -1606,11 +1593,22 @@ potentially misleading conclusions.
 
 ### Imputation
 
-The last strategy to deal with fit errors is to impute missing values
-so that all models can be estimated. `QFeatures` provides a large
-panel of imputation strategies through `impute()`. Identifying which
+**TODO** would we not argue to avoid imputation all together? 
+
+The last popular strategy to deal with fit errors is to impute missing values
+so that all models can be estimated. 
+Note, that our general advice is to avoid imputation as this typically comes at the expense of additional and often unrealistic
+assumptions. ^[Indeed, we have shown that state-of-the-art imputation methods profoundly change the
+distribution of the intensities in bulk proteomics, which can have a detrimental impact on the downstream analysis. 
+Our take is to start from the ion or peptide intensity data as is and to model the data from the same protein together while correcting for ion/peptide species. 
+These ion/peptide-level models can either be used to directly infer differential abundance at the protein level or to obtain protein-level abundance values in the summarisation step. Note, that this approach assumes random missingness upon correction for ion/peptide species.]
+
+`QFeatures` provides a large
+panel of imputation strategies through `impute()`. 
+Identifying which
 imputation strategy is most suited for this data set is outside the
-scope of this book, and we here arbitrarily decide to use KNN
+scope of this book. 
+For illustration purposes, we here arbitrarily use KNN
 imputation.
 
 ```{r}
