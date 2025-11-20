@@ -38,6 +38,12 @@ engines. The book aims to help proteomics researchers tailoring their
 statistical analysis workflow to their specific datasets and research
 questions.
 
+```{r, echo = FALSE, out.width = "30%", fig.cap = "Add sticker licence."}
+knitr::include_graphics("figs/lfq_workflow.png")
+```
+
+**TODO** add sticker license 
+
 ## Why msqrob2?
 
 MS-based proteomics experiments often imposes a complex correlation

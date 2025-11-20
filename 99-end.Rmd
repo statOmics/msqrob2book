@@ -45,13 +45,15 @@ Used in chapter \@ref(sec-advanced).
 
 ### Francisella data set
 
-
+**TODO**
 
 ### Heart data set
 
+**TODO**
 
 ### Mouse diet data set
 
+**TODO**
 
 ## License
 
@@ -74,7 +76,7 @@ Please cite the `msqrob2` package as:
   _Molecular & Cellular Proteomics_, *15*(2), 657-668.
   doi:[10.1074/mcp.m115.055897](https://doi.org/10.1074/mcp.m115.055897).
 
-If you opt for a summarised based workflow, you can also cite: 
+If you opt for a summarisation-based workflow, you can also cite: 
 
 > Sticker A, Goeminne L, Martens L, Clement L (2020). "Robust 
   Summarization and Inference in Proteome-wide Label-free
@@ -90,17 +92,21 @@ abundant proteins in labelled experiments with arbitrarily complex
 design. bioRxiv. Published online March 29, 2024:2024.03.29.587218.
 doi:10.1101/2024.03.29.587218
 
-**TODO**: populate the citation section and 
-
 ## Session Info
 
 The following packages have been used to generate this document.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+## Load package dependencies 
 devtools::load_all()
+## Load package dependencies listed in Suggests
+read.dcf("DESCRIPTION")[, "Suggests"] |> 
+  strsplit(",\\s*") |> 
+  unlist() |> 
+  lapply(require, character.only = TRUE, quietly = TRUE) |> 
+  invisible()
 ```
 
 ```{r}
 sessionInfo()
 ```
-
