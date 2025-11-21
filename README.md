@@ -64,10 +64,17 @@ Actions](https://github.com/statOmics/msqrob2book/actions/workflows/publish_book
 
 ## License
 
-This book is distributed under a
-[Artistic-2.0](https://opensource.org/license/artistic-2-0) license.
-
-**TODO**: add logo and explicit how people can access and modify this work
+<a rel="license"
+href="http://creativecommons.org/licenses/by-sa/4.0/"><img
+alt="Creative Commons Licence" style="border-width:0"
+src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br
+/>This material is licensed under a <a rel="license"
+href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+Attribution-ShareAlike 4.0 International License</a>. You are free to
+**share** (copy and redistribute the material in any medium or format)
+and **adapt** (remix, transform, and build upon the material) for any
+purpose, even commercially, as long as you give appropriate credit and
+distribute your contributions under the same license as the original.
 
 ## Citation
 
