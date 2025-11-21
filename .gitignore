@@ -54,3 +54,8 @@ rsconnect/
 
 # Temporary data
 data/
+
+# Temporary compilation files
+figure/
+build/msqrob2book.rds
+.Rbuildignore
