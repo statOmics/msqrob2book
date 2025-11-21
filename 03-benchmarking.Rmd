@@ -707,7 +707,7 @@ types of data input. Note that the same framework could be used to
 compare different search and quantification engines. Similarly, this
 framework can also be applied to compare different instruments or
 analytical protocols and setups. In the [next
-chapter](sec-worflow_optimisation) we demonstrate how to compare the
+chapter](sec-workflow_optimisation) we demonstrate how to compare the
 impact of analysis steps for the same data.
 
 In the remainder of this section, we provide a recap on how to perform

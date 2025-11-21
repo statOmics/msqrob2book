@@ -7,11 +7,12 @@ The repository provides the source code for generating the book:
 The book is focused around the msqrob2 software.
 
 <div>
-<img src="figs/msqrob2.png" alt="msqrob2 sticker" width="300px" />
-<p style="font-size: 10px; color: grey;">Sticker license</p>
+<img src="figs/msqrob2.png" alt="msqrob2 sticker" width="200px" /> <p
+style="font-size: 10px; color: grey;">The sticker is licensed under a
+<a rel="license"
+href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+Attribution-ShareAlike 4.0 International License</a>.</p>
 </div>
-
-**TODO** add sticker license 
 
 ## Compiling the book
 
