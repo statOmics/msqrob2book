@@ -52,7 +52,7 @@ knitr::knit("CHAPTER.Rmd"", output = "build/CHAPTER.md")
 bookdown::render_book("build/index.md", output_dir = "docs")
 ```
 
-This process is automatised using `make` which you can run in a 
+This process is automated using `make` which you can run in a 
 (`bash`) shell. Credits to
 https://github.com/rstudio/bookdown/issues/1262:
 
