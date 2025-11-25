@@ -64,7 +64,7 @@ knitr::include_graphics("figs/lfq_workflow.png")
 
 ### Challenges{#sec-lfq_challenges}
 
-Behind this workflow lies several challenges that will affect the data
+This workflow presents several challenges that will affect the data
 modelling:
 
 - MS-based proteomics doesn't measure proteins directly, but their 
