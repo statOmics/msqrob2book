@@ -230,7 +230,8 @@ baselines.
 ```{r,warning=FALSE}
 pe <- aggregateFeatures(
   pe, i = "peptides_norm", fcol = "Proteins", 
-  fun = MsCoreUtils::robustSummary, na.rm = TRUE, name = "proteins"
+  fun = MsCoreUtils::medianPolish, 
+  na.rm = TRUE, name = "proteins"
 )
 ```
 
@@ -293,7 +294,9 @@ variables defined in `model` are automatically retrieved from the
 `colData` (i.e. `"tissue"`, `"location"`, and `"patient"`). 
 
 ```{r, cache=TRUE}
-pe <- msqrob(pe, i = "proteins", formula = model, robust = TRUE)
+pe <- msqrob(
+  pe, i = "proteins", formula = model, robust = TRUE, ridge = TRUE
+)
 ```
 
 **TODO** DISCUSS DO WE NEED TO USE RIDGE HERE? RESULTS REMAIN IN LINE. Slightly more features detected
@@ -411,12 +414,12 @@ We can set up the four contrasts:
 design <- model.matrix(~ location*tissue + patient, data = colData(pe))
 L <- makeContrast(
   c(
-    "tissueV = 0",
-    "tissueV + locationR:tissueV = 0",
-    "tissueV + 0.5*locationR:tissueV = 0",
-    "locationR:tissueV = 0"
+    "ridgetissueV = 0",
+    "ridgetissueV + ridgelocationR:tissueV = 0",
+    "ridgetissueV + 0.5*ridgelocationR:tissueV = 0",
+    "ridgelocationR:tissueV = 0"
   ),
-  parameterNames = colnames(design)
+  parameterNames = paste0("ridge", colnames(design))
   )
 ```
 
