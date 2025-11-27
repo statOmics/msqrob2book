@@ -813,22 +813,22 @@ model boils down to a linear model, again we suppress the index for
 protein:
 
 $$
-y_r = \mathbf{x}^T_r \boldsymbol{\beta} + \epsilon_r,
+y_i = \mathbf{x}^T_i \boldsymbol{\beta} + \epsilon_i,
 $$
 
-with $y_r$ the $\log_2$-normalised protein intensities in run r;
-$\mathbf{x}_r$ a vector with the covariate pattern for the sample in
+with $y_i$ the $\log_2$-normalised protein intensities in sample $i$ out of $N$ samples;
+$\mathbf{x}_i$ a vector with the covariate pattern for the sample in
 run $r$ encoding the intercept, treatment, potential batch effects and
 confounders; $\boldsymbol{\beta}$ the vector of parameters that model
 the association between the covariates and the outcome; and
-$\epsilon_r$ the residuals reflecting variation that is not captured
-by the fixed effects. Note that $\mathbf{x}_r$ allows for a flexible
+$\epsilon_i$ the residuals reflecting variation that is not captured
+by the fixed effects. Note that $\mathbf{x}_i$ allows for a flexible
 parameterisation of the treatment beyond a single covariate, i.e.
 including a 1 for the intercept, continuous and categorical variables
 as well as their interactions. For all models considered in this work,
 we assume the residuals to be independent and identically distributed
 (i.i.d) according to a normal distribution with zero mean and constant
-variance, i.e. $\epsilon_{r} \sim N(0,\sigma_\epsilon^2)$, that can
+variance, i.e. $\epsilon_{i} \sim N(0,\sigma_\epsilon^2)$, that can
 differ from protein to protein.
 
 We could estimate this model from the data using 
@@ -847,43 +847,43 @@ This model, however, does not model all sources of variation in the experiment a
 to incorrect conclusions. We therefore did not run the modelling command and will
 expand the model.
 
-### Effect of TMT label{#sec-random_effect}
+### Effect of run{#sec-random_effect}
 
-**TODO** DISCUSS, misschien makkelijker om label als laatste te introduceren???
-
-The data analysis of labeled experiments, e.g. using TMT multiplexing,
-has to account for label-specific effects, explicitly. If TMT label
-swaps are performed so as to avoid confounding between label and
-treatment, then the model parameters can be estimated using fixed
-label effects. Indeed, for these designs label acts as a blocking
-variable as all treatment effects can be estimated within each label.
+As label-free experiments contain only a single sample per run,
+run-specific effects will be absorbed in the residuals. However, the
+data analysis of multiplexed experiments involving multiple MS runs
+has to account for run-specific effects, explicitly. If all treatments
+are present in each run, then the model parameters can be estimated
+using fixed run effects. Indeed, for these designs run acts as a
+blocking variable as all treatment effects can be estimated within
+each run.
 
 However, for more complex designs this is no longer possible and the
 uncertainty in the estimation of the mean model parameters can involve
-both within and between TMT label variability. For these designs we
-can resort to mixed models where the label effect is modelled using
+both within and between run variability. For these designs we
+can resort to mixed models where the run effect is modelled using
 **random effects**, i.e. they are considered as a random sample from
-the population of all TMT labelling aliquotes, which are assumed to be
+the population of all possible runs, which are assumed to be
 i.i.d normally distributed with mean 0 and constant variance,
-$u_{label} \sim N(0,\sigma^2_\text{label})$. The use of random
+$u_{run} \sim N(0,\sigma^2_\text{run})$. The use of random
 effects thus models the correlation in the data, explicitly. Indeed,
-protein intensities that are measured with the same label will be
-more similar than protein intensities between labels.
+protein intensities that are measured within the same run will be
+more similar than protein intensities between runs.
 
 Hence, the model is extended to:
 
 $$
 y_{i} =
-\mathbf{x}^T_{i} \boldsymbol{\beta} + u_l^\text{label} + \epsilon_{l}
+\mathbf{x}^T_{i} \boldsymbol{\beta} + u_r^\text{run} + \epsilon_{i}
 $$
-with $y_{i}$ the normalised $\log_2$ protein intensities measured with
-label $l$ out of $L$ labels, and $u_l^\text{label}$ the effect
-introduced by the label $l$.
+with $y_{i}$ the normalised $\log_2$ protein intensities measured in sample $i$ that has been acquired in
+run $r$ out of $R$ runs, and $u_r^\text{run}$ the effect
+introduced by run $r$.
 
 We can also write the model in matrix form:
 
 $$
-\mathbf{Y} = \mathbf{X}\boldsymbol{\beta} + \mathbf{Zu}^\text{label} + \boldsymbol{\epsilon}
+\mathbf{Y} = \mathbf{X}\boldsymbol{\beta} + \mathbf{Zu}^\text{run} + \boldsymbol{\epsilon}
 $$
 with
 $$
@@ -903,10 +903,10 @@ $$
   \begin{array}{c} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_P \end{array}
 \right],
 \mathbf{Z}=\left[
-  \begin{array}{ccc}z_{1,1}&\ldots&z_{1, L}\\\vdots&&\vdots\\z_{N,1}&\ldots&z_{N,L}\end{array}
+  \begin{array}{ccc}z_{1,1}&\ldots&z_{1, R}\\\vdots&&\vdots\\z_{N,1}&\ldots&z_{N,R}\end{array}
 \right], 
-\mathbf{u}^\text{label}=\left[
-  \begin{array}{c} u^\text{label}_1 \\\vdots\\ u^\text{label}_{l} \\\vdots\\ u^\text{label}_{L}\end{array}
+\mathbf{u}^\text{run}=\left[
+  \begin{array}{c} u^\text{run}_1 \\\vdots\\ u^\text{run}_{r} \\\vdots\\ u^\text{run}_{R}\end{array}
 \right]
 $$ 
 
@@ -918,74 +918,32 @@ $$
 \boldsymbol{\Sigma}_\mathbf{Y} &=& \text{var}\left(\mathbf{Y}\right) \\
 &=& \text{var}\left(\mathbf{X}\boldsymbol{\beta} + \mathbf{Zu} + \boldsymbol{\epsilon}\right) \\
 &=& \mathbf{Z}\text{var}\left(\mathbf{u}\right)\mathbf{Z}^T + \mathbf{I}\sigma_\epsilon^2\\
-&=& \mathbf{Z}\mathbf{Z}^T\sigma^2_\text{label} + \mathbf{I}\sigma_\epsilon^2
+&=& \mathbf{Z}\mathbf{Z}^T\sigma^2_\text{run} + \mathbf{I}\sigma_\epsilon^2
 \end{array}
 $$
 
-So, we see that the correlation of the data from the same TMT label
-are correctly addressed and that the data from distinct TMT labels are
+So, we see that the correlation of the data from the same run
+are correctly addressed and that the data from distinct runs are
 assumed to be independent. Hence, the variance-covariance matrix of
 $\mathbf{Y}$ has a block diagonal structure, with as variance
-$\sigma^2_\text{label} + \sigma_\epsilon^2$ and the covariance between
-intensities from the same label equals $\sigma^2_\text{label}$.
-Suppose every label has been used for three samples and that the
-samples were order by their TMT label, then
+$\sigma^2_\text{run} + \sigma_\epsilon^2$ and the covariance between
+intensities from the same run equals $\sigma^2_\text{run}$.
+Suppose every run contains three samples, then
 
 $$
 \boldsymbol{\Sigma}_\mathbf{Y} = \left[
-\begin{array}{cccccccccc}\sigma^2_\text{label}+\sigma^2_\epsilon&\sigma^2_\text{label}&\sigma^2_\text{label}&0&0&0&\ldots&0&0&0\\
-\sigma^2_\text{label}&\sigma^2_\text{label}+\sigma^2_\epsilon&\sigma^2_\text{label}&0&0&0&\ldots&0&0&0\\
-\sigma^2_\text{label}&\sigma^2_\text{label}&\sigma^2_\text{label}+\sigma^2_\epsilon&0&0&0&\ldots&0&0&0\\
-0&0&0&\sigma^2_\text{label}+\sigma^2_\epsilon&\sigma^2_\text{label}&\sigma^2_\text{label}&\ldots&0&0&0\\
-0&0&0&\sigma^2_\text{label}&\sigma^2_\text{label}+\sigma^2_\epsilon&\sigma^2_\text{label}&\ldots&0&0&0\\
-0&0&0&\sigma^2_\text{label}&\sigma^2_\text{label}&\sigma^2_\text{label}+\sigma^2_\epsilon&\ldots&0&0&0\\
+\begin{array}{cccccccccc}\sigma^2_\text{run}+\sigma^2_\epsilon&\sigma^2_\text{run}&\sigma^2_\text{run}&0&0&0&\ldots&0&0&0\\
+\sigma^2_\text{run}&\sigma^2_\text{run}+\sigma^2_\epsilon&\sigma^2_\text{run}&0&0&0&\ldots&0&0&0\\
+\sigma^2_\text{run}&\sigma^2_\text{run}&\sigma^2_\text{run}+\sigma^2_\epsilon&0&0&0&\ldots&0&0&0\\
+0&0&0&\sigma^2_\text{run}+\sigma^2_\epsilon&\sigma^2_\text{run}&\sigma^2_\text{run}&\ldots&0&0&0\\
+0&0&0&\sigma^2_\text{run}&\sigma^2_\text{run}+\sigma^2_\epsilon&\sigma^2_\text{run}&\ldots&0&0&0\\
+0&0&0&\sigma^2_\text{run}&\sigma^2_\text{run}&\sigma^2_\text{run}+\sigma^2_\epsilon&\ldots&0&0&0\\
 \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots \\
-0&0&0&0&0&0&\dots&\sigma^2_\text{label}+\sigma^2_\epsilon&\sigma^2_\text{label}&\sigma^2_u\\
-0&0&0&0&0&0&\dots&\sigma^2_\text{label}&\sigma^2_\text{label}+\sigma^2_\epsilon&\sigma^2_\text{label}\\
-0&0&0&0&0&0&\dots&\sigma^2_\text{label}&\sigma^2_\text{label}&\sigma^2_\text{label}+\sigma^2_\epsilon\\
+0&0&0&0&0&0&\dots&\sigma^2_\text{run}+\sigma^2_\epsilon&\sigma^2_\text{run}&\sigma^2_u\\
+0&0&0&0&0&0&\dots&\sigma^2_\text{run}&\sigma^2_\text{run}+\sigma^2_\epsilon&\sigma^2_\text{run}\\
+0&0&0&0&0&0&\dots&\sigma^2_\text{run}&\sigma^2_\text{run}&\sigma^2_\text{run}+\sigma^2_\epsilon\\
 \end{array}\right]
 $$
-
-Specifying label as a random effect translates in the following code:
-
-```{r run_msqrob_protein2, eval=FALSE}
-spikein <- msqrob(
-    spikein,  i = "proteins",
-    formula = ~ Condition + ## fixed effect for experimental condition
-        (1 | Label) ## random effect for label
-    robust = TRUE, ridge = TRUE
-    )
-```
-
-This model is still incomplete and is not executed as we still need to 
-account that multiple samples are acquired within the same run.
-
-### Effect of run
-
-As label-free experiments contain only a single sample per run,
-run-specific effects will be absorbed in the residuals. However, for
-labeled experiments involving multiple samples per run, we also need to account for
-run-specific effects. We will model the run effect using random
-effects and consider that the run effects are a random sample from the
-population of all possible runs, which are assumed to be i.i.d
-normally distributed with mean 0 and constant variance,  $u_r \sim
-N(0,\sigma^{2,\text{run}})$. Protein intensities that are measured
-within the same run will be more similar than protein intensities
-between runs.
-
-Hence, the model is extended to:
-
-$$
-y_{rl} =
-\mathbf{x}^T_{rl} \boldsymbol{\beta} + u_l^\text{label} + u_r^\text{run} +
-\epsilon_{rl}
-$$
-with $y_{rl}$ the normalised $\log_2$ protein intensities in run $r$
-and label $l$, $u_l^\text{label}$ the effect introduced by
-the label $l$, and $u_r^\text{run}$ the effect for MS run
-$r$. Note that the $rl$ indexing is similar to the previous $i$ 
-indexing, but we now explicitly define the observational unit as the
-sample that has been measured in run $r$ and labelled with label $l$.
 
 This translates in the following code:
 
@@ -993,15 +951,55 @@ This translates in the following code:
 spikein <- msqrob(
     spikein,  i = "proteins",
     formula = ~ Condition + ## fixed effect for experimental condition
-        (1 | Label) + ## random effect for label
         (1 | Run), ## random effect for MS run
     robust = TRUE, ridge = TRUE
-    )
+)
+```
+
+This model is still incomplete and is not executed as we still need to 
+account that multiple samples are acquired within the same run thanks to TMT labelling.
+
+### Effect of TMT label
+
+Acquiring multiple samples in a single run is possible because the
+peptides from each samples are labelled with chemical tags^[Recall the
+[section above](#sec-tmt_workflow)).]. Peptide labelling can introduce
+label-specific effects that also need to be modelled. In principle,
+the effect of adding a chemical label to a peptide should be
+reproducible from experiment to experiment, and hence could be
+modelled using a fixed effect (given that TMT label swaps are
+performed so as to avoid confounding between label and treatment).
+However, TMT aliquotes contain impurities during production and
+these impurities may lead to unreproducible effects. Hence, we also
+include a random effect to account for labelling effects, i.e.
+$u^\text{label}_l \sim N(0, \sigma^{2,\text{label}})$. The model thus
+extends to:
+
+$$
+y_{rl} =
+\mathbf{x}^T_{rl} \boldsymbol{\beta} +
+u_r^\text{run} + u_l^\text{label} + \epsilon_{rlm}
+$$
+with $y_{rl}$ the normalised $\log_2$ protein intensities in run $r$,
+labelled with TMT $l$, $u_l^\text{label}$ the effect introduced by
+label $l$.  Note that the $rl$ indexing is similar to the previous $i$
+indexing, but we now explicitly define the observational unit as the
+sample that has been measured in run $r$ and labelled with label $l$.
+
+Specifying label as a random effect translates in the following code:
+
+```{r run_msqrob_protein2, eval=FALSE}
+spikein <- msqrob(
+    spikein,  i = "proteins",
+    formula = ~ Condition + ## fixed effect for experimental condition
+        (1 | Run) + ## random effect for MS run
+        (1 | Label), ## random effect for label
+    robust = TRUE, ridge = TRUE
+)
 ```
 
 This model is still incomplete and is not executed as we still need to 
 account that each mixture has been replicated three times.
-
 
 ### Effect of replication{#sec-tmt_protein_model}
 
@@ -1015,11 +1013,13 @@ extends to:
 
 $$
 y_{rlm} =
-\mathbf{x}^T_{rlm} \boldsymbol{\beta} +  u_{l}^\text{label} +
-u_r^\text{run} + u_m^\text{mix} + \epsilon_{rlm}
+\mathbf{x}^T_{rlm} \boldsymbol{\beta} +
+u_r^\text{run} + u_l^\text{label} + u_m^\text{mix} + \epsilon_{rlm}
 $$
 
-with $m$ the index for mixture.
+with $y_{rm}$ the normalised $\log_2$ protein intensities in run $r$
+with label $l$ in mixture $m$, $u_m^\text{mix}$ the effect introduced by
+mixture $m$. 
 
 The model translates to the following code:
 
@@ -1027,9 +1027,9 @@ The model translates to the following code:
 spikein <- msqrob(
     spikein,  i = "proteins",
     formula = ~ Condition + ## fixed effect for experimental condition
-        (1 | Label) + ## random effect for label
-        (1 | Run) + ## random effect for MS run
-        (1 | Mixture), ## random effect for mixture
+      (1 | Run) + ## random effect for MS run
+      (1 | Label) + ## random effect for label
+      (1 | Mixture), ## random effect for mixture
     robust = TRUE, ridge = TRUE,
     overwrite = TRUE
 )
@@ -1039,7 +1039,7 @@ This model provides a sensible representation of the sources of
 variation in the data if we were to model the data at the protein
 level. This time, we executed the code and will use the result in a
 later section.  However, we found that modelling protein-level effects
-from ion-level data leads to improved performance. This will require
+from ion-level data leads to improved performance [@Vandenbulcke2025-sj]. This will require
 an additional model expansion.
 
 ### Ion-level modelling{#sec-tmt_ion_model}
@@ -1060,8 +1060,8 @@ N(0,\sigma^{2,\text{label}})$. The model then becomes:
 
 $$
 y_{rlmp} =
-\mathbf{x}^T_{rlmp} \beta + u_{l}^\text{label} +
-u_r^\text{run} + u_m^\text{mix}  +
+\mathbf{x}^T_{rlmp} \beta + u_r^\text{run} + u_{l}^\text{label} +
+u_m^\text{mix}  +
 u_{rl}^\text{label} + u_{rp}^\text{PSM} + \epsilon_{rlmp}
 $$
 with $y_{rlmp}$ the $\log_2$-normalised PSM intensities for run $r$
@@ -1491,7 +1491,7 @@ rowData(spikein[["proteins_msqrob"]])[["msqrobModels"]] |>
     table()
 ```
 
-We suggest 3 strategies for dealing with these `fitErrors`.
+There are 3 possible strategies for dealing with these `fitErrors`.
 
 ### Removing the random effect of sample{#sec-msqrob_refit}
 
@@ -1593,15 +1593,13 @@ potentially misleading conclusions.
 
 ### Imputation
 
-**TODO** would we not argue to avoid imputation all together? 
-
 The last popular strategy to deal with fit errors is to impute missing values
 so that all models can be estimated. 
 Note, that our general advice is to avoid imputation as this typically comes at the expense of additional and often unrealistic
-assumptions. ^[Indeed, we have shown that state-of-the-art imputation methods profoundly change the
+assumptions^[Indeed, we have shown that state-of-the-art imputation methods profoundly change the
 distribution of the intensities in bulk proteomics, which can have a detrimental impact on the downstream analysis. 
 Our take is to start from the ion or peptide intensity data as is and to model the data from the same protein together while correcting for ion/peptide species. 
-These ion/peptide-level models can either be used to directly infer differential abundance at the protein level or to obtain protein-level abundance values in the summarisation step. Note, that this approach assumes random missingness upon correction for ion/peptide species.]
+These ion/peptide-level models can either be used to directly infer differential abundance at the protein level or to obtain protein-level abundance values in the summarisation step. Note, that this approach assumes random missingness upon correction for ion/peptide species.].
 
 `QFeatures` provides a large
 panel of imputation strategies through `impute()`. 
