@@ -622,9 +622,9 @@ not depend on the set of proteins considered.
 Next to correctly prioritising the differentially abundant proteins,
 another object is to correctly estimate the log2-fold change between
 conditions. Since every condition contains E. Coli proteins that have
-been spiked in experimentally controlled amounts, we know real log2-fold change between any two conditions. We will explore
+been spiked in experimentally controlled amounts, we know the real log2-fold change between any two conditions. We will explore
 the model accuracy, i.e. how close the estimations are from the
-real value on average, and the model precision, i.e. how narrow
+true value on average, and the model precision, i.e. how narrow
 the estimations are spread around the average estimation. In this data
 set, there are two target values. For E. Coli proteins, the expected
 value is the experimentally induced log2-fold change. For human
