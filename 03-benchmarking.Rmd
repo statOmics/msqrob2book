@@ -617,7 +617,7 @@ data]({#sec-appendix3_1) or when considering [proteins estimated by
 all approaches]({#sec-appendix3_2), indicating that the conclusions do
 not depend on the set of proteins considered. 
 
-### Fold change boxplots
+### Fold change boxplots{#sec-benchmark_with_boxplots}
 
 Next to correctly prioritising the differentially abundant proteins,
 another object is to correctly estimate the log2-fold change between
