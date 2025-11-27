@@ -90,7 +90,7 @@ missingness not at random. Next to that, many reasons can lead to
 ions not being selected or identified irrespective of their 
 quantification value leading to missingness that is not related to
 its quantitative value. This is referred to as missingness 
-completely at random. The missingness issue is not negligible: **TODO** CALCULATE MISSINGNESS FOR CHEN DATA. SHOULD WE NOT DO THIS ON THE FLY?
+completely at random. The missingness issue is not negligible as we shall see upon reading the data.
 - The identification issues lead to unbalanced peptide missingness
 across samples, and the patterns of missing values are potentially
 different for every peptide, highlighting the need for an
@@ -474,7 +474,7 @@ detected)
 - Razor peptides: non-unique peptides assigned to the protein group 
 with the most other peptides 
 - Contaminants
-- Peptides few identifications
+- Peptides with few identifications
 - Proteins that are only identified with one or a few peptides
 - FDR of identification
 - ...
@@ -530,7 +530,33 @@ spikein <- filterFeatures(spikein, ~ Reverse != "+" & ## Remove decoys
 
 #### Remove highly missing peptides
 
-**TODO** DO WE USE THE SAME STRATEGY AS IN EDGER? Observe in at least as many samples as in the smallest group or in the minimum of 1/leverage for more complex designs?  minSampleSize <- 1/max(hat(design))
+The data are characterised by a high proportion of missing values as
+reported by `nNA()` from the `QFeatures` package. The function
+computes the number and the proportion of missing values across
+peptides, samples or for the whole data set and return a list of three
+tables called `nNArows`, `nNAcols`, and `nNA`, respectively.
+
+```{r}
+nNaRes <- nNA(spikein, "peptides")
+range(nNaRes$nNAcols$pNA)
+```
+
+The samples contain between `r round(min(nNaRes$nNAcols$pNA)*100, 1)`%
+and `r round(max(nNaRes$nNAcols$pNA)*100, 1)`% missing values. The
+missingness within each peptide is more variable, with most peptides
+found accross all samples (`nNA` is 0) and other that could not be
+quantified in any sample (`nNA` is `r ncol(spikein[[1]])`), as depicted
+by the histogram below.
+
+```{r}
+data.frame(nNaRes$nNArows) |> 
+  ggplot() +
+  aes(x = nNA) +
+  geom_histogram(bins = 15) +
+  ggtitle("Number of missing values for each peptide")
+```
+
+**TODO** assigned:Lieven DO WE USE THE SAME STRATEGY AS IN EDGER? Observe in at least as many samples as in the smallest group or in the minimum of 1/leverage for more complex designs?  minSampleSize <- 1/max(hat(design))
 
 We keep peptides that were observed at last 4 times out of the $n
 = 20$ samples, so that we can estimate the peptide characteristics. We tolerate the following proportion of NAs:
@@ -663,7 +689,7 @@ The objective of summarisation (also referred to as aggregation) is to
 summarise the peptide-level intensities into a protein expression value.
 We illustrate the motivation for summarisation using all peptide-level data for
 one of the E. coli proteins. We also focus on the lowest (a) and highest (e)
-spike-in conditions. We illustrate the different peptides on the
+spike-in conditions. The different peptides are shown on the
 x axis and plot their log2 normalised intensities across samples on y
 axis. All the points belonging to the same sample are linked through a
 grey line.
@@ -801,21 +827,6 @@ spikein["P0AEE5", , c("peptides_norm", "proteins")] |> ## 1.
   theme(axis.text.x = element_blank())
 ```
 
-### Protein filtering
-
-**TODO** Again use the same edgeR rationale to define the minimum sample size? 
-
-As a final step, we filter the protein data to keep proteins if they
-are picked up in at least 4 samples so that most proteins have
-observations in more than one group. So we tolerate a proportion of
-$\frac{n - 4}{n}$ NAs.
-
-```{r}
-nObs <- 4
-n <- ncol(spikein[["proteins"]])
-spikein <- filterNA(spikein, i = "proteins", pNA = (n - nObs) / n)
-```
-
 The data processing is complete.
 
 ```{r basics_qfeatures_plot, fig.cap="Overview of the `QFeatures` object and its processed sets."}
@@ -947,7 +958,7 @@ spikein <- msqrob(
 We enable M-estimation (`robust = TRUE`) for improved robustness
 against outliers. We also enable ridge regression (`ridge = TRUE`).
 Ridge regression stabilises the parameter estimation of fixed effects. 
-**However, this is only possible if there are more than two slope terms in the model, e.g. designs with more than two groups or designs involving multiple covariates.** The next chapter provides more details on [robust
+However, this is **only possible if there are more than two slope terms** in the model, e.g. designs with more than two groups or designs involving multiple covariates.** The next chapter provides more details on [robust
 regression](#sec-robust) and [ridge regression](#sec-ridge).
 
 The fitting results are available in the `msqrobModels` column of the
@@ -1008,7 +1019,7 @@ params[grep("condition", names(params))]
 
 For this protein we can see that the effects of condition are small, as
 expected since the protein is part of the human constant background.
-Note, however, that because of the ridge penalisation they are shrunken to zero.
+Note that because of the ridge penalisation they are shrunken to zero.
 We now explore the parameters for one of the E. coli
 proteins.
 
@@ -1063,7 +1074,7 @@ spikein <- hypothesisTest(spikein, i = "proteins", contrast = L)
 
 The results are stored in the set containing the model, here
 `proteins`. We retrieve the results from the `rowData`.
-Note, that for this spike-in study we also know the ground truth, so we also add variable `isEcoli` to indicate if the protein is spiked 
+Note, that for this spike-in study we know the ground truth, so we also add variable `isEcoli` to indicate if the protein is spiked 
 (from E. coli).
 
 ```{r}
