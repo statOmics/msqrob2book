@@ -389,21 +389,22 @@ accounted for by the model:
    diet type can be different whether the mice were fed for a short or
    long duration.
 
-2. **Biological replicate effect**: the experiment involves biological
+2. **Pseudo-replication effect**: the experiment involves biological
    replication as the adipose tissue extracts were sampled from 20
-   mice (5 mice per Diet x Duration combination). Replicate-specific
-   effects occurs due to uncontrollable factors, such as social
-   behavior, feeding behavior, physical activity, occasional
-   injury,... Two mice will never provide exactly the same sample material,
-   even were they genetically identical and manipulated identically.
-   These effects are typically modelled as random effects which are
-   considered as a random sample from the population of all possible
-   mice and are assumed to be i.i.d normally distributed with mean 0
-   and constant variance, $u_{mouse} \sim
+   mice (5 mice per Diet x Duration combination). The tissue from each
+   mouse was prepared in a single TMT mixture, but each mixture was
+   acquired in 9 fractions, so we have 9 measures for each mice. While
+   the treatment is applied at the mice level (experimental unit), we
+   actually measure 9 fractions as an outcome (observational unit). We
+   refer to **pseudo-replication** when the observational unit is
+   different from the experimental unit. We therefore need to account
+   for the potential increased correlation among pseudo-replicates
+   from the same mouse compared to between different mice. These
+   effects are typically modelled as [random
+   effects](#sec-random_effect), and are assumed to be i.i.d normally
+   distributed with mean 0 and constant variance, $u_{mouse} \sim
    N(0,\sigma^{2,\text{mouse}})$. The use of random effects thus
-   models the correlation in the data, explicitly. We expect that
-   intensities from the same mouse are more alike than intensities
-   between mice. (**TODO** DISCUSS REWRITE MORE CLEARLY TO INDICATE THAT PSEUDOREPLICATIONS OCCURS AT THE MOUSE LEVEL)
+   models the correlation in the data, explicitly.
 
 ```{r}
 length(unique(mouse$BioReplicate))

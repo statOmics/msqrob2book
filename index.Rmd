@@ -36,6 +36,10 @@ different biological questions starting from datasets with different
 experimental designs, acquisition strategies, instruments, and search
 engines. The book aims to help proteomics researchers and data analysists tailoring their statistical analysis workflow to their specific datasets and research questions.
 
+```{r, echo = FALSE, out.width = "30%", fig.cap = "The sticker is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)."}
+knitr::include_graphics("figs/lfq_workflow.png")
+```
+
 ## Why msqrob2?
 
 MS-based proteomics experiments often imposes a complex correlation
@@ -92,11 +96,16 @@ users that want to understand how to apply the guidelines and
 recommendations to their analyses.
 
 - Chapter \@ref(sec-benchmarking) explains how to conduct a 
-  benchmarking experiment to assess different data analysis workflows.
-  As an example, the chapter compares the performance when starting
-  from the different MaxQuant input files: the evidence file, the
-  peptides file, and the protein-group file.
-- Chapter **TODO** summarise Stijn's chapter.
+  benchmarking experiment to assess the impact of starting from
+  different data sources. As an example, the chapter compares the
+  performance when starting from the different MaxQuant input files:
+  the evidence file, the peptides file, and the protein-group file.
+- Chapter \@ref(sec-workflow_optimisation) demonstrates how to optimise
+  a data analysis workflows on one data set. As an example, the 
+  chapter compares the performance of two normalisation approaches
+  (median of ratios and median centering) in combination with three
+  summarisation approaches (median, median polish, and robust
+  regression).
 
 ### Use cases{#sec-overview_use_cases}
 
