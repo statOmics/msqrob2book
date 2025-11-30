@@ -13,7 +13,7 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-11-16" />
+<meta name="date" content="2025-11-30" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -187,11 +187,11 @@ div.csl-indent {
 </ul>
 <a href="sec-advanced.html" id="toc-sec-advanced"><span class="toc-section-number">3</span> Advanced statistical analysis with msqrob2</a>
 <a href="sec-benchmarking.html" id="toc-sec-benchmarking"><span class="toc-section-number">4</span> Benchmarking workflows</a>
-<a href="sec-worflow_optimisation.html#sec-worflow_optimisation" id="toc-sec-worflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
+<a href="sec-workflow_optimisation.html#sec-workflow_optimisation" id="toc-sec-workflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
 <a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
 <a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
 <a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
-<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Usefull links and session information</a>
+<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Useful links and session information</a>
 </div>
 </li>
 </ul>
@@ -206,21 +206,18 @@ div.csl-indent {
 <p>This chapter explains the main concepts for statistical analysis of
 proteomics data using <code>msqrob2</code>. To illustrate these concepts, we will
 use using a publicly available spike-in study with PRIDE identifier
-PXD003881 <span class="citation">(<label for="tufte-mn-4" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">Shen et al. 2018<span class="marginnote">Shen, Xiaomeng, Shichen Shen, Jun Li, Qiang Hu, Lei Nie, Chengjian Tu, Xue Wang, et al. 2018. <span>“<span>IonStar</span> Enables High-Precision, Low-Missing-Data Proteomics Quantification in Large Biological Cohorts.”</span> <em>Proc. Natl. Acad. Sci. U. S. A.</em> 115 (21): E4767–76.</span>)</span>. This is an excellent example dataset
-since it contains ground truth information about which proteins are
-differentially abundant, enabling us to objectively demonstrate the
-performance of <code>msqrob2</code>. This dataset has a relatively simple
+PXD003881 <span class="citation">(<label for="tufte-mn-4" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">Shen et al. 2018<span class="marginnote">Shen, Xiaomeng, Shichen Shen, Jun Li, Qiang Hu, Lei Nie, Chengjian Tu, Xue Wang, et al. 2018. <span>“<span>IonStar</span> Enables High-Precision, Low-Missing-Data Proteomics Quantification in Large Biological Cohorts.”</span> <em>Proc. Natl. Acad. Sci. U. S. A.</em> 115 (21): E4767–76.</span>)</span>. This dataset contains ground truth information about which proteins are differentially abundant, enabling us to objectively demonstrate the key aspects of differential proteomics data analysis and their implementation in <code>msqrob2</code>. This dataset has a relatively simple
 experimental design (which does not imply that the analysis is easy),
 allowing us to assess differential abundance using a data analysis
-workflow with a single factor for the spike-in condition. For a more
-advanced analysis with a more complex expiremental design, we refer to
-our <a href="sec-advanced.html#sec-advanced">advanced concepts chapter</a></p>
+workflow with a single factor for the spike-in condition. For more
+advanced analyses with a more complex experimental design, we refer to
+our <a href="sec-advanced.html#sec-advanced">advanced concepts chapter</a> and to the case studies.</p>
 <div id="background" class="section level2" number="2.1">
 <h2>
 <span class="header-section-number">2.1</span> Background<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('background')" onmouseout="reset_tooltip('background-tooltip')"><span class="tooltiptext" id="background-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h2>
 <p>Mass spectrometry (MS)-based proteomics aims at characterising the
-proteome abundance of biological samples. The most popular approach is
+proteome abundance of biological samples. A popular approach is
 label-free quantification (LFQ), where every sample is analysed in a
 separate MS run. This section provides an overview of the analytical
 workflow and its main challenges regarding data modelling.</p>
@@ -246,7 +243,7 @@ referred to as data dependent acquisition (DDA).</span>. This process is
 repeated for every sample so that every sample is acquired in one MS
 run. This provides the ion’s mass fingerprint. For LFQ workflows, the
 accumulated MS1 intensity over time, also known as the area under the
-curve, around the target mass is used as a quantitification measure.
+curve, around the target mass is used as a quantification measure.
 On the other hand, the ion mass fingerprint, called the MS2 spectrum,
 enables computational identification of the corresponding peptide
 using search engines (e.g. Andromeda has been used for this data set)
@@ -271,12 +268,12 @@ Overview of an LFQ-based proteomics workflow.
 <p>Behind this workflow lies several challenges that will affect the data
 modelling:</p>
 <ul>
-<li>MS-based proteomics doesn’t measure proteins directly, but their
+<li>MS-based proteomics does not measure proteins directly, but their
 constituting <strong>peptide ions</strong>. The protein-level information needs
 to be reconstructed from the ion data. In this tutorial, we will
 start from the peptide data, which has been constructed from the ion
 data by MaxQuant.</li>
-<li>All peptides cannot be ionised with the same efficiency. Poor
+<li>All peptides do not ionise with the same efficiency. Poor
 ionisation will lead to reduced signal as less ions will hit the
 detector, hence leading to a huge variability in intensity among
 different peptide species, even when they originate from the same
@@ -286,7 +283,7 @@ errors<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><in
 this tutorial</span>. PSM misidentification leads to the assignment of a
 quantitative values from another peptide with likely another
 ionisation efficiency and relative abundance. Hence this misassigned
-value will become an outlier.</li>
+values often lead to outliers.</li>
 <li>Moreover, the ion selection for MS2 depends on its
 intensity<label for="tufte-sn-4" class="margin-toggle sidenote-number">4</label><input type="checkbox" id="tufte-sn-4" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">4</span> Recall that only the top most intense ion peaks are send
 for MS2</span>. Therefore, the chance to measure and, subsequently,
@@ -297,9 +294,7 @@ missingness not at random. Next to that, many reasons can lead to
 ions not being selected or identified irrespective of their
 quantification value leading to missingness that is not related to
 its quantitative value. This is referred to as missingness
-completely at random. The missingness issue is not negligible: only
-41% of all proteins are quantified across all samples, and the
-number drops to 6.6% when considering peptides.</li>
+completely at random. The missingness issue is not negligible as we shall see upon reading the data.</li>
 <li>The identification issues lead to unbalanced peptide missingness
 across samples, and the patterns of missing values are potentially
 different for every peptide, highlighting the need for an
@@ -318,7 +313,7 @@ answering biological questions.</li>
 </h3>
 <p>The samples were synthetically constructed, starting from a
 trypsin-digested human background, hence human proteins are known to
-be constant across samples E. coli lysates were spiked at five
+be constant across samples. E. coli lysates were spiked at five
 different concentrations (3%, 4.5%, 6%, 7.5% and 9% wt/wt). So the E.
 coli proteins are known to be differentially abundant, and we know
 exactly in what amount they differ. There are four replicates per
@@ -339,8 +334,8 @@ protein-level differences between samples. To achieve this goal, we
 will apply an <code>msqrob2</code> workflow, a data processing and modelling
 workflow dedicated to the analysis of MS-based proteomics datasets. We
 will demonstrate how the workflow can retrieve the spiked-in proteins
-from the E. coli data set, along with explanation of the key
-statistical concepts behind proteomics data analysis. Before delving
+from the E. coli data set, while introducing the key
+statistical concepts of differential proteomics data analysis. Before delving
 into the analysis, we first set the concentrations for the different
 spike-ins, and will prepare our computational environment.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="sec-basics.html#cb2-1" tabindex="-1"></a>concentrations <span class="ot">&lt;-</span> (<span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">*</span> <span class="fl">1.5</span></span>
@@ -1525,7 +1520,7 @@ as opposed to the “long format” (eg, the <a href="sec-advanced.html#sec-psm_
 <p>Each row in the annotation table contains information about one
 sample. The columns contain various descriptors about the sample, such
 as the name of the sample or the MS run, the treatment (here the
-spike-in condition), the lab that acquired the sample or any other
+spike-in condition), or any other
 biological or technical information that may impact the data quality
 or the quantification. Without an annotation table, no analysis
 can be performed. The sample annotations are generated by the
@@ -2672,7 +2667,7 @@ using <code>getWithColData()</code>, which extracts the set of interest (like
 </tbody>
 </table>
 <p>We can also retrieve the quantitative values for each set using
-<code>assays()</code>.</p>
+<code>assays()</code>. Here we only show the first 5 rows and columns of the intensity matrix.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="sec-basics.html#cb22-1" tabindex="-1"></a><span class="fu">assay</span>(spikein[[<span class="dv">1</span>]])[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code></pre></div>
 <pre><code>##                        Intensity.a1 Intensity.a2 Intensity.a3 Intensity.a4
 ## AAAAAAAAAAAAAAAGAGAGAK      6378300            0            0            0
@@ -2731,7 +2726,7 @@ options).</p>
 <h3>
 <span class="header-section-number">2.4.2</span> Log2 transformation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('sec-log2')" onmouseout="reset_tooltip('sec-log2-tooltip')"><span class="tooltiptext" id="sec-log2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
-<p>We need to log2 transform the intensities. We illustrate the rationale
+<p>We typically start a MS-based proteomics data analysis by log2 transforming the intensities. We illustrate the rationale
 using the spike-in data. For this, we perform a short data
 manipulation pipeline:</p>
 <ol style="list-style-type: decimal">
@@ -2749,10 +2744,10 @@ include <code>Mixture</code> and <code>TechRepMixture</code> for filtering and c
 </ol>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="sec-basics.html#cb26-1" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">longForm</span>(spikein, <span class="at">colvars =</span> <span class="fu">colnames</span>(<span class="fu">colData</span>(spikein))) <span class="sc">|&gt;</span> <span class="do">## 1.</span></span>
 <span id="cb26-2"><a href="sec-basics.html#cb26-2" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> <span class="do">## 2.</span></span>
-<span id="cb26-3"><a href="sec-basics.html#cb26-3" tabindex="-1"></a>  <span class="fu">filter</span>(rowname <span class="sc">==</span> <span class="st">"AEMSEYLFDK"</span>)</span></code></pre></div>
+<span id="cb26-3"><a href="sec-basics.html#cb26-3" tabindex="-1"></a>  <span class="fu">filter</span>(rowname <span class="sc">==</span> <span class="st">"AEMSEYLFDK"</span>) <span class="do">## 3.</span></span></code></pre></div>
 <p>Next, we visualise the data using <code>ggplot2</code>. We will show the
 intensities and log2-intensities for one of the peptides, AALEELVK, in
-function of the E. coli spike-in concentration. We first define a common
+function of the known E. coli spike-in concentration. We first define a common
 plot from which we generate two plots, one without and the other with
 log2 transformation of the quantitative values.</p>
 <div class="float">
@@ -2760,20 +2755,21 @@ log2 transformation of the quantitative values.</p>
 </div>
 <p>We can see that the variation around the mean for each concentration slightly increases as the mean increases. This is known as heteroskedasticity.
 We will later see that <code>msqrob2</code> assumes that variance of the error
-should be consistent across the different conditions. Upon,
-log2-transformation we can see that the problem of unequal variation
+is equal across the different conditions. Upon,
+log2-transformation we can see that the problem of unequal variability
 is solved.</p>
 <p>Another advantages of log2-transformation is that it provides a scale
 that directly relates to biological interpretation. In biology, a
 change induced by some condition often results in a fold change in
 concentration. Interestingly, the log2 fold change (logFC), which is
-the log of the ratio between two conditions, is identical to the
+the log2 of the ratio between two conditions, is identical to the
 difference between the log of each condition.</p>
 <p><span class="math display">\[log_2FC_{b-a} = log_2b - log_2a = log_2 \frac{b}{a}\]</span></p>
 <p>This simplifies the modelling since the effects are now additive and
-it simplifies the interpretation since a logFC of 1 means that the
-abundances are <span class="math inline">\(2\times\)</span> higher in <span class="math inline">\(b\)</span> than in <span class="math inline">\(a\)</span>, a logFC of 2
-means an increase of <span class="math inline">\(4\times\)</span>, for instance.</p>
+it provides a straightforward interpretation, i.e. a logFC of 1 means that the
+abundances are on average <span class="math inline">\(2\times\)</span> higher in <span class="math inline">\(b\)</span> than in <span class="math inline">\(a\)</span>, a logFC of 2
+means an average increase of <span class="math inline">\(4\times\)</span>, for instance.
+Also, note that the averages calculated at the log2-scale have the interpretation of log2-transformed geometric means.</p>
 <p>We perform log2-transformation with <code>logTransform()</code> from the
 <code>QFeatures</code> package.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="sec-basics.html#cb27-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(</span>
@@ -2794,7 +2790,7 @@ detected)</li>
 <li>Razor peptides: non-unique peptides assigned to the protein group
 with the most other peptides</li>
 <li>Contaminants</li>
-<li>Peptides few identifications</li>
+<li>Peptides with few identifications</li>
 <li>Proteins that are only identified with one or a few peptides</li>
 <li>FDR of identification</li>
 <li>…</li>
@@ -2806,7 +2802,7 @@ each feature (row) in each set across the object. If the filter
 returns <code>TRUE</code>, the corresponding row is retained, otherwise it is
 removed. Defining a filter through a formula offers a flexible
 approach, allowing for any customised filter. This dataset requires an
-extensive PSM filtering which is an ideal use case to demonstrate the
+extensive PSM filtering, which is an ideal use case to demonstrate the
 customisation of a filtering workflow.</p>
 <div id="remove-failed-protein-inference" class="section level4" number="2.4.3.1">
 <h4>
@@ -2837,22 +2833,45 @@ contaminants are human or animal keratins (deposited by the
 experimenter) or trypsin (used for protein digestion). It is important
 to remove these peptides before performing statistical modelling,
 otherwise these proteins will be accounted for during the multiple
-test adjustment which will cause an unnecessary decrease of
-statistical power. Note, that the column name of the contaminants in the peptides file differs according to the MaxQuant version. In our peptide.txt the contaminants are indicated in the column <code>Potential.contaminant</code>.</p>
+test adjustment, which will cause an unnecessary decrease of
+statistical power. Note, that the column name of the contaminants in the peptides file differs according to the MaxQuant version. In our peptide.txt file decoys and contaminants are indicated with a “+” character in the column <code>Reverse</code> and <code>Potential.contaminant</code>, respectively.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="sec-basics.html#cb29-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(spikein, <span class="sc">~</span> Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> <span class="do">## Remove decoys</span></span>
 <span id="cb29-2"><a href="sec-basics.html#cb29-2" tabindex="-1"></a>                            Potential.contaminant <span class="sc">!=</span> <span class="st">"+"</span>) <span class="do">## Remove contaminants</span></span></code></pre></div>
 </div>
 <div id="remove-highly-missing-peptides" class="section level4" number="2.4.3.3">
 <h4>
 <span class="header-section-number">2.4.3.3</span> Remove highly missing peptides</h4>
+<p>The data are characterised by a high proportion of missing values as
+reported by <code>nNA()</code> from the <code>QFeatures</code> package. The function
+computes the number and the proportion of missing values across
+peptides, samples or for the whole data set and return a list of three
+tables called <code>nNArows</code>, <code>nNAcols</code>, and <code>nNA</code>, respectively.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="sec-basics.html#cb30-1" tabindex="-1"></a>nNaRes <span class="ot">&lt;-</span> <span class="fu">nNA</span>(spikein, <span class="st">"peptides"</span>)</span>
+<span id="cb30-2"><a href="sec-basics.html#cb30-2" tabindex="-1"></a><span class="fu">range</span>(nNaRes<span class="sc">$</span>nNAcols<span class="sc">$</span>pNA)</span></code></pre></div>
+<pre><code>## [1] 0.2196928 0.2649294</code></pre>
+<p>The samples contain between 22%
+and 26.5% missing values. The
+missingness within each peptide is more variable, with most peptides
+found accross all samples (<code>nNA</code> is 0) and other that could not be
+quantified in any sample (<code>nNA</code> is 20), as depicted
+by the histogram below.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="sec-basics.html#cb32-1" tabindex="-1"></a><span class="fu">data.frame</span>(nNaRes<span class="sc">$</span>nNArows) <span class="sc">|&gt;</span> </span>
+<span id="cb32-2"><a href="sec-basics.html#cb32-2" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb32-3"><a href="sec-basics.html#cb32-3" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> nNA) <span class="sc">+</span></span>
+<span id="cb32-4"><a href="sec-basics.html#cb32-4" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="sec-basics.html#cb32-5" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Number of missing values for each peptide"</span>)</span></code></pre></div>
+<div class="float">
+<img src="figure/unnamed-chunk-30-1.png" alt="plot of chunk unnamed-chunk-30"><div class="figcaption">plot of chunk unnamed-chunk-30</div>
+</div>
+<p><strong>TODO</strong> assigned:Lieven DO WE USE THE SAME STRATEGY AS IN EDGER? Observe in at least as many samples as in the smallest group or in the minimum of 1/leverage for more complex designs? minSampleSize &lt;- 1/max(hat(design))</p>
 <p>We keep peptides that were observed at last 4 times out of the <span class="math inline">\(n = 20\)</span> samples, so that we can estimate the peptide characteristics. We tolerate the following proportion of NAs:
 <span class="math inline">\(\text{pNA} = \frac{(n - 4)}{n} = 0.8\)</span>, so we keep peptides that
 are observed in at least 20% of the samples, which corresponds to one treatment condition. This is an arbitrary
 value that may need to be adjusted depending on the experiment and the
 data set.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="sec-basics.html#cb30-1" tabindex="-1"></a>nObs <span class="ot">&lt;-</span> <span class="dv">4</span></span>
-<span id="cb30-2"><a href="sec-basics.html#cb30-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(spikein[[<span class="st">"peptides_log"</span>]])</span>
-<span id="cb30-3"><a href="sec-basics.html#cb30-3" tabindex="-1"></a>(spikein <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(spikein, <span class="at">i =</span> <span class="st">"peptides_log"</span>, <span class="at">pNA =</span> (n <span class="sc">-</span> nObs) <span class="sc">/</span> n))</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="sec-basics.html#cb33-1" tabindex="-1"></a>nObs <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb33-2"><a href="sec-basics.html#cb33-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(spikein[[<span class="st">"peptides_log"</span>]])</span>
+<span id="cb33-3"><a href="sec-basics.html#cb33-3" tabindex="-1"></a>(spikein <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(spikein, <span class="at">i =</span> <span class="st">"peptides_log"</span>, <span class="at">pNA =</span> (n <span class="sc">-</span> nObs) <span class="sc">/</span> n))</span></code></pre></div>
 <pre><code>## An instance of class QFeatures (type: bulk) with 2 sets:
 ## 
 ##  [1] peptides: SummarizedExperiment with 30661 rows and 20 columns 
@@ -2875,21 +2894,19 @@ intensity distribution. We can this explore as follows:</p>
 performed using <code>QFeatures</code>’ 3-way subsetting<label for="tufte-sn-8" class="margin-toggle sidenote-number">8</label><input type="checkbox" id="tufte-sn-8" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">8</span> We will explain this
 with more details at the end of the <a href="sec-basics.html#sec-summarisation">summarisation step</a></span>.</li>
 <li>We use <code>longForm()</code> to convert the <code>QFeatures</code> object into a long
-table, including <code>lab</code> and <code>concentration</code> for filtering and
+table, including <code>condition</code> and <code>concentration</code> for filtering and
 colouring.</li>
 <li>We visualise the density of the quantitative values within each
-sample. We colour each sample based on its spike-in condition.
-Remember that each spike-in concentration has been acquired in
-triplicate for each lab.</li>
+sample. We colour each sample based on its spike-in condition.</li>
 </ol>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="sec-basics.html#cb32-1" tabindex="-1"></a>spikein[, , <span class="st">"peptides_log"</span>] <span class="sc">|&gt;</span> <span class="do">## 1.</span></span>
-<span id="cb32-2"><a href="sec-basics.html#cb32-2" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="fu">c</span>(<span class="st">"concentration"</span>, <span class="st">"condition"</span>)) <span class="sc">|&gt;</span> <span class="do">## 2.</span></span>
-<span id="cb32-3"><a href="sec-basics.html#cb32-3" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb32-4"><a href="sec-basics.html#cb32-4" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="do">## 3.</span></span>
-<span id="cb32-5"><a href="sec-basics.html#cb32-5" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value,</span>
-<span id="cb32-6"><a href="sec-basics.html#cb32-6" tabindex="-1"></a>      <span class="at">colour =</span> condition,</span>
-<span id="cb32-7"><a href="sec-basics.html#cb32-7" tabindex="-1"></a>      <span class="at">group =</span> colname) <span class="sc">+</span></span>
-<span id="cb32-8"><a href="sec-basics.html#cb32-8" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="sec-basics.html#cb35-1" tabindex="-1"></a>spikein[, , <span class="st">"peptides_log"</span>] <span class="sc">|&gt;</span> <span class="do">## 1.</span></span>
+<span id="cb35-2"><a href="sec-basics.html#cb35-2" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="fu">c</span>(<span class="st">"concentration"</span>, <span class="st">"condition"</span>)) <span class="sc">|&gt;</span> <span class="do">## 2.</span></span>
+<span id="cb35-3"><a href="sec-basics.html#cb35-3" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb35-4"><a href="sec-basics.html#cb35-4" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="do">## 3.</span></span>
+<span id="cb35-5"><a href="sec-basics.html#cb35-5" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value,</span>
+<span id="cb35-6"><a href="sec-basics.html#cb35-6" tabindex="-1"></a>      <span class="at">colour =</span> condition,</span>
+<span id="cb35-7"><a href="sec-basics.html#cb35-7" tabindex="-1"></a>      <span class="at">group =</span> colname) <span class="sc">+</span></span>
+<span id="cb35-8"><a href="sec-basics.html#cb35-8" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_before_norm-1.png" alt="Intensity distribution for all samples before normalisation."><div class="figcaption">Intensity distribution for all samples before normalisation.</div>
 </div>
@@ -2899,10 +2916,8 @@ distributions across samples are not well aligned. Ignoring this
 effect will increase the noise and reduce the statistical power of the
 experiment, and may also, in case of unbalanced designs, introduce
 confounding effects that will bias the results.</p>
-<p>Therefore, normalisation will transform the data to put all the
-distributions on the same location, such as centering on the mean or
-the median, so that the distributions better coincide and overlap.</p>
-<p>Here, we will use the Median of Ratios method of DESeq2:</p>
+<p>Therefore, normalisation will transform the data to make the intensities of the different samples comparable, e.g. by centering the distributions using the median, so that the distributions better coincide and overlap.</p>
+<p>Here, we will use the Median of Ratios method of DESeq2, which was originally developed for RNA-seq data analysis and can also correct for differences in composition of the proteomes in the different samples:</p>
 <ol style="list-style-type: decimal">
 <li>We first create a pseudo-reference sample (row-wise mean of log2
 intensities, which corresponds to the log2 transformed geometric
@@ -2911,42 +2926,42 @@ mean).</li>
 pseudo-reference</li>
 <li>Subsequently take the column wise median of these log2 ratios to
 obtain the sample based normalisation factor on the log2 scale.</li>
-<li>Subtract the norm factors from the intensities of each
+<li>Subtract these log2-norm factors from the intensities of each
 corresponding column of the assay data and store the result in the
 new assay peptides_norm. (We adopt the sweep function to the
 <code>peptides_log</code> assay of the spikein QFeatures object with as
 statistic the log2 normfactor <code>STATS=nf</code> the default function <code>FUN = "-"</code>, <code>MARGIN = 2</code> to substract the column wise log2 norm factor
 from each entry of the corresponding assay data)</li>
 </ol>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="sec-basics.html#cb33-1" tabindex="-1"></a>pseudoRef <span class="ot">&lt;-</span> <span class="fu">assay</span>(spikein[[<span class="st">"peptides_log"</span>]]) <span class="sc">|&gt;</span> </span>
-<span id="cb33-2"><a href="sec-basics.html#cb33-2" tabindex="-1"></a>  <span class="fu">rowMeans</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co">#1. Calculate the row means </span></span>
-<span id="cb33-3"><a href="sec-basics.html#cb33-3" tabindex="-1"></a>nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
-<span id="cb33-4"><a href="sec-basics.html#cb33-4" tabindex="-1"></a>  <span class="fu">assay</span>(spikein[[<span class="st">"peptides_log"</span>]]), </span>
-<span id="cb33-5"><a href="sec-basics.html#cb33-5" tabindex="-1"></a>  <span class="at">MARGIN =</span> <span class="dv">1</span>, </span>
-<span id="cb33-6"><a href="sec-basics.html#cb33-6" tabindex="-1"></a>  pseudoRef) <span class="sc">|&gt;</span> <span class="co">#2. Subtract the row means row-by-row (MARGIN = 1)</span></span>
-<span id="cb33-7"><a href="sec-basics.html#cb33-7" tabindex="-1"></a>  <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)  <span class="co">#3. Calculate the column median </span></span>
-<span id="cb33-8"><a href="sec-basics.html#cb33-8" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">sweep</span>( <span class="co">#4. Subtract log2 norm factor column-by-column (MARGIN = 2)</span></span>
-<span id="cb33-9"><a href="sec-basics.html#cb33-9" tabindex="-1"></a>  spikein,</span>
-<span id="cb33-10"><a href="sec-basics.html#cb33-10" tabindex="-1"></a>  <span class="at">MARGIN =</span> <span class="dv">2</span>,</span>
-<span id="cb33-11"><a href="sec-basics.html#cb33-11" tabindex="-1"></a>  <span class="at">STATS =</span> nfLog,</span>
-<span id="cb33-12"><a href="sec-basics.html#cb33-12" tabindex="-1"></a>  <span class="at">i =</span> <span class="st">"peptides_log"</span>,</span>
-<span id="cb33-13"><a href="sec-basics.html#cb33-13" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"peptides_norm"</span></span>
-<span id="cb33-14"><a href="sec-basics.html#cb33-14" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="sec-basics.html#cb36-1" tabindex="-1"></a>pseudoRef <span class="ot">&lt;-</span> <span class="fu">assay</span>(spikein[[<span class="st">"peptides_log"</span>]]) <span class="sc">|&gt;</span> </span>
+<span id="cb36-2"><a href="sec-basics.html#cb36-2" tabindex="-1"></a>  <span class="fu">rowMeans</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co">#1. Calculate the row means </span></span>
+<span id="cb36-3"><a href="sec-basics.html#cb36-3" tabindex="-1"></a>nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
+<span id="cb36-4"><a href="sec-basics.html#cb36-4" tabindex="-1"></a>  <span class="fu">assay</span>(spikein[[<span class="st">"peptides_log"</span>]]), </span>
+<span id="cb36-5"><a href="sec-basics.html#cb36-5" tabindex="-1"></a>  <span class="at">MARGIN =</span> <span class="dv">1</span>, </span>
+<span id="cb36-6"><a href="sec-basics.html#cb36-6" tabindex="-1"></a>  pseudoRef) <span class="sc">|&gt;</span> <span class="co">#2. Subtract the row means row-by-row (MARGIN = 1)</span></span>
+<span id="cb36-7"><a href="sec-basics.html#cb36-7" tabindex="-1"></a>  <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)  <span class="co">#3. Calculate the column median </span></span>
+<span id="cb36-8"><a href="sec-basics.html#cb36-8" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">sweep</span>( <span class="co">#4. Subtract log2 norm factor column-by-column (MARGIN = 2)</span></span>
+<span id="cb36-9"><a href="sec-basics.html#cb36-9" tabindex="-1"></a>  spikein,</span>
+<span id="cb36-10"><a href="sec-basics.html#cb36-10" tabindex="-1"></a>  <span class="at">MARGIN =</span> <span class="dv">2</span>,</span>
+<span id="cb36-11"><a href="sec-basics.html#cb36-11" tabindex="-1"></a>  <span class="at">STATS =</span> nfLog,</span>
+<span id="cb36-12"><a href="sec-basics.html#cb36-12" tabindex="-1"></a>  <span class="at">i =</span> <span class="st">"peptides_log"</span>,</span>
+<span id="cb36-13"><a href="sec-basics.html#cb36-13" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"peptides_norm"</span></span>
+<span id="cb36-14"><a href="sec-basics.html#cb36-14" tabindex="-1"></a>)</span></code></pre></div>
 <p>Formally, the function applies the following operation on each sample
 <span class="math inline">\(i\)</span> across all PSMs <span class="math inline">\(p\)</span>:</p>
 <p><span class="math display">\[
 y_{ip}^{\text{norm}} = y_{ip} - \hat{\mu}_i
 \]</span></p>
-<p>with <span class="math inline">\(\hat{\mu}_i\)</span> the norm factor. Upon normalisation, we can see
-that the distribution nicely overlap (using the same code as above)</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="sec-basics.html#cb34-1" tabindex="-1"></a>spikein[, , <span class="st">"peptides_norm"</span>] <span class="sc">|&gt;</span> <span class="do">## 1.</span></span>
-<span id="cb34-2"><a href="sec-basics.html#cb34-2" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="fu">c</span>( <span class="st">"concentration"</span>, <span class="st">"condition"</span>)) <span class="sc">|&gt;</span> <span class="do">## 2.</span></span>
-<span id="cb34-3"><a href="sec-basics.html#cb34-3" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb34-4"><a href="sec-basics.html#cb34-4" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="do">## 3.</span></span>
-<span id="cb34-5"><a href="sec-basics.html#cb34-5" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value,</span>
-<span id="cb34-6"><a href="sec-basics.html#cb34-6" tabindex="-1"></a>      <span class="at">colour =</span> condition,</span>
-<span id="cb34-7"><a href="sec-basics.html#cb34-7" tabindex="-1"></a>      <span class="at">group =</span> colname) <span class="sc">+</span></span>
-<span id="cb34-8"><a href="sec-basics.html#cb34-8" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code></pre></div>
+<p>with <span class="math inline">\(y_ip\)</span> the log2-transformed intensities and <span class="math inline">\(\hat{\mu}_i\)</span> the log2-transformed norm factor. Upon normalisation, we can see
+that the distribution of the <span class="math inline">\(y_{ip}^{\text{norm}}\)</span> nicely overlap (using the same code as above)</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="sec-basics.html#cb37-1" tabindex="-1"></a>spikein[, , <span class="st">"peptides_norm"</span>] <span class="sc">|&gt;</span> <span class="do">## 1.</span></span>
+<span id="cb37-2"><a href="sec-basics.html#cb37-2" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="fu">c</span>( <span class="st">"concentration"</span>, <span class="st">"condition"</span>)) <span class="sc">|&gt;</span> <span class="do">## 2.</span></span>
+<span id="cb37-3"><a href="sec-basics.html#cb37-3" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb37-4"><a href="sec-basics.html#cb37-4" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="do">## 3.</span></span>
+<span id="cb37-5"><a href="sec-basics.html#cb37-5" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value,</span>
+<span id="cb37-6"><a href="sec-basics.html#cb37-6" tabindex="-1"></a>      <span class="at">colour =</span> condition,</span>
+<span id="cb37-7"><a href="sec-basics.html#cb37-7" tabindex="-1"></a>      <span class="at">group =</span> colname) <span class="sc">+</span></span>
+<span id="cb37-8"><a href="sec-basics.html#cb37-8" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_after_norm-1.png" alt="Intensity distribution for all samples after normalisation."><div class="figcaption">Intensity distribution for all samples after normalisation.</div>
 </div>
@@ -2971,9 +2986,9 @@ for example. Dedicated normalisation strategies are then required.</p>
 </h3>
 <p>The objective of summarisation (also referred to as aggregation) is to
 summarise the peptide-level intensities into a protein expression value.
-We illustrate the motivation behind summarisation using all peptide-level data for
+We illustrate the motivation for summarisation using all peptide-level data for
 one of the E. coli proteins. We also focus on the lowest (a) and highest (e)
-spike-in conditions. We illustrate the different peptides on the
+spike-in conditions. The different peptides are shown on the
 x axis and plot their log2 normalised intensities across samples on y
 axis. All the points belonging to the same sample are linked through a
 grey line.</p>
@@ -3035,13 +3050,13 @@ approach through the <code>fun</code> argument. Other summarisation methods
 are available from the <code>MsCoreUtils</code> package, see <code>?aggregateFeatures</code>
 for a comprehensive list. The function will return a <code>QFeatures</code>
 object with a new set that we called <code>proteins</code>.</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="sec-basics.html#cb35-1" tabindex="-1"></a>(spikein <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
-<span id="cb35-2"><a href="sec-basics.html#cb35-2" tabindex="-1"></a>  spikein, <span class="at">i =</span> <span class="st">"peptides_norm"</span>, </span>
-<span id="cb35-3"><a href="sec-basics.html#cb35-3" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"proteins"</span>,</span>
-<span id="cb35-4"><a href="sec-basics.html#cb35-4" tabindex="-1"></a>  <span class="at">fcol =</span> <span class="st">"Proteins"</span>, </span>
-<span id="cb35-5"><a href="sec-basics.html#cb35-5" tabindex="-1"></a>  <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary,</span>
-<span id="cb35-6"><a href="sec-basics.html#cb35-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb35-7"><a href="sec-basics.html#cb35-7" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="sec-basics.html#cb38-1" tabindex="-1"></a>(spikein <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
+<span id="cb38-2"><a href="sec-basics.html#cb38-2" tabindex="-1"></a>  spikein, <span class="at">i =</span> <span class="st">"peptides_norm"</span>, </span>
+<span id="cb38-3"><a href="sec-basics.html#cb38-3" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"proteins"</span>,</span>
+<span id="cb38-4"><a href="sec-basics.html#cb38-4" tabindex="-1"></a>  <span class="at">fcol =</span> <span class="st">"Proteins"</span>, </span>
+<span id="cb38-5"><a href="sec-basics.html#cb38-5" tabindex="-1"></a>  <span class="at">fun =</span> MsCoreUtils<span class="sc">::</span>robustSummary,</span>
+<span id="cb38-6"><a href="sec-basics.html#cb38-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb38-7"><a href="sec-basics.html#cb38-7" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## An instance of class QFeatures (type: bulk) with 4 sets:
 ## 
 ##  [1] peptides: SummarizedExperiment with 30661 rows and 20 columns 
@@ -3064,7 +3079,7 @@ entry selects the sets of interest. If an entry is left blank, all the
 corresponding features, samples or sets will be selected. Let’s
 extract all the data (all samples and all sets) related to the E. coli protein
 (<code>P0AEE5</code>).</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="sec-basics.html#cb37-1" tabindex="-1"></a>spikein[<span class="st">"P0AEE5"</span>, , ]</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="sec-basics.html#cb40-1" tabindex="-1"></a>spikein[<span class="st">"P0AEE5"</span>, , ]</span></code></pre></div>
 <pre><code>## An instance of class QFeatures (type: bulk) with 4 sets:
 ## 
 ##  [1] peptides: SummarizedExperiment with 16 rows and 20 columns 
@@ -3083,34 +3098,22 @@ summarisation.</li>
 colouring by experimental condition, linking dots from the same
 peptide or protein with a line.</li>
 </ol>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="sec-basics.html#cb39-1" tabindex="-1"></a>spikein[<span class="st">"P0AEE5"</span>, , <span class="fu">c</span>(<span class="st">"peptides_norm"</span>, <span class="st">"proteins"</span>)] <span class="sc">|&gt;</span> <span class="do">## 1.</span></span>
-<span id="cb39-2"><a href="sec-basics.html#cb39-2" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="fu">colnames</span>(<span class="fu">colData</span>(spikein))) <span class="sc">|&gt;</span> <span class="do">## 2.</span></span>
-<span id="cb39-3"><a href="sec-basics.html#cb39-3" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span></span>
-<span id="cb39-4"><a href="sec-basics.html#cb39-4" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="do">## 3.</span></span>
-<span id="cb39-5"><a href="sec-basics.html#cb39-5" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> colname, </span>
-<span id="cb39-6"><a href="sec-basics.html#cb39-6" tabindex="-1"></a>      <span class="at">y =</span> value,</span>
-<span id="cb39-7"><a href="sec-basics.html#cb39-7" tabindex="-1"></a>      <span class="at">group =</span> rowname) <span class="sc">+</span></span>
-<span id="cb39-8"><a href="sec-basics.html#cb39-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb39-9"><a href="sec-basics.html#cb39-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> condition)) <span class="sc">+</span></span>
-<span id="cb39-10"><a href="sec-basics.html#cb39-10" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span> assay) <span class="sc">+</span></span>
-<span id="cb39-11"><a href="sec-basics.html#cb39-11" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="sec-basics.html#cb42-1" tabindex="-1"></a>spikein[<span class="st">"P0AEE5"</span>, , <span class="fu">c</span>(<span class="st">"peptides_norm"</span>, <span class="st">"proteins"</span>)] <span class="sc">|&gt;</span> <span class="do">## 1.</span></span>
+<span id="cb42-2"><a href="sec-basics.html#cb42-2" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="fu">colnames</span>(<span class="fu">colData</span>(spikein))) <span class="sc">|&gt;</span> <span class="do">## 2.</span></span>
+<span id="cb42-3"><a href="sec-basics.html#cb42-3" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb42-4"><a href="sec-basics.html#cb42-4" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="do">## 3.</span></span>
+<span id="cb42-5"><a href="sec-basics.html#cb42-5" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> colname, </span>
+<span id="cb42-6"><a href="sec-basics.html#cb42-6" tabindex="-1"></a>      <span class="at">y =</span> value,</span>
+<span id="cb42-7"><a href="sec-basics.html#cb42-7" tabindex="-1"></a>      <span class="at">group =</span> rowname) <span class="sc">+</span></span>
+<span id="cb42-8"><a href="sec-basics.html#cb42-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb42-9"><a href="sec-basics.html#cb42-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> condition)) <span class="sc">+</span></span>
+<span id="cb42-10"><a href="sec-basics.html#cb42-10" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span> assay) <span class="sc">+</span></span>
+<span id="cb42-11"><a href="sec-basics.html#cb42-11" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_summarisation_results-1.png" alt="Data for protein P0AEE5 before and after summarisation"><div class="figcaption">Data for protein P0AEE5 before and after summarisation</div>
 </div>
-</div>
-<div id="protein-filtering" class="section level3" number="2.4.6">
-<h3>
-<span class="header-section-number">2.4.6</span> Protein filtering<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('protein-filtering')" onmouseout="reset_tooltip('protein-filtering-tooltip')"><span class="tooltiptext" id="protein-filtering-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
-</h3>
-<p>As a final step, we filter the protein data to keep proteins if they
-are picked up in at least 4 samples so that most proteins have
-observations in more than one group. So we tolerate a proportion of
-<span class="math inline">\(\frac{n - 4}{n}\)</span> NAs.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="sec-basics.html#cb40-1" tabindex="-1"></a>nObs <span class="ot">&lt;-</span> <span class="dv">4</span></span>
-<span id="cb40-2"><a href="sec-basics.html#cb40-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(spikein[[<span class="st">"proteins"</span>]])</span>
-<span id="cb40-3"><a href="sec-basics.html#cb40-3" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">pNA =</span> (n <span class="sc">-</span> nObs) <span class="sc">/</span> n)</span></code></pre></div>
 <p>The data processing is complete.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="sec-basics.html#cb41-1" tabindex="-1"></a><span class="fu">plot</span>(spikein)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="sec-basics.html#cb43-1" tabindex="-1"></a><span class="fu">plot</span>(spikein)</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_qfeatures_plot-1.png" alt="Overview of the QFeatures object and its processed sets."><div class="figcaption">Overview of the <code>QFeatures</code> object and its processed sets.</div>
 </div>
@@ -3126,16 +3129,16 @@ off-behaving samples. A common approach for data exploration is to
 perform dimension reduction, such as Multi Dimensional Scaling (MDS).
 We will first extract the set to explore along the sample annotations
 (used for plot colouring).</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="sec-basics.html#cb42-1" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(spikein, <span class="st">"proteins"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="sec-basics.html#cb44-1" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(spikein, <span class="st">"proteins"</span>)</span></code></pre></div>
 <p>We then use the <code>scater</code> package to compute and plot the PCA. For
 technical reasons, it requires <code>SingleCellExperiment</code> class object,
 but these can easily be generated from a <code>SummarizedExperiment</code>
 object.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="sec-basics.html#cb43-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"scater"</span>)</span>
-<span id="cb43-2"><a href="sec-basics.html#cb43-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">runMDS</span>(<span class="fu">as</span>(se, <span class="st">"SingleCellExperiment"</span>), <span class="at">exprs_values =</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="sec-basics.html#cb45-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"scater"</span>)</span>
+<span id="cb45-2"><a href="sec-basics.html#cb45-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">runMDS</span>(<span class="fu">as</span>(se, <span class="st">"SingleCellExperiment"</span>), <span class="at">exprs_values =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p>We can now explore the data structure while coloring for the factor of
 interest, here <code>condition</code>.</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="sec-basics.html#cb44-1" tabindex="-1"></a><span class="fu">plotMDS</span>(se, <span class="at">colour_by =</span> <span class="st">"condition"</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="sec-basics.html#cb46-1" tabindex="-1"></a><span class="fu">plotMDS</span>(se, <span class="at">colour_by =</span> <span class="st">"condition"</span>) </span></code></pre></div>
 <div class="float">
 <img src="figure/basics_mds-1.png" alt="MDS visualisation of the spike-in data set. Each point represents a sample and is coloured by the spike-in condiion."><div class="figcaption">MDS visualisation of the spike-in data set. Each point represents a sample and is coloured by the spike-in condiion.</div>
 </div>
@@ -3156,8 +3159,8 @@ QC.</p>
 questions. As described above, each sample has been synthetically
 created to contain a constant human background where E. coli lysates
 were spiked in at five different concentration. Each sample
-preparation has been replicated three times and each replicate has
-been sent to three different labs. So, the research quest is “can our
+preparation has been replicated four times.
+So, the key question is “can our
 model retrieve the proteins that have been spiked in across the
 conditions?” Moreover, since we know the expected protein abundance in
 each sample, we will also be able to assess how accurate the model can
@@ -3187,7 +3190,7 @@ the model boils down to the following linear model:</p>
 <p><span class="math display">\[
 y_i = \mathbf{x}^T_i \boldsymbol{\beta} + \epsilon_i
 \]</span></p>
-<p>with <span class="math inline">\(y_i\)</span> the <span class="math inline">\(\log_2\)</span>-normalised protein intensities in sample <span class="math inline">\(i\)</span>;
+<p>with <span class="math inline">\(y_i\)</span> the <span class="math inline">\(\log_2\)</span>-normalised and summarised protein intensities in sample <span class="math inline">\(i\)</span>;
 <span class="math inline">\(\mathbf{x}_i\)</span> a vector with the covariate pattern for the sample
 encoding the intercept, spike-in condition<label for="tufte-sn-13" class="margin-toggle sidenote-number">13</label><input type="checkbox" id="tufte-sn-13" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">13</span> Categorical
 variables are encoded using dummy coding.</span>, or other experimental factors; <span class="math inline">\(\boldsymbol{\beta}\)</span> the
@@ -3208,7 +3211,7 @@ also suppress it using <code>~ 0 +</code>. When an intercept is included, one of
 the groups is defined as the reference group and its corresponding
 model parameter is absorbed in the intercept. The residuals don’t need
 to be specified as they are part of the model estimation process.</span>:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="sec-basics.html#cb45-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="er">~</span> condition</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="sec-basics.html#cb47-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="er">~</span> condition</span></code></pre></div>
 </div>
 <div id="sec-msqrob" class="section level3" number="2.6.2">
 <h3>
@@ -3219,24 +3222,23 @@ to be specified as they are part of the model estimation process.</span>:</p>
 <code>"proteins"</code> set generated during summarisation, and fits a simple
 linear model with <code>condition</code> as covariate, which are
 automatically retrieved from <code>colData(spikein)</code>.</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="sec-basics.html#cb46-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
-<span id="cb46-2"><a href="sec-basics.html#cb46-2" tabindex="-1"></a>  spikein,  <span class="at">i =</span> <span class="st">"proteins"</span>,</span>
-<span id="cb46-3"><a href="sec-basics.html#cb46-3" tabindex="-1"></a>  <span class="at">formula =</span> model,</span>
-<span id="cb46-4"><a href="sec-basics.html#cb46-4" tabindex="-1"></a>  <span class="at">ridge =</span> <span class="cn">TRUE</span>, <span class="at">robust =</span> <span class="cn">TRUE</span></span>
-<span id="cb46-5"><a href="sec-basics.html#cb46-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="sec-basics.html#cb48-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
+<span id="cb48-2"><a href="sec-basics.html#cb48-2" tabindex="-1"></a>  spikein,  <span class="at">i =</span> <span class="st">"proteins"</span>,</span>
+<span id="cb48-3"><a href="sec-basics.html#cb48-3" tabindex="-1"></a>  <span class="at">formula =</span> model,</span>
+<span id="cb48-4"><a href="sec-basics.html#cb48-4" tabindex="-1"></a>  <span class="at">ridge =</span> <span class="cn">TRUE</span>, <span class="at">robust =</span> <span class="cn">TRUE</span></span>
+<span id="cb48-5"><a href="sec-basics.html#cb48-5" tabindex="-1"></a>)</span></code></pre></div>
 <p>We enable M-estimation (<code>robust = TRUE</code>) for improved robustness
 against outliers. We also enable ridge regression (<code>ridge = TRUE</code>).
-Ridge regression stabilises the parameter estimation of fixed effects
-in case where the number of parameters are close to the number of
-available samples. The next chapter provides more details on <a href="sec-advanced.html#sec-robust">robust
+Ridge regression stabilises the parameter estimation of fixed effects.
+However, this is <strong>only possible if there are more than two slope terms</strong> in the model, e.g. designs with more than two groups or designs involving multiple covariates.** The next chapter provides more details on <a href="sec-advanced.html#sec-robust">robust
 regression</a> and <a href="sec-advanced.html#sec-ridge">ridge regression</a>.</p>
 <p>The fitting results are available in the <code>msqrobModels</code> column of the
 <code>rowData</code>. More specifically, the modelling output is stored in the
 <code>rowData</code> as a <code>statModel</code> object, one model per row (protein). We
 will see in a later section how to perform statistical inference on
 the estimated parameters.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="sec-basics.html#cb47-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])[[<span class="st">"msqrobModels"</span>]]</span>
-<span id="cb47-2"><a href="sec-basics.html#cb47-2" tabindex="-1"></a>models[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="sec-basics.html#cb49-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])[[<span class="st">"msqrobModels"</span>]]</span>
+<span id="cb49-2"><a href="sec-basics.html#cb49-2" tabindex="-1"></a>models[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div>
 <pre><code>## $A0AVT1
 ## Object of class "StatModel"
 ## The type is "lmer"
@@ -3263,28 +3265,28 @@ hypothesis. In other words, we must convert this question in a
 combination of the model parameters, also referred to as a contrast.
 To aid defining contrasts, we will visualise the experimental design
 using the <code>ExploreModelMatrix</code> package.</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="sec-basics.html#cb49-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ExploreModelMatrix"</span>)</span>
-<span id="cb49-2"><a href="sec-basics.html#cb49-2" tabindex="-1"></a><span class="fu">VisualizeDesign</span>(</span>
-<span id="cb49-3"><a href="sec-basics.html#cb49-3" tabindex="-1"></a>  <span class="at">sampleData =</span>  <span class="fu">colData</span>(spikein),</span>
-<span id="cb49-4"><a href="sec-basics.html#cb49-4" tabindex="-1"></a>  <span class="at">designFormula =</span> model,</span>
-<span id="cb49-5"><a href="sec-basics.html#cb49-5" tabindex="-1"></a>  <span class="at">textSizeFitted =</span> <span class="dv">4</span></span>
-<span id="cb49-6"><a href="sec-basics.html#cb49-6" tabindex="-1"></a>)<span class="sc">$</span>plotlist</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="sec-basics.html#cb51-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ExploreModelMatrix"</span>)</span>
+<span id="cb51-2"><a href="sec-basics.html#cb51-2" tabindex="-1"></a><span class="fu">VisualizeDesign</span>(</span>
+<span id="cb51-3"><a href="sec-basics.html#cb51-3" tabindex="-1"></a>  <span class="at">sampleData =</span>  <span class="fu">colData</span>(spikein),</span>
+<span id="cb51-4"><a href="sec-basics.html#cb51-4" tabindex="-1"></a>  <span class="at">designFormula =</span> model,</span>
+<span id="cb51-5"><a href="sec-basics.html#cb51-5" tabindex="-1"></a>  <span class="at">textSizeFitted =</span> <span class="dv">4</span></span>
+<span id="cb51-6"><a href="sec-basics.html#cb51-6" tabindex="-1"></a>)<span class="sc">$</span>plotlist</span></code></pre></div>
 <pre><code>## [[1]]</code></pre>
 <div class="float">
 <img src="figure/basics_VisualizeDesign-1.png" alt="Visualisation of the experimental design using the ExploreModelMatrix package."><div class="figcaption">Visualisation of the experimental design using the <code>ExploreModelMatrix</code> package.</div>
 </div>
-<p>Spike-in condition <code>a</code> is the reference class. So the mean log2
+<p>Spike-in condition <code>a</code> is the reference group. So the mean log2
 intensity for samples from condition a is <code>(Intercept)</code>. The mean
 log2 expression for samples from condition b is ‘(Intercept) +
-conditionB’. Hence, the average log2 fold change between conditionbB
+conditionb’. Hence, the average log2 fold change between condition b
 and condition a is modelled using the parameter ‘conditionb’.</p>
 <p>With <code>getCoef()</code>, we can retrieve the estimated model parameters.
 We start with extracting the model output, stored as <code>StatModel</code>
 objects, from the <code>rowData</code>. Next, <code>getCoef()</code> retrieves the estimated
 model parameters:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="sec-basics.html#cb51-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])<span class="sc">$</span>msqrobModels</span>
-<span id="cb51-2"><a href="sec-basics.html#cb51-2" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">getCoef</span>(models[[<span class="dv">1</span>]])</span>
-<span id="cb51-3"><a href="sec-basics.html#cb51-3" tabindex="-1"></a><span class="fu">head</span>(params)</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="sec-basics.html#cb53-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])<span class="sc">$</span>msqrobModels</span>
+<span id="cb53-2"><a href="sec-basics.html#cb53-2" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">getCoef</span>(models[[<span class="dv">1</span>]])</span>
+<span id="cb53-3"><a href="sec-basics.html#cb53-3" tabindex="-1"></a><span class="fu">head</span>(params)</span></code></pre></div>
 <pre><code>##     (Intercept) ridgeconditionb ridgeconditionc ridgeconditiond ridgeconditione 
 ##        23.51052         0.00000         0.00000         0.00000         0.00000</code></pre>
 <p>Note the <code>"ridge"</code> tag in front of the parameter names that indicates
@@ -3292,15 +3294,16 @@ the parameters have been estimated using ridge penalisation. The model
 estimated 5 parameters to model the fixed and random
 effects. However, we are interested, for this data set, in the
 parameters that model the effect of <code>condition</code>.</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="sec-basics.html#cb53-1" tabindex="-1"></a>params[<span class="fu">grep</span>(<span class="st">"condition"</span>, <span class="fu">names</span>(params))]</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="sec-basics.html#cb55-1" tabindex="-1"></a>params[<span class="fu">grep</span>(<span class="st">"condition"</span>, <span class="fu">names</span>(params))]</span></code></pre></div>
 <pre><code>## ridgeconditionb ridgeconditionc ridgeconditiond ridgeconditione 
 ##               0               0               0               0</code></pre>
-<p>For this protein we can see that the effects of condition are zero, as
+<p>For this protein we can see that the effects of condition are small, as
 expected since the protein is part of the human constant background.
-However, we can explore the parameters for one of the E. coli
+Note that because of the ridge penalisation they are shrunken to zero.
+We now explore the parameters for one of the E. coli
 proteins.</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="sec-basics.html#cb55-1" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">getCoef</span>(models[[<span class="st">"P0AEE5"</span>]])</span>
-<span id="cb55-2"><a href="sec-basics.html#cb55-2" tabindex="-1"></a>params[<span class="fu">grep</span>(<span class="st">"condition"</span>, <span class="fu">names</span>(params))]</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="sec-basics.html#cb57-1" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">getCoef</span>(models[[<span class="st">"P0AEE5"</span>]])</span>
+<span id="cb57-2"><a href="sec-basics.html#cb57-2" tabindex="-1"></a>params[<span class="fu">grep</span>(<span class="st">"condition"</span>, <span class="fu">names</span>(params))]</span></code></pre></div>
 <pre><code>## ridgeconditionb ridgeconditionc ridgeconditiond ridgeconditione 
 ##       0.6612049       1.0635637       1.3121650       1.6876229</code></pre>
 <p>Since this is a benchmark study and we know the concentration of A
@@ -3309,47 +3312,42 @@ proteins.</p>
 intensity between condition B and condition A that has been estimated
 by the model is 0.6612049, rather close. Now,
 the question is if we can conclude that the fold change between
-condition B and condition A is statistically significant based on the
+condition B and condition A is statistically significant for this protein based on the
 model output.</p>
 <div id="sec-hypothesis_testing" class="section level3" number="2.7.1">
 <h3>
 <span class="header-section-number">2.7.1</span> Hypothesis testing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('sec-hypothesis_testing')" onmouseout="reset_tooltip('sec-hypothesis_testing-tooltip')"><span class="tooltiptext" id="sec-hypothesis_testing-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>As shown above, the average difference in log2 intensity between
-condition B and A after correcting for the lab effect is
-<code>ridgeconditionb</code>. This combination of parameters is also called a
-contrast. Thus, we assess the following nul hypothesis for this
-contrast: ‘ridgeconditionb = 0’ with our statistical test.</p>
-<p>As shown above, the average difference in log2 intensity between
 condition b and a after correcting for the lab effect is
 <code>ridgeconditionb</code>. This combination of parameters is also called a
 contrast. Thus, we assess the following null hypothesis for this
 contrast: <code>ridgeconditionb = 0</code> with our statistical test.</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="sec-basics.html#cb57-1" tabindex="-1"></a>contrast <span class="ot">&lt;-</span> <span class="st">"ridgeconditionb = 0"</span></span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="sec-basics.html#cb59-1" tabindex="-1"></a>contrast <span class="ot">&lt;-</span> <span class="st">"ridgeconditionb = 0"</span></span></code></pre></div>
 <p><code>makeContrast()</code> converts the hypothesis into a formal contrast matrix
 with parameter names as rows and hypotheses in columns<label for="tufte-sn-15" class="margin-toggle sidenote-number">15</label><input type="checkbox" id="tufte-sn-15" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">15</span> Note, that we only need to specify the names of the model parameters that are involved in the contrast when using the make contrast function. The hypothesisTest function below will then subset the relevant part from the model output. Also, note that the contrast matrix in this example is trivial. However, we will
 <a href="sec-basics.html#sec-multiple_contrasts">later</a> show how to asses multiple hypotheses
-at once and then the constrast matrix consists of multiple
+at once and then the contrast matrix consists of multiple
 columns, with one column for each contrast</span>.</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="sec-basics.html#cb58-1" tabindex="-1"></a>(L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
-<span id="cb58-2"><a href="sec-basics.html#cb58-2" tabindex="-1"></a>  <span class="st">"ridgeconditionb = 0"</span>,</span>
-<span id="cb58-3"><a href="sec-basics.html#cb58-3" tabindex="-1"></a>  <span class="st">"ridgeconditionb"</span></span>
-<span id="cb58-4"><a href="sec-basics.html#cb58-4" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="sec-basics.html#cb60-1" tabindex="-1"></a>(L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
+<span id="cb60-2"><a href="sec-basics.html#cb60-2" tabindex="-1"></a>  <span class="st">"ridgeconditionb = 0"</span>,</span>
+<span id="cb60-3"><a href="sec-basics.html#cb60-3" tabindex="-1"></a>  <span class="st">"ridgeconditionb"</span></span>
+<span id="cb60-4"><a href="sec-basics.html#cb60-4" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>##                 ridgeconditionb
 ## ridgeconditionb               1</code></pre>
 <p>We can now test our null hypothesis using <code>hypothesisTest()</code> which
 takes the <code>QFeatures</code> object with the fitted model and the contrast we
 just built. <code>msqrob2</code> automatically applies the hypothesis
 testing to all proteins in the data.</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="sec-basics.html#cb60-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">contrast =</span> L)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="sec-basics.html#cb62-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">contrast =</span> L)</span></code></pre></div>
 <p>The results are stored in the set containing the model, here
 <code>proteins</code>. We retrieve the results from the <code>rowData</code>.
-We also add variable <code>isEcoli</code> to indicate if the protein is spiked
+Note, that for this spike-in study we know the ground truth, so we also add variable <code>isEcoli</code> to indicate if the protein is spiked
 (from E. coli).</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="sec-basics.html#cb61-1" tabindex="-1"></a>inference <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])<span class="sc">$</span>ridgeconditionb</span>
-<span id="cb61-2"><a href="sec-basics.html#cb61-2" tabindex="-1"></a>inference<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)</span>
-<span id="cb61-3"><a href="sec-basics.html#cb61-3" tabindex="-1"></a>inference<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein <span class="sc">%in%</span> ecoli</span>
-<span id="cb61-4"><a href="sec-basics.html#cb61-4" tabindex="-1"></a><span class="fu">head</span>(inference)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="sec-basics.html#cb63-1" tabindex="-1"></a>inference <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])<span class="sc">$</span>ridgeconditionb</span>
+<span id="cb63-2"><a href="sec-basics.html#cb63-2" tabindex="-1"></a>inference<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)</span>
+<span id="cb63-3"><a href="sec-basics.html#cb63-3" tabindex="-1"></a>inference<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein <span class="sc">%in%</span> ecoli</span>
+<span id="cb63-4"><a href="sec-basics.html#cb63-4" tabindex="-1"></a><span class="fu">head</span>(inference)</span></code></pre></div>
 <pre><code>##              logFC           se       df         t      pval   adjPval Protein
 ## A0AVT1  0.00000000 8.086020e-11 20.95446  0.000000 1.0000000 1.0000000  A0AVT1
 ## A0FGR8  0.06647992 3.917165e-02 17.43077  1.697144 0.1074520 0.7248094  A0FGR8
@@ -3387,42 +3385,42 @@ highly significant. We can use the table above directly to build a
 volcano plot using <code>ggplot2</code> functionality. We also highlight which
 proteins are UPS standards, known to be differentially abundant by
 experimental design.</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="sec-basics.html#cb63-1" tabindex="-1"></a>inference <span class="sc">|&gt;</span> </span>
-<span id="cb63-2"><a href="sec-basics.html#cb63-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
-<span id="cb63-3"><a href="sec-basics.html#cb63-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
-<span id="cb63-4"><a href="sec-basics.html#cb63-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
-<span id="cb63-5"><a href="sec-basics.html#cb63-5" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval),</span>
-<span id="cb63-6"><a href="sec-basics.html#cb63-6" tabindex="-1"></a>        <span class="at">color =</span> isEcoli,</span>
-<span id="cb63-7"><a href="sec-basics.html#cb63-7" tabindex="-1"></a>        <span class="at">shape =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>)) <span class="sc">+</span></span>
-<span id="cb63-8"><a href="sec-basics.html#cb63-8" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb63-9"><a href="sec-basics.html#cb63-9" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">log2</span>(<span class="fl">4.5</span>) <span class="sc">-</span> <span class="fu">log2</span>(<span class="dv">3</span>), <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb63-10"><a href="sec-basics.html#cb63-10" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb63-11"><a href="sec-basics.html#cb63-11" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb63-12"><a href="sec-basics.html#cb63-12" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"Ecoli spikein"</span>)</span>
-<span id="cb63-13"><a href="sec-basics.html#cb63-13" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb63-14"><a href="sec-basics.html#cb63-14" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Statistical inference results"</span>,</span>
-<span id="cb63-15"><a href="sec-basics.html#cb63-15" tabindex="-1"></a>          <span class="fu">paste0</span>(<span class="st">"H0: "</span>, <span class="fu">colnames</span>(L), <span class="st">" = 0"</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="sec-basics.html#cb65-1" tabindex="-1"></a>inference <span class="sc">|&gt;</span> </span>
+<span id="cb65-2"><a href="sec-basics.html#cb65-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
+<span id="cb65-3"><a href="sec-basics.html#cb65-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
+<span id="cb65-4"><a href="sec-basics.html#cb65-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
+<span id="cb65-5"><a href="sec-basics.html#cb65-5" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval),</span>
+<span id="cb65-6"><a href="sec-basics.html#cb65-6" tabindex="-1"></a>        <span class="at">color =</span> isEcoli,</span>
+<span id="cb65-7"><a href="sec-basics.html#cb65-7" tabindex="-1"></a>        <span class="at">shape =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>)) <span class="sc">+</span></span>
+<span id="cb65-8"><a href="sec-basics.html#cb65-8" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb65-9"><a href="sec-basics.html#cb65-9" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">log2</span>(<span class="fl">4.5</span>) <span class="sc">-</span> <span class="fu">log2</span>(<span class="dv">3</span>), <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb65-10"><a href="sec-basics.html#cb65-10" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb65-11"><a href="sec-basics.html#cb65-11" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb65-12"><a href="sec-basics.html#cb65-12" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"Ecoli spikein"</span>)</span>
+<span id="cb65-13"><a href="sec-basics.html#cb65-13" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb65-14"><a href="sec-basics.html#cb65-14" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Statistical inference results"</span>,</span>
+<span id="cb65-15"><a href="sec-basics.html#cb65-15" tabindex="-1"></a>          <span class="fu">paste0</span>(<span class="st">"H0: "</span>, <span class="fu">colnames</span>(L), <span class="st">" = 0"</span>))</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_volcano-1.png" alt="Volcano plot of the statistical inference of the average difference between condition b and condition a."><div class="figcaption">Volcano plot of the statistical inference of the average difference between condition b and condition a.</div>
 </div>
 <p>We retrieve the proteins that are significantly differentially
 abundant based on the FDR-adjusted p-value (<code>adjPval</code>). Note that the
 majority of the differentially abundant proteins are E. coli proteins.</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="sec-basics.html#cb64-1" tabindex="-1"></a><span class="fu">table</span>(<span class="at">is_significant =</span> inference<span class="sc">$</span>adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>, </span>
-<span id="cb64-2"><a href="sec-basics.html#cb64-2" tabindex="-1"></a>      <span class="at">is_ecoli =</span> inference<span class="sc">$</span>isEcoli)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="sec-basics.html#cb66-1" tabindex="-1"></a><span class="fu">table</span>(<span class="at">is_significant =</span> inference<span class="sc">$</span>adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>, </span>
+<span id="cb66-2"><a href="sec-basics.html#cb66-2" tabindex="-1"></a>      <span class="at">is_ecoli =</span> inference<span class="sc">$</span>isEcoli)</span></code></pre></div>
 <pre><code>##               is_ecoli
 ## is_significant FALSE TRUE
 ##          FALSE  3760  203
 ##          TRUE     19  443</code></pre>
 <p>Because we known the ground truth, we can also provide a list with
 false positives, true positives and the false discovery proprotion
-(FP/(FP+TP)) at a nominal 5% FDR level.</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="sec-basics.html#cb66-1" tabindex="-1"></a>inference <span class="sc">|&gt;</span> </span>
-<span id="cb66-2"><a href="sec-basics.html#cb66-2" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
-<span id="cb66-3"><a href="sec-basics.html#cb66-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb66-4"><a href="sec-basics.html#cb66-4" tabindex="-1"></a>    <span class="at">fp =</span> <span class="fu">sum</span>(<span class="sc">!</span>isEcoli), </span>
-<span id="cb66-5"><a href="sec-basics.html#cb66-5" tabindex="-1"></a>    <span class="at">tp =</span> <span class="fu">sum</span>(isEcoli), </span>
-<span id="cb66-6"><a href="sec-basics.html#cb66-6" tabindex="-1"></a>    <span class="at">fdp =</span> <span class="fu">round</span>(<span class="fu">mean</span>(<span class="sc">!</span>isEcoli) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>))</span></code></pre></div>
+(FP/(FP+TP)) at a nominal 5% FDR level and observe that the FDP for this contrast is close to the 5% FDR, which is an estimate of the expected FDP if all assumptions made in the data analysis are valid.</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="sec-basics.html#cb68-1" tabindex="-1"></a>inference <span class="sc">|&gt;</span> </span>
+<span id="cb68-2"><a href="sec-basics.html#cb68-2" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb68-3"><a href="sec-basics.html#cb68-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb68-4"><a href="sec-basics.html#cb68-4" tabindex="-1"></a>    <span class="at">fp =</span> <span class="fu">sum</span>(<span class="sc">!</span>isEcoli), </span>
+<span id="cb68-5"><a href="sec-basics.html#cb68-5" tabindex="-1"></a>    <span class="at">tp =</span> <span class="fu">sum</span>(isEcoli), </span>
+<span id="cb68-6"><a href="sec-basics.html#cb68-6" tabindex="-1"></a>    <span class="at">fdp =</span> <span class="fu">round</span>(<span class="fu">mean</span>(<span class="sc">!</span>isEcoli) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##   fp  tp  fdp
 ## 1 19 443 4.11</code></pre>
 </div>
@@ -3434,9 +3432,9 @@ false positives, true positives and the false discovery proprotion
 a heatmap. First, we select the names of the proteins that were
 declared significant between condition A and condition B and extract
 their quantitative data.</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="sec-basics.html#cb68-1" tabindex="-1"></a>sigNames <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein[<span class="sc">!</span><span class="fu">is.na</span>(inference<span class="sc">$</span>adjPval) <span class="sc">&amp;</span> inference<span class="sc">$</span>adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>]</span>
-<span id="cb68-2"><a href="sec-basics.html#cb68-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(spikein, <span class="st">"proteins"</span>)</span>
-<span id="cb68-3"><a href="sec-basics.html#cb68-3" tabindex="-1"></a>se <span class="ot">&lt;-</span> se[sigNames, se<span class="sc">$</span>condition <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="sec-basics.html#cb70-1" tabindex="-1"></a>sigNames <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein[<span class="sc">!</span><span class="fu">is.na</span>(inference<span class="sc">$</span>adjPval) <span class="sc">&amp;</span> inference<span class="sc">$</span>adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>]</span>
+<span id="cb70-2"><a href="sec-basics.html#cb70-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">getWithColData</span>(spikein, <span class="st">"proteins"</span>)</span>
+<span id="cb70-3"><a href="sec-basics.html#cb70-3" tabindex="-1"></a>se <span class="ot">&lt;-</span> se[sigNames, se<span class="sc">$</span>condition <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>)]</span></code></pre></div>
 <p>Next, we extract the quantitative data and scale by rows<label for="tufte-sn-17" class="margin-toggle sidenote-number">17</label><input type="checkbox" id="tufte-sn-17" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">17</span> The
 <code>scales()</code> function aligns the means and the centered standard
 deviations by column. Since we want to scale by row, we need to
@@ -3446,49 +3444,50 @@ caused by uninteresting changes in ionisation efficiency.</span> with
 <code>assay()</code>. We will create a heatmap using the <code>ComplexHeatmap</code>
 package, which enables heatmap annotations. We will annotate the
 heatmap using our model variables <code>condition</code> and <code>lab</code>.</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="sec-basics.html#cb69-1" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
-<span id="cb69-2"><a href="sec-basics.html#cb69-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ComplexHeatmap"</span>)</span>
-<span id="cb69-3"><a href="sec-basics.html#cb69-3" tabindex="-1"></a>annotations <span class="ot">&lt;-</span> <span class="fu">columnAnnotation</span>(</span>
-<span id="cb69-4"><a href="sec-basics.html#cb69-4" tabindex="-1"></a>  <span class="at">condition =</span> se<span class="sc">$</span>condition</span>
-<span id="cb69-5"><a href="sec-basics.html#cb69-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="sec-basics.html#cb71-1" tabindex="-1"></a>quants <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(<span class="fu">assay</span>(se))))</span>
+<span id="cb71-2"><a href="sec-basics.html#cb71-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ComplexHeatmap"</span>)</span>
+<span id="cb71-3"><a href="sec-basics.html#cb71-3" tabindex="-1"></a>annotations <span class="ot">&lt;-</span> <span class="fu">columnAnnotation</span>(</span>
+<span id="cb71-4"><a href="sec-basics.html#cb71-4" tabindex="-1"></a>  <span class="at">condition =</span> se<span class="sc">$</span>condition</span>
+<span id="cb71-5"><a href="sec-basics.html#cb71-5" tabindex="-1"></a>)</span></code></pre></div>
 <p>We now make the heatmap.</p>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="sec-basics.html#cb70-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
-<span id="cb70-2"><a href="sec-basics.html#cb70-2" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
-<span id="cb70-3"><a href="sec-basics.html#cb70-3" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
-<span id="cb70-4"><a href="sec-basics.html#cb70-4" tabindex="-1"></a> <span class="at">cluster_rows =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb70-5"><a href="sec-basics.html#cb70-5" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
-<span id="cb70-6"><a href="sec-basics.html#cb70-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="sec-basics.html#cb72-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="do">## annotation colours are randomly generated by default</span></span>
+<span id="cb72-2"><a href="sec-basics.html#cb72-2" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
+<span id="cb72-3"><a href="sec-basics.html#cb72-3" tabindex="-1"></a> quants, <span class="at">name =</span> <span class="st">"log2 intensity"</span>,</span>
+<span id="cb72-4"><a href="sec-basics.html#cb72-4" tabindex="-1"></a> <span class="at">cluster_rows =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb72-5"><a href="sec-basics.html#cb72-5" tabindex="-1"></a> <span class="at">top_annotation =</span> annotations</span>
+<span id="cb72-6"><a href="sec-basics.html#cb72-6" tabindex="-1"></a>)</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_heatmap-1.png" alt="Heatmap of the proteins that are significantly differentially abundant between condition b and condition a."><div class="figcaption">Heatmap of the proteins that are significantly differentially abundant between condition b and condition a.</div>
 </div>
+<p>We observe that the majority of the returned proteins are indeed upregulated in the higher spike-in condition b.</p>
 </div>
 <div id="fold-change-distributions" class="section level3" number="2.7.4">
 <h3>
 <span class="header-section-number">2.7.4</span> Fold change distributions<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('fold-change-distributions')" onmouseout="reset_tooltip('fold-change-distributions-tooltip')"><span class="tooltiptext" id="fold-change-distributions-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
 <p>As this is a spike-in study with known ground truth, we can also plot
-the log2 fold change distributions against the expected values, in
+the log2 fold change distributions against its true values, in
 this case 0 for the human proteins and 0.585 for the
 E. coli proteins.</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="sec-basics.html#cb71-1" tabindex="-1"></a><span class="fu">ggplot</span>(inference) <span class="sc">+</span></span>
-<span id="cb71-2"><a href="sec-basics.html#cb71-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
-<span id="cb71-3"><a href="sec-basics.html#cb71-3" tabindex="-1"></a>      <span class="at">x =</span> isEcoli,</span>
-<span id="cb71-4"><a href="sec-basics.html#cb71-4" tabindex="-1"></a>      <span class="at">colour =</span> isEcoli) <span class="sc">+</span></span>
-<span id="cb71-5"><a href="sec-basics.html#cb71-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb71-6"><a href="sec-basics.html#cb71-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">log2</span>(<span class="fl">4.5</span>) <span class="sc">-</span> <span class="fu">log2</span>(<span class="dv">3</span>)), </span>
-<span id="cb71-7"><a href="sec-basics.html#cb71-7" tabindex="-1"></a>             <span class="at">colour =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>)) <span class="sc">+</span></span>
-<span id="cb71-8"><a href="sec-basics.html#cb71-8" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb71-9"><a href="sec-basics.html#cb71-9" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb71-10"><a href="sec-basics.html#cb71-10" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"E. coli proteins"</span>)</span>
-<span id="cb71-11"><a href="sec-basics.html#cb71-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb71-12"><a href="sec-basics.html#cb71-12" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">"Hypothesis test: "</span>, <span class="fu">colnames</span>(L), <span class="st">" = 0"</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="sec-basics.html#cb73-1" tabindex="-1"></a><span class="fu">ggplot</span>(inference) <span class="sc">+</span></span>
+<span id="cb73-2"><a href="sec-basics.html#cb73-2" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
+<span id="cb73-3"><a href="sec-basics.html#cb73-3" tabindex="-1"></a>      <span class="at">x =</span> isEcoli,</span>
+<span id="cb73-4"><a href="sec-basics.html#cb73-4" tabindex="-1"></a>      <span class="at">colour =</span> isEcoli) <span class="sc">+</span></span>
+<span id="cb73-5"><a href="sec-basics.html#cb73-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb73-6"><a href="sec-basics.html#cb73-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">log2</span>(<span class="fl">4.5</span>) <span class="sc">-</span> <span class="fu">log2</span>(<span class="dv">3</span>)), </span>
+<span id="cb73-7"><a href="sec-basics.html#cb73-7" tabindex="-1"></a>             <span class="at">colour =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>)) <span class="sc">+</span></span>
+<span id="cb73-8"><a href="sec-basics.html#cb73-8" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb73-9"><a href="sec-basics.html#cb73-9" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb73-10"><a href="sec-basics.html#cb73-10" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"E. coli proteins"</span>)</span>
+<span id="cb73-11"><a href="sec-basics.html#cb73-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb73-12"><a href="sec-basics.html#cb73-12" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">"Hypothesis test: "</span>, <span class="fu">colnames</span>(L), <span class="st">" = 0"</span>))</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_boxplots-1.png" alt="Distribution of the log2 fold changes between condition b and condition a. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins."><div class="figcaption">Distribution of the log2 fold changes between condition b and condition a. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins.</div>
 </div>
 <p>Estimated log2 fold change for human proteins are closely distributed
 around 0, as expected. log2 fold changes for E. coli proteins are
 distributed around the fold changes induced by the experimental
-design.</p>
+design, indicating that msqrob2 is providing unbiased fold change estimates.</p>
 </div>
 <div id="sec-detail_plot" class="section level3" number="2.7.5">
 <h3>
@@ -3498,7 +3497,7 @@ design.</p>
 inference results. For example, let’s explore the peptide and the
 summarised protein intensities for the protein with the most
 significant difference.</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="sec-basics.html#cb72-1" tabindex="-1"></a>(targetProtein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)[<span class="fu">which.min</span>(inference<span class="sc">$</span>adjPval)])</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="sec-basics.html#cb74-1" tabindex="-1"></a>(targetProtein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)[<span class="fu">which.min</span>(inference<span class="sc">$</span>adjPval)])</span></code></pre></div>
 <pre><code>## [1] "P0A799"</code></pre>
 <p>To obtain the required data, we perform a little data manipulation
 pipeline:</p>
@@ -3510,19 +3509,19 @@ Finally, we plot the log2 normalised intensities for each sample at
 the protein and at the peptide level. Since multiple peptides are
 recorded for the protein, we link peptides across samples using a grey
 line. Samples are colored according to E. coli spike-in condition.</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="sec-basics.html#cb74-1" tabindex="-1"></a>spikein[targetProtein, , <span class="fu">c</span>(<span class="st">"peptides_log"</span>, <span class="st">"proteins"</span>)] <span class="sc">|&gt;</span> <span class="co">#1</span></span>
-<span id="cb74-2"><a href="sec-basics.html#cb74-2" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="fu">colnames</span>(<span class="fu">colData</span>(spikein)), <span class="co">#2</span></span>
-<span id="cb74-3"><a href="sec-basics.html#cb74-3" tabindex="-1"></a>           <span class="at">rowvars =</span> <span class="st">"Proteins"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb74-4"><a href="sec-basics.html#cb74-4" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb74-5"><a href="sec-basics.html#cb74-5" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb74-6"><a href="sec-basics.html#cb74-6" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> colname,</span>
-<span id="cb74-7"><a href="sec-basics.html#cb74-7" tabindex="-1"></a>      <span class="at">y =</span> value) <span class="sc">+</span></span>
-<span id="cb74-8"><a href="sec-basics.html#cb74-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> rowname), <span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb74-9"><a href="sec-basics.html#cb74-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> condition)) <span class="sc">+</span></span>
-<span id="cb74-10"><a href="sec-basics.html#cb74-10" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> assay, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
-<span id="cb74-11"><a href="sec-basics.html#cb74-11" tabindex="-1"></a>  <span class="fu">ggtitle</span>(targetProtein) <span class="sc">+</span></span>
-<span id="cb74-12"><a href="sec-basics.html#cb74-12" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb74-13"><a href="sec-basics.html#cb74-13" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="sec-basics.html#cb76-1" tabindex="-1"></a>spikein[targetProtein, , <span class="fu">c</span>(<span class="st">"peptides_log"</span>, <span class="st">"proteins"</span>)] <span class="sc">|&gt;</span> <span class="co">#1</span></span>
+<span id="cb76-2"><a href="sec-basics.html#cb76-2" tabindex="-1"></a>  <span class="fu">longForm</span>(<span class="at">colvars =</span> <span class="fu">colnames</span>(<span class="fu">colData</span>(spikein)), <span class="co">#2</span></span>
+<span id="cb76-3"><a href="sec-basics.html#cb76-3" tabindex="-1"></a>           <span class="at">rowvars =</span> <span class="st">"Proteins"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb76-4"><a href="sec-basics.html#cb76-4" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb76-5"><a href="sec-basics.html#cb76-5" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb76-6"><a href="sec-basics.html#cb76-6" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> colname,</span>
+<span id="cb76-7"><a href="sec-basics.html#cb76-7" tabindex="-1"></a>      <span class="at">y =</span> value) <span class="sc">+</span></span>
+<span id="cb76-8"><a href="sec-basics.html#cb76-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> rowname), <span class="at">linewidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb76-9"><a href="sec-basics.html#cb76-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> condition)) <span class="sc">+</span></span>
+<span id="cb76-10"><a href="sec-basics.html#cb76-10" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> assay, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb76-11"><a href="sec-basics.html#cb76-11" tabindex="-1"></a>  <span class="fu">ggtitle</span>(targetProtein) <span class="sc">+</span></span>
+<span id="cb76-12"><a href="sec-basics.html#cb76-12" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb76-13"><a href="sec-basics.html#cb76-13" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
 <div class="float">
 <img src="figure/detail_plot-1.png" alt="Detail plot showing the peptide log intensities (left) and log-transformed normalised and summarised protein intensities (right). Every point is a sample, coloured by spike-in condition, and points belonging to the same feature (peptide or protein) are linked with a grey line."><div class="figcaption">Detail plot showing the peptide log intensities (left) and log-transformed normalised and summarised protein intensities (right). Every point is a sample, coloured by spike-in condition, and points belonging to the same feature (peptide or protein) are linked with a grey line.</div>
 </div>
@@ -3538,7 +3537,7 @@ line. Samples are colored according to E. coli spike-in condition.</p>
 </h3>
 <p>We showed how to perform a hypothesis test to answer the question
 “which proteins change in abundance between condition b and condition
-c?”. However, since we have 5 conditions, we can do further
+a?”. However, since we have 5 conditions, we can do further
 comparisons. <code>msqrob2</code> can assess multiple hypothesis at once. Like
 above we must provide which hypotheses we want to compare.
 <code>createPairwiseContrasts()</code> will generate all possible comparisons
@@ -3547,9 +3546,9 @@ specification that has been estimated and the sample annotation from
 the data. We also specify that we estimated the model using ridge
 regression, which influences parameter names.</p>
 <p><strong>TODO</strong>: add automatic pairwise comparisons function to msqrob2</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="sec-basics.html#cb75-1" tabindex="-1"></a>(allHypotheses <span class="ot">&lt;-</span> <span class="fu">createPairwiseContrasts</span>(</span>
-<span id="cb75-2"><a href="sec-basics.html#cb75-2" tabindex="-1"></a>  model, <span class="fu">colData</span>(spikein), <span class="st">"condition"</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb75-3"><a href="sec-basics.html#cb75-3" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="sec-basics.html#cb77-1" tabindex="-1"></a>(allHypotheses <span class="ot">&lt;-</span> <span class="fu">createPairwiseContrasts</span>(</span>
+<span id="cb77-2"><a href="sec-basics.html#cb77-2" tabindex="-1"></a>  model, <span class="fu">colData</span>(spikein), <span class="st">"condition"</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
+<span id="cb77-3"><a href="sec-basics.html#cb77-3" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>##  [1] "ridgeconditionc - ridgeconditionb = 0"
 ##  [2] "ridgeconditiond - ridgeconditionb = 0"
 ##  [3] "ridgeconditione - ridgeconditionb = 0"
@@ -3562,10 +3561,10 @@ regression, which influences parameter names.</p>
 ## [10] "ridgeconditione = 0"</code></pre>
 <p>We now run the same workflow as above for a single hypothesis, except
 that here <code>allHypotheses</code> is a vector of contrasts.</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="sec-basics.html#cb77-1" tabindex="-1"></a>(L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
-<span id="cb77-2"><a href="sec-basics.html#cb77-2" tabindex="-1"></a>  allHypotheses,</span>
-<span id="cb77-3"><a href="sec-basics.html#cb77-3" tabindex="-1"></a>  <span class="at">parameterNames =</span> <span class="fu">paste0</span>(<span class="st">"ridgecondition"</span>, <span class="fu">c</span>(<span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>))</span>
-<span id="cb77-4"><a href="sec-basics.html#cb77-4" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="sec-basics.html#cb79-1" tabindex="-1"></a>(L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
+<span id="cb79-2"><a href="sec-basics.html#cb79-2" tabindex="-1"></a>  allHypotheses,</span>
+<span id="cb79-3"><a href="sec-basics.html#cb79-3" tabindex="-1"></a>  <span class="at">parameterNames =</span> <span class="fu">paste0</span>(<span class="st">"ridgecondition"</span>, <span class="fu">c</span>(<span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>))</span>
+<span id="cb79-4"><a href="sec-basics.html#cb79-4" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>##                 ridgeconditionc - ridgeconditionb
 ## ridgeconditionb                                -1
 ## ridgeconditionc                                 1
@@ -3607,49 +3606,49 @@ involve multiple parameters (multiple rows).</p>
 already generated results for the contrast <code>ridgeconditionb = 0</code> and
 the function will throw an error by default, but we can overwrite the
 results with the argument <code>overwrite = TRUE</code>.</p>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="sec-basics.html#cb79-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, L, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="sec-basics.html#cb81-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, L, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>We retrieve the inference tables from the <code>rowData</code> to generate the
 volcano plots.</p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="sec-basics.html#cb80-1" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])[, <span class="fu">colnames</span>(L)]</span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="sec-basics.html#cb82-1" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])[, <span class="fu">colnames</span>(L)]</span></code></pre></div>
 <p>We here use a <code>lapply()</code> loop to generate additional information, and
 then combine all the tables in a single table.</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="sec-basics.html#cb81-1" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">colnames</span>(inferences), <span class="cf">function</span>(i) {</span>
-<span id="cb81-2"><a href="sec-basics.html#cb81-2" tabindex="-1"></a>  inference <span class="ot">&lt;-</span> inferences[[i]]</span>
-<span id="cb81-3"><a href="sec-basics.html#cb81-3" tabindex="-1"></a>  inference<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)</span>
-<span id="cb81-4"><a href="sec-basics.html#cb81-4" tabindex="-1"></a>  inference<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein <span class="sc">%in%</span> ecoli</span>
-<span id="cb81-5"><a href="sec-basics.html#cb81-5" tabindex="-1"></a>  inference<span class="sc">$</span>Comparison <span class="ot">&lt;-</span> i</span>
-<span id="cb81-6"><a href="sec-basics.html#cb81-6" tabindex="-1"></a>  inference</span>
-<span id="cb81-7"><a href="sec-basics.html#cb81-7" tabindex="-1"></a>})</span>
-<span id="cb81-8"><a href="sec-basics.html#cb81-8" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, inferences) <span class="do">## combine in a single table</span></span>
-<span id="cb81-9"><a href="sec-basics.html#cb81-9" tabindex="-1"></a>inferences<span class="sc">$</span>Comparison <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgecondition"</span>,<span class="st">""</span>, inferences<span class="sc">$</span>Comparison)</span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="sec-basics.html#cb83-1" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">colnames</span>(inferences), <span class="cf">function</span>(i) {</span>
+<span id="cb83-2"><a href="sec-basics.html#cb83-2" tabindex="-1"></a>  inference <span class="ot">&lt;-</span> inferences[[i]]</span>
+<span id="cb83-3"><a href="sec-basics.html#cb83-3" tabindex="-1"></a>  inference<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)</span>
+<span id="cb83-4"><a href="sec-basics.html#cb83-4" tabindex="-1"></a>  inference<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein <span class="sc">%in%</span> ecoli</span>
+<span id="cb83-5"><a href="sec-basics.html#cb83-5" tabindex="-1"></a>  inference<span class="sc">$</span>Comparison <span class="ot">&lt;-</span> i</span>
+<span id="cb83-6"><a href="sec-basics.html#cb83-6" tabindex="-1"></a>  inference</span>
+<span id="cb83-7"><a href="sec-basics.html#cb83-7" tabindex="-1"></a>})</span>
+<span id="cb83-8"><a href="sec-basics.html#cb83-8" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, inferences) <span class="do">## combine in a single table</span></span>
+<span id="cb83-9"><a href="sec-basics.html#cb83-9" tabindex="-1"></a>inferences<span class="sc">$</span>Comparison <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgecondition"</span>,<span class="st">""</span>, inferences<span class="sc">$</span>Comparison)</span></code></pre></div>
 <p><strong>TODO</strong> I created a function <code>msqrobCollect()</code> to streamline the
 table extraction above.</p>
 <p>We plot the volcano plots with each comparison in a separate facet.</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="sec-basics.html#cb82-1" tabindex="-1"></a>inferences <span class="sc">|&gt;</span></span>
-<span id="cb82-2"><a href="sec-basics.html#cb82-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb82-3"><a href="sec-basics.html#cb82-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
-<span id="cb82-4"><a href="sec-basics.html#cb82-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
-<span id="cb82-5"><a href="sec-basics.html#cb82-5" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval),</span>
-<span id="cb82-6"><a href="sec-basics.html#cb82-6" tabindex="-1"></a>        <span class="at">shape =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>,</span>
-<span id="cb82-7"><a href="sec-basics.html#cb82-7" tabindex="-1"></a>        <span class="at">color =</span> isEcoli)) <span class="sc">+</span></span>
-<span id="cb82-8"><a href="sec-basics.html#cb82-8" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb82-9"><a href="sec-basics.html#cb82-9" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb82-10"><a href="sec-basics.html#cb82-10" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb82-11"><a href="sec-basics.html#cb82-11" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"Ecoli spikein"</span>)</span>
-<span id="cb82-12"><a href="sec-basics.html#cb82-12" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb82-13"><a href="sec-basics.html#cb82-13" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Comparison)</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="sec-basics.html#cb84-1" tabindex="-1"></a>inferences <span class="sc">|&gt;</span></span>
+<span id="cb84-2"><a href="sec-basics.html#cb84-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb84-3"><a href="sec-basics.html#cb84-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
+<span id="cb84-4"><a href="sec-basics.html#cb84-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
+<span id="cb84-5"><a href="sec-basics.html#cb84-5" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(pval),</span>
+<span id="cb84-6"><a href="sec-basics.html#cb84-6" tabindex="-1"></a>        <span class="at">shape =</span> adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>,</span>
+<span id="cb84-7"><a href="sec-basics.html#cb84-7" tabindex="-1"></a>        <span class="at">color =</span> isEcoli)) <span class="sc">+</span></span>
+<span id="cb84-8"><a href="sec-basics.html#cb84-8" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb84-9"><a href="sec-basics.html#cb84-9" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb84-10"><a href="sec-basics.html#cb84-10" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb84-11"><a href="sec-basics.html#cb84-11" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"Ecoli spikein"</span>)</span>
+<span id="cb84-12"><a href="sec-basics.html#cb84-12" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb84-13"><a href="sec-basics.html#cb84-13" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Comparison)</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_volcano_multiple-1.png" alt="Volcano plot of the statistical inference results for all pairwise comparisons."><div class="figcaption">Volcano plot of the statistical inference results for all pairwise comparisons.</div>
 </div>
 <p>Since we know the ground truth we can again evaluate the number of
 true positives, false positives and false discovery proportion.</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="sec-basics.html#cb83-1" tabindex="-1"></a>inferences <span class="sc">|&gt;</span> </span>
-<span id="cb83-2"><a href="sec-basics.html#cb83-2" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb83-3"><a href="sec-basics.html#cb83-3" tabindex="-1"></a>  <span class="fu">group_by</span>(Comparison) <span class="sc">|&gt;</span> </span>
-<span id="cb83-4"><a href="sec-basics.html#cb83-4" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb83-5"><a href="sec-basics.html#cb83-5" tabindex="-1"></a>    <span class="at">fp =</span> <span class="fu">sum</span>(<span class="sc">!</span>isEcoli), </span>
-<span id="cb83-6"><a href="sec-basics.html#cb83-6" tabindex="-1"></a>    <span class="at">tp =</span> <span class="fu">sum</span>(isEcoli), </span>
-<span id="cb83-7"><a href="sec-basics.html#cb83-7" tabindex="-1"></a>    <span class="at">fdp =</span> <span class="fu">round</span>(<span class="fu">mean</span>(<span class="sc">!</span>isEcoli)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="sec-basics.html#cb85-1" tabindex="-1"></a>inferences <span class="sc">|&gt;</span> </span>
+<span id="cb85-2"><a href="sec-basics.html#cb85-2" tabindex="-1"></a>  <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb85-3"><a href="sec-basics.html#cb85-3" tabindex="-1"></a>  <span class="fu">group_by</span>(Comparison) <span class="sc">|&gt;</span> </span>
+<span id="cb85-4"><a href="sec-basics.html#cb85-4" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb85-5"><a href="sec-basics.html#cb85-5" tabindex="-1"></a>    <span class="at">fp =</span> <span class="fu">sum</span>(<span class="sc">!</span>isEcoli), </span>
+<span id="cb85-6"><a href="sec-basics.html#cb85-6" tabindex="-1"></a>    <span class="at">tp =</span> <span class="fu">sum</span>(isEcoli), </span>
+<span id="cb85-7"><a href="sec-basics.html#cb85-7" tabindex="-1"></a>    <span class="at">fdp =</span> <span class="fu">round</span>(<span class="fu">mean</span>(<span class="sc">!</span>isEcoli)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 10 × 4
 ##    Comparison    fp    tp   fdp
 ##    &lt;chr&gt;      &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
@@ -3663,32 +3662,32 @@ true positives, false positives and false discovery proportion.</p>
 ##  8 e - b         47   578  7.52
 ##  9 e - c         20   501  3.84
 ## 10 e - d          5   286  1.72</code></pre>
+<p>We observe that the FDPs for the different contrasts nicely fluctuate around the nominal FDR that was set at 5%.</p>
 <p>We can also assess the fold changes, but we first create a small table
 with the real values.</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="sec-basics.html#cb85-1" tabindex="-1"></a>realLogFC <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb85-2"><a href="sec-basics.html#cb85-2" tabindex="-1"></a>  <span class="at">logFC =</span> <span class="fu">t</span>(L) <span class="sc">%*%</span> <span class="fu">lm</span>(<span class="fu">log2</span>(concentration) <span class="sc">~</span> condition, <span class="fu">colData</span>(spikein))<span class="sc">$</span>coef[<span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb85-3"><a href="sec-basics.html#cb85-3" tabindex="-1"></a>)</span>
-<span id="cb85-4"><a href="sec-basics.html#cb85-4" tabindex="-1"></a>realLogFC<span class="sc">$</span>Comparison <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgecondition"</span>,<span class="st">""</span>,<span class="fu">colnames</span>(L))</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="sec-basics.html#cb87-1" tabindex="-1"></a>realLogFC <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb87-2"><a href="sec-basics.html#cb87-2" tabindex="-1"></a>  <span class="at">logFC =</span> <span class="fu">t</span>(L) <span class="sc">%*%</span> <span class="fu">lm</span>(<span class="fu">log2</span>(concentration) <span class="sc">~</span> condition, <span class="fu">colData</span>(spikein))<span class="sc">$</span>coef[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb87-3"><a href="sec-basics.html#cb87-3" tabindex="-1"></a>)</span>
+<span id="cb87-4"><a href="sec-basics.html#cb87-4" tabindex="-1"></a>realLogFC<span class="sc">$</span>Comparison <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgecondition"</span>,<span class="st">""</span>,<span class="fu">colnames</span>(L))</span></code></pre></div>
 <p>We can now create the boxplots with the estimated log2-fold changes,
 adding horizontal lines with the corresponding target values.</p>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="sec-basics.html#cb86-1" tabindex="-1"></a>inferences <span class="sc">|&gt;</span></span>
-<span id="cb86-2"><a href="sec-basics.html#cb86-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb86-3"><a href="sec-basics.html#cb86-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
-<span id="cb86-4"><a href="sec-basics.html#cb86-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
-<span id="cb86-5"><a href="sec-basics.html#cb86-5" tabindex="-1"></a>        <span class="at">x =</span> isEcoli,</span>
-<span id="cb86-6"><a href="sec-basics.html#cb86-6" tabindex="-1"></a>        <span class="at">colour =</span> isEcoli)) <span class="sc">+</span></span>
-<span id="cb86-7"><a href="sec-basics.html#cb86-7" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()  <span class="sc">+</span></span>
-<span id="cb86-8"><a href="sec-basics.html#cb86-8" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb86-9"><a href="sec-basics.html#cb86-9" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb86-10"><a href="sec-basics.html#cb86-10" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"E. coli proteins"</span>)</span>
-<span id="cb86-11"><a href="sec-basics.html#cb86-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb86-12"><a href="sec-basics.html#cb86-12" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Comparison) <span class="sc">+</span></span>
-<span id="cb86-13"><a href="sec-basics.html#cb86-13" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> realLogFC, <span class="fu">aes</span>(<span class="at">yintercept =</span> logFC), </span>
-<span id="cb86-14"><a href="sec-basics.html#cb86-14" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
-<span id="cb86-15"><a href="sec-basics.html#cb86-15" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)</span></code></pre></div>
-<div class="float">
-<img src="figure/basics_boxplots_multiple-1.png" alt="Distribution of the log2 fold changes for all pairwise comparisons. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins."><div class="figcaption">Distribution of the log2 fold changes for all pairwise comparisons. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins.</div>
-</div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="sec-basics.html#cb88-1" tabindex="-1"></a>inferences <span class="sc">|&gt;</span></span>
+<span id="cb88-2"><a href="sec-basics.html#cb88-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb88-3"><a href="sec-basics.html#cb88-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
+<span id="cb88-4"><a href="sec-basics.html#cb88-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
+<span id="cb88-5"><a href="sec-basics.html#cb88-5" tabindex="-1"></a>        <span class="at">x =</span> isEcoli,</span>
+<span id="cb88-6"><a href="sec-basics.html#cb88-6" tabindex="-1"></a>        <span class="at">colour =</span> isEcoli)) <span class="sc">+</span></span>
+<span id="cb88-7"><a href="sec-basics.html#cb88-7" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()  <span class="sc">+</span></span>
+<span id="cb88-8"><a href="sec-basics.html#cb88-8" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb88-9"><a href="sec-basics.html#cb88-9" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb88-10"><a href="sec-basics.html#cb88-10" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"E. coli proteins"</span>)</span>
+<span id="cb88-11"><a href="sec-basics.html#cb88-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb88-12"><a href="sec-basics.html#cb88-12" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Comparison) <span class="sc">+</span></span>
+<span id="cb88-13"><a href="sec-basics.html#cb88-13" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> realLogFC, <span class="fu">aes</span>(<span class="at">yintercept =</span> logFC), </span>
+<span id="cb88-14"><a href="sec-basics.html#cb88-14" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
+<span id="cb88-15"><a href="sec-basics.html#cb88-15" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)</span></code></pre></div>
+<p><img src="figure/basics_boxplots_multiple-1.png" alt="Distribution of the log2 fold changes for all pairwise comparisons. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins.">
+We again observe that the log2 fold change estimates are close to the real spike-in fold changes induced by the experimental design.</p>
 </div>
 <div id="model-the-spike-in-concentration-as-a-numeric" class="section level3" number="2.8.2">
 <h3>
@@ -3708,63 +3707,61 @@ column with name <code>"concentration_model"</code>.</li>
 <li>We setup a contrast for the slope term.</li>
 <li>We conduct the hypothesis test for all proteins.</li>
 </ol>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="sec-basics.html#cb87-1" tabindex="-1"></a>spikein<span class="sc">$</span>concentration_log2 <span class="ot">&lt;-</span> <span class="fu">log2</span>(spikein<span class="sc">$</span>concentration) <span class="co">#1.</span></span>
-<span id="cb87-2"><a href="sec-basics.html#cb87-2" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">msqrob</span>( <span class="co">#2.</span></span>
-<span id="cb87-3"><a href="sec-basics.html#cb87-3" tabindex="-1"></a>  spikein, <span class="at">i =</span> <span class="st">"proteins"</span>,</span>
-<span id="cb87-4"><a href="sec-basics.html#cb87-4" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span> concentration_log2,</span>
-<span id="cb87-5"><a href="sec-basics.html#cb87-5" tabindex="-1"></a>  <span class="at">ridge =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb87-6"><a href="sec-basics.html#cb87-6" tabindex="-1"></a>  <span class="at">robust =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb87-7"><a href="sec-basics.html#cb87-7" tabindex="-1"></a>  <span class="at">modelColumnName =</span> <span class="st">"concentration_model"</span></span>
-<span id="cb87-8"><a href="sec-basics.html#cb87-8" tabindex="-1"></a>)</span>
-<span id="cb87-9"><a href="sec-basics.html#cb87-9" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>( <span class="co">#3.</span></span>
-<span id="cb87-10"><a href="sec-basics.html#cb87-10" tabindex="-1"></a>  <span class="st">"concentration_log2 = 0"</span>, <span class="at">parameterNames =</span> <span class="st">"concentration_log2"</span></span>
-<span id="cb87-11"><a href="sec-basics.html#cb87-11" tabindex="-1"></a>)</span>
-<span id="cb87-12"><a href="sec-basics.html#cb87-12" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>( <span class="co">#4.</span></span>
-<span id="cb87-13"><a href="sec-basics.html#cb87-13" tabindex="-1"></a>  spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, L, <span class="at">modelColumn =</span> <span class="st">"concentration_model"</span>,</span>
-<span id="cb87-14"><a href="sec-basics.html#cb87-14" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
-<span id="cb87-15"><a href="sec-basics.html#cb87-15" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="sec-basics.html#cb89-1" tabindex="-1"></a>spikein<span class="sc">$</span>concentration_log2 <span class="ot">&lt;-</span> <span class="fu">log2</span>(spikein<span class="sc">$</span>concentration) <span class="co">#1.</span></span>
+<span id="cb89-2"><a href="sec-basics.html#cb89-2" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">msqrob</span>( <span class="co">#2.</span></span>
+<span id="cb89-3"><a href="sec-basics.html#cb89-3" tabindex="-1"></a>  spikein, <span class="at">i =</span> <span class="st">"proteins"</span>,</span>
+<span id="cb89-4"><a href="sec-basics.html#cb89-4" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span> concentration_log2,</span>
+<span id="cb89-5"><a href="sec-basics.html#cb89-5" tabindex="-1"></a>  <span class="at">ridge =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb89-6"><a href="sec-basics.html#cb89-6" tabindex="-1"></a>  <span class="at">robust =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb89-7"><a href="sec-basics.html#cb89-7" tabindex="-1"></a>  <span class="at">modelColumnName =</span> <span class="st">"concentration_model"</span></span>
+<span id="cb89-8"><a href="sec-basics.html#cb89-8" tabindex="-1"></a>)</span>
+<span id="cb89-9"><a href="sec-basics.html#cb89-9" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>( <span class="co">#3.</span></span>
+<span id="cb89-10"><a href="sec-basics.html#cb89-10" tabindex="-1"></a>  <span class="st">"concentration_log2 = 0"</span>, <span class="at">parameterNames =</span> <span class="st">"concentration_log2"</span></span>
+<span id="cb89-11"><a href="sec-basics.html#cb89-11" tabindex="-1"></a>)</span>
+<span id="cb89-12"><a href="sec-basics.html#cb89-12" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>( <span class="co">#4.</span></span>
+<span id="cb89-13"><a href="sec-basics.html#cb89-13" tabindex="-1"></a>  spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, L, <span class="at">modelColumn =</span> <span class="st">"concentration_model"</span>,</span>
+<span id="cb89-14"><a href="sec-basics.html#cb89-14" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb89-15"><a href="sec-basics.html#cb89-15" tabindex="-1"></a>)</span></code></pre></div>
 <p>We plot the results using the volcano plot as in the previous section.</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="sec-basics.html#cb88-1" tabindex="-1"></a>inference <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])[, <span class="fu">colnames</span>(L)]</span>
-<span id="cb88-2"><a href="sec-basics.html#cb88-2" tabindex="-1"></a>inference<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)</span>
-<span id="cb88-3"><a href="sec-basics.html#cb88-3" tabindex="-1"></a>inference<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein <span class="sc">%in%</span> ecoli</span>
-<span id="cb88-4"><a href="sec-basics.html#cb88-4" tabindex="-1"></a>inference <span class="sc">|&gt;</span></span>
-<span id="cb88-5"><a href="sec-basics.html#cb88-5" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
-<span id="cb88-6"><a href="sec-basics.html#cb88-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
-<span id="cb88-7"><a href="sec-basics.html#cb88-7" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
-<span id="cb88-8"><a href="sec-basics.html#cb88-8" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(adjPval),</span>
-<span id="cb88-9"><a href="sec-basics.html#cb88-9" tabindex="-1"></a>        <span class="at">color =</span> isEcoli)) <span class="sc">+</span></span>
-<span id="cb88-10"><a href="sec-basics.html#cb88-10" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb88-11"><a href="sec-basics.html#cb88-11" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>)) <span class="sc">+</span></span>
-<span id="cb88-12"><a href="sec-basics.html#cb88-12" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb88-13"><a href="sec-basics.html#cb88-13" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb88-14"><a href="sec-basics.html#cb88-14" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb88-15"><a href="sec-basics.html#cb88-15" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"Ecoli spikein"</span>)</span>
-<span id="cb88-16"><a href="sec-basics.html#cb88-16" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="sec-basics.html#cb90-1" tabindex="-1"></a>inference <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[<span class="st">"proteins"</span>]])[, <span class="fu">colnames</span>(L)]</span>
+<span id="cb90-2"><a href="sec-basics.html#cb90-2" tabindex="-1"></a>inference<span class="sc">$</span>Protein <span class="ot">&lt;-</span> <span class="fu">rownames</span>(inference)</span>
+<span id="cb90-3"><a href="sec-basics.html#cb90-3" tabindex="-1"></a>inference<span class="sc">$</span>isEcoli <span class="ot">&lt;-</span> inference<span class="sc">$</span>Protein <span class="sc">%in%</span> ecoli</span>
+<span id="cb90-4"><a href="sec-basics.html#cb90-4" tabindex="-1"></a>inference <span class="sc">|&gt;</span></span>
+<span id="cb90-5"><a href="sec-basics.html#cb90-5" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
+<span id="cb90-6"><a href="sec-basics.html#cb90-6" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
+<span id="cb90-7"><a href="sec-basics.html#cb90-7" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> logFC,</span>
+<span id="cb90-8"><a href="sec-basics.html#cb90-8" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(adjPval),</span>
+<span id="cb90-9"><a href="sec-basics.html#cb90-9" tabindex="-1"></a>        <span class="at">color =</span> isEcoli)) <span class="sc">+</span></span>
+<span id="cb90-10"><a href="sec-basics.html#cb90-10" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb90-11"><a href="sec-basics.html#cb90-11" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>)) <span class="sc">+</span></span>
+<span id="cb90-12"><a href="sec-basics.html#cb90-12" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb90-13"><a href="sec-basics.html#cb90-13" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb90-14"><a href="sec-basics.html#cb90-14" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb90-15"><a href="sec-basics.html#cb90-15" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"Ecoli spikein"</span>)</span>
+<span id="cb90-16"><a href="sec-basics.html#cb90-16" tabindex="-1"></a>  )</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_volcano_continuous-1.png" alt="Volcano plot of the statistical inference results when modelling the spike-in concentration as a continuous variable. logFC actually stands for the slope parameter."><div class="figcaption">Volcano plot of the statistical inference results when modelling the spike-in concentration as a continuous variable. <code>logFC</code> actually stands for the slope parameter.</div>
 </div>
 <p>Similarly, we plot the estimated log2 concentration slope against the
 expected value.</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="sec-basics.html#cb89-1" tabindex="-1"></a>inference <span class="sc">|&gt;</span></span>
-<span id="cb89-2"><a href="sec-basics.html#cb89-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
-<span id="cb89-3"><a href="sec-basics.html#cb89-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
-<span id="cb89-4"><a href="sec-basics.html#cb89-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
-<span id="cb89-5"><a href="sec-basics.html#cb89-5" tabindex="-1"></a>        <span class="at">x =</span> isEcoli,</span>
-<span id="cb89-6"><a href="sec-basics.html#cb89-6" tabindex="-1"></a>        <span class="at">colour =</span> isEcoli)) <span class="sc">+</span></span>
-<span id="cb89-7"><a href="sec-basics.html#cb89-7" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()  <span class="sc">+</span></span>
-<span id="cb89-8"><a href="sec-basics.html#cb89-8" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb89-9"><a href="sec-basics.html#cb89-9" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
-<span id="cb89-10"><a href="sec-basics.html#cb89-10" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"E. coli proteins"</span>)</span>
-<span id="cb89-11"><a href="sec-basics.html#cb89-11" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb89-12"><a href="sec-basics.html#cb89-12" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
-<span id="cb89-13"><a href="sec-basics.html#cb89-13" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"firebrick"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="sec-basics.html#cb91-1" tabindex="-1"></a>inference <span class="sc">|&gt;</span></span>
+<span id="cb91-2"><a href="sec-basics.html#cb91-2" tabindex="-1"></a>  <span class="fu">na.exclude</span>() <span class="sc">|&gt;</span></span>
+<span id="cb91-3"><a href="sec-basics.html#cb91-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
+<span id="cb91-4"><a href="sec-basics.html#cb91-4" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">y =</span> logFC,</span>
+<span id="cb91-5"><a href="sec-basics.html#cb91-5" tabindex="-1"></a>        <span class="at">x =</span> isEcoli,</span>
+<span id="cb91-6"><a href="sec-basics.html#cb91-6" tabindex="-1"></a>        <span class="at">colour =</span> isEcoli)) <span class="sc">+</span></span>
+<span id="cb91-7"><a href="sec-basics.html#cb91-7" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()  <span class="sc">+</span></span>
+<span id="cb91-8"><a href="sec-basics.html#cb91-8" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb91-9"><a href="sec-basics.html#cb91-9" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey20"</span>, <span class="st">"firebrick"</span>), <span class="at">name =</span> <span class="st">""</span>,</span>
+<span id="cb91-10"><a href="sec-basics.html#cb91-10" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Human proteins"</span>, <span class="st">"E. coli proteins"</span>)</span>
+<span id="cb91-11"><a href="sec-basics.html#cb91-11" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb91-12"><a href="sec-basics.html#cb91-12" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb91-13"><a href="sec-basics.html#cb91-13" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"firebrick"</span>)</span></code></pre></div>
 <div class="float">
 <img src="figure/basics_boxplots_continuous-1.png" alt="Distribution of the log2 fold changes for the slope parameter. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins."><div class="figcaption">Distribution of the log2 fold changes for the slope parameter. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins.</div>
 </div>
 <p>Note, that the slopes for the human and E. coli proteins are centered
-around 0 and 1, respectively. However, they seem to be slightly
-biased. Probably again because of ion supression effects in the high
-spike in conditions.</p>
+around 0 and 1, respectively.</p>
 </div>
 </div>
 <div id="conclusion" class="section level2" number="2.9">
@@ -3786,14 +3783,14 @@ differentially abundant proteins. We explored statistical results
 through volcano plots and boxplots of the log2 fold changes and
 visually validated the results for one protein by plotting the input
 data. We have shown the inference pipeline can be streamlined when
-having multiple hypotheses to test. In this example, the spike-in
+assessing multiple hypotheses. In this example, the spike-in
 condition can be encoded as a categorical variable or a numeric
 variable, and we showed how to model and interpret the results for
 both cases.</p>
-<p>This chapter hence provides a general framework for analysing simple
+<p>This chapter thus provides a general framework for analysing simple
 experimental designs for label-free proteomics experiments. Remember,
 this book provides <a href="index.html#sec-overview_use_cases">an overview</a> of different
-use cases with more complex designs. In the next chapter, we will
+use-cases with more complex designs. In the next chapter, we will
 illustrate advanced concepts of proteomics data analysis, illustrated
 by the analysis of a TMT-labelled spike-in experiment.</p>
 
@@ -3804,7 +3801,7 @@ by the analysis of a TMT-labelled spike-in experiment.</p>
 <a href="sec-advanced.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-11-16
+2025-11-30
  using 
 R version 4.5.2 (2025-10-31)
 </p>

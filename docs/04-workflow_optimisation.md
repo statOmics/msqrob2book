@@ -1,4 +1,4 @@
-# Optimisation of a data analysis workflow{#sec-worflow_optimisation}
+# Optimisation of a data analysis workflow{#sec-workflow_optimisation}
 
 
 
@@ -123,7 +123,7 @@ specific feature identifier and the data does not fullfill to the
 modelling assumptions, yet. We will therefore preprocess the data 
 first.
 
-## Data preprocessing{#sec-basic_preprocess}
+## Data preprocessing
 
 We will follow the same data [preprocessing
 workflow]({#sec-preprocess_evidence}) as in the previous chapter. We
@@ -442,6 +442,28 @@ accuracy of the estimated log2 fold changes (LFC), and finally, the
 overall performance using True Positive Rate (TPR) versus False
 Discovery Proportion (FDP) curves.
 
+Before delving into the performance plot, we will first create a
+colour scheme in order to compare the different workflows. We will
+assign a colour to each combination of normalisation and summarisation
+method.
+
+
+``` r
+inferences <- mutate(
+  inferences,
+  workflow = paste0(normalisation, "_", summarisation)
+)
+colours <- c(
+  MedianCentering_colMedians = "#fcba03",
+  MedianCentering_medianPolish = "#c29310",
+  MedianCentering_robustSummary = "#423512",
+  MedianOfRatios_colMedians = "#5bb4fc",
+  MedianOfRatios_medianPolish = "#0b69b5",
+  MedianOfRatios_robustSummary = "#0f2a40"
+)
+```
+
+
 ### TP and FP at 5% FDR
 
 We will first construct the table with TPs and FPs obtained
@@ -449,7 +471,7 @@ from each data modelling approach for each comparison.
 
 
 ``` r
-tpFpTable <- group_by(inferences, normalisation, summarisation, contrast) |>
+tpFpTable <- group_by(inferences, normalisation, workflow, contrast) |>
     filter(adjPval < 0.05) |>
     summarise("True Positives" = sum(isEcoli),
               "False Positives" = sum(!isEcoli),
@@ -462,46 +484,35 @@ We then plot the table as a bar plot, facetting for every comparison.
 
 
 ``` r
-tpFpTable |> 
-  ggplot() +
+ggplot(tpFpTable) +
   aes(
-    x = contrast, y = count, 
-    fill = normalisation, 
-    pattern = summarisation
+    x = normalisation, y = count,
+    fill = workflow
   ) +
   geom_bar(
     stat = "identity", position = position_dodge(preserve = "single"),
     color = "black"
   ) +
-  facet_wrap(
-    contrast ~ metric, scales = "free",
-    labeller = label_both, ncol = 2
-  ) +
-  theme_bw()
+  facet_grid(contrast ~ metric, scales = "free") +
+  scale_fill_manual(values = colours) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 ![ ](figure/wf_tp_fp-1.png)
 
-We also plot the FDP at 5% FDR across comparisons and workflows using
-bar plots.
-
-
-``` r
-ggplot(tpFpTable) +
-  aes(x = contrast, y = FDP, fill = summarisation) +
-  geom_bar(stat = "identity", position = position_dodge(preserve = "single")) +
-  facet_wrap(
-    contrast ~ normalisation, scales = "free_x", labeller = label_both,
-    ncol = 2
-  ) +
-  geom_hline(yintercept = 0.05, linetype = 2) +
-  coord_cartesian(ylim = c(0, 0.45)) +
-  theme_bw()
-```
-
-![ ](figure/wf_fdp-1.png)
+We see that summarising using the column median leads to poor performance (irrespective of the normalisation method used) as these workflow identify less TPs.
+This can be easily explained as the summarisation step in this workflow does not account for the fact that different PSMs are often observed for a protein in the different samples and that their corresponding intensities largely fluctuate according to the differences in the PSM characteristics. 
+We also see that, while it has minimal impact on the TPs, the median centering normalisation approach increases the number of FPs for some comparisons (E-A and E-B).
+The median polish and the robust summary summarisation show similar performance.
 
 ### TPR-FDP curves
+
+We generate the [TPR-FDP curves](#sec-tpr_fdp) to assess the
+performance of the different workflows to prioritise differentially
+abundant proteins. Again, these curves are built using the ground
+truth information about which proteins are differentially abundant
+(spiked in) and which proteins are constant across samples. We create
+two functions to compute the TPR and the FDP.
 
 
 ``` r
@@ -518,8 +529,12 @@ computeTPR <- function(pval, tp, nTP = NULL) {
 }
 ```
 
+We apply these function and compute the corresponding metric using the
+statistical inference results and the ground truth information.
 
 
+
+We also highlight the observed FDP at a 5\% FDR threshold.
 
 
 ``` r
@@ -528,24 +543,35 @@ workPoints <- group_by(performance, summarisation, normalisation, contrast) |>
     slice_max(adjPval)
 ```
 
+We can now generate the plot^[Note that the code to build the TPR-FDP
+curves is identical to the workflow in the previous chapter on data
+benchmarking.].
+
 
 ``` r
 ggplot(performance) +
-    aes(y = fdp,
+    aes(
+        y = fdp,
         x = tpr,
-        colour = summarisation) +
+        colour = workflow
+    ) +
     geom_line() +
     geom_point(data = workPoints, size = 3) +
     geom_hline(yintercept = 0.05, linetype = 2) +
-    facet_wrap(contrast ~ normalisation, ncol = 2, labeller = label_both) +
+    facet_grid(contrast ~ .) +
     coord_flip(ylim = c(0, 0.2)) +
-    theme(legend.position = "bottom")
+    scale_colour_manual(values = colours)
 ```
 
 ![ ](figure/wf_fdr_fdp-1.png)
 
+The TPR-FDP curves clearly indicate a suboptimal performance (lower sensitivity at the same false discovery proportion) of median summarisation.
+
+Moreover, we also observe a benefit of the MedianOfRatios normalisation, which seems to improve the FDR control accross the board^[the dots indicating the sensitivity and FDP when using a 5% FDR cut-off are much closer to the empirical 5% FDP] as well as the sensitivity in contrasts involving the higher spike-in conditions. 
 
 ### Fold change boxplots
+
+Finally, we estimate the accuracy and precision of the log2-fold changes using [boxplots](#sec-benchmark_with_boxplots). We first create a table with the ground truth information from the spike-in experiment.
 
 
 ``` r
@@ -556,21 +582,28 @@ realLogFC$contrast <- gsub("ridgeCondition","",colnames(L))
 realLogFC$contrast <- gsub("^([B-E])$", "\\1 - A", realLogFC$contrast)
 ```
 
+We now plot the estimated log2-fold changes, focusing on the differentially abundant proteins (E. Coli proteins). The dashed line represents the true log2-fold change for each comparison. 
+
 
 ``` r
 filter(inferences, isEcoli) |> 
   ggplot() +
-  aes(y = logFC,
-      x = summarisation,
-      colour = summarisation) +
+  aes(
+      y = logFC,
+      x = normalisation,
+      colour = workflow
+  ) +
   geom_boxplot()  +
-  facet_grid(normalisation ~ contrast) +
+  facet_grid(contrast ~ ., scales = "free") +
   geom_hline(data = realLogFC, aes(yintercept = expectedLogFC), 
              linetype = "dashed") +
-  theme(legend.position = "bottom", axis.text.x = element_blank())
+  scale_colour_manual(values = colours) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 ![ ](figure/wf_boxplot-1.png)
+
+The plots show that median summarisation produces biased fold change estimates, again because it does not account for the differences in the characteristics of the PSMs that are observed in the different samples. 
 
 ## Conclusion
 
@@ -583,28 +616,34 @@ shows that the choice of normalisation method has a significant impact
 on the results. Workflows using the median-of-ratios normalisation
 consistently outperformed those using simple median centering. They
 yielded more true positives, better control of the false discovery
-proportion, and more accurate log-fold change estimates, particularly
+proportion, and more accurate log2-fold change estimates, particularly
 for smaller fold changes.
 
-2.  **Robust summarization offers the best performance**: Among the
-three summarization methods tested, robust summarisation
-(`robustSummary`) generally provided the best balance between
-sensitivity (high True Positive Rate) and specificity (low False
-Discovery Proportion). The TPR vs. FDP curves show that the pipelines
-incorporating robust summarisation are consistently closer to the
-ideal top-left corner. This indicates that explicitly modeling
-peptide-specific effects and down-weighting outliers leads to more
-reliable protein-level quantification and inference.
+2. **Column median summarisation is suboptimal**: we found that 
+summarising peptide data to protein intensities using the column
+(sample) median leads to reduced sensitivity (low True Positive Rate)
+and specificity (low False Discovery Proportion), but also to lower
+accuracy (i.e. the estimated log2-fold changes are further from the
+true value on average) and precision (the estimations are more spread
+around the average estimation).
 
-Based on this comprehensive evaluation, the recommended pipeline for
-this type of dataset is **DESeq2-style normalization followed by
-robust summarization**. This combination provided the most accurate
-and powerful results, demonstrating the strength of `msqrob2` in
-identifying truly differentially abundant proteins while controlling
-for false discoveries.
+3. **Median polish and robust summary provide comparable performance**:
+the TPR-FDP curves show that the pipelines incorporating robust
+summarisation and median polish are consistently closer to the ideal
+top-left corner, with only subtle differences between the two
+approaches. This indicates that explicitly modelling peptide-specific
+effects and down-weighting outliers leads to more reliable
+protein-level quantification and inference. Note that median polish
+summarisation is a simpler approach that is faster to compute, hence 
+we could not find a benefit in performance that justifies the 
+computational overhead.
 
-**TODO** update discussion, I don't see difference between median
-polish and robust summarisation. 
+Based on this comprehensive evaluation, we recommended pipeline for
+this type of dataset is the **median-of-ratios normalisation**
+followed by **median polish summarisation**. This combination provided
+the most accurate and powerful results, demonstrating the strength of
+`msqrob2` in identifying truly differentially abundant proteins while
+controlling for false discoveries.
 
 **TODO** discuss that ddata analysis optimisation is data set 
-dependent, and other conclusion may be reached on other datasets. 
+dependent, and other conclusion may be reached on other datasets?
