@@ -407,50 +407,65 @@ We will first construct the table with TPs and FPs obtained
 from each data modelling approach for each comparison.
 
 ```{r}
-tpFpTable <- group_by(inferences, normalisation, summarisation, contrast) |>
-    filter(adjPval < 0.05) |>
-    summarise("True Positives" = sum(isEcoli),
-              "False Positives" = sum(!isEcoli),
-              FDP = mean(!isEcoli)) |>
-    pivot_longer(cols = c("True Positives", "False Positives"),
+tpFpTable <- inferences %>%
+  na.omit() %>%
+  mutate(TP = adjPval < 0.05 & isEcoli,
+         FP = adjPval < 0.05 & !isEcoli) %>%
+  group_by(normalisation,workflow,contrast) %>%
+  summarise("TruePositives" = sum(TP),
+            "FalsePositives" = sum(FP)) %>%
+  mutate(FDP = FalsePositives/(TruePositives+FalsePositives)) %>%
+      pivot_longer(cols = c("TruePositives", "FalsePositives"),
                  names_to = "metric", values_to = "count")
+
+#Variables needed for the upcoming plots
+workflow_order <- c(
+  "MedianCentering_colMedians", 
+  "MedianCentering_medianPolish", 
+  "MedianCentering_robustSummary",
+  "MedianOfRatios_colMedians", 
+  "MedianOfRatios_medianPolish", 
+  "MedianOfRatios_robustSummary"
+)
+
+colours <- c(
+  "MedianCentering_colMedians"      = "#FFD580", 
+  "MedianCentering_medianPolish"    = "#E69F00", 
+  "MedianCentering_robustSummary"   = "#8B4513", 
+  "MedianOfRatios_colMedians"       = "#ADD8E6", 
+  "MedianOfRatios_medianPolish"     = "#56B4E9", 
+  "MedianOfRatios_robustSummary"    = "#000080"  
+)
+
+all_contrasts <- unique(tpFpTable$contrast)
+contrast_groups <- list(
+  left = all_contrasts[1:5],
+  right = all_contrasts[6:10]
+)
 ```
 
 We then plot the table as a bar plot, facetting for every comparison. 
 
-```{r wf_tp_fp, fig.width=6, fig.height=15, fig.cap=" "}
-tpFpTable |> 
-  ggplot() +
-  aes(
-    x = contrast, y = count, 
-    fill = normalisation, 
-    pattern = summarisation
-  ) +
-  geom_bar(
-    stat = "identity", position = position_dodge(preserve = "single"),
-    color = "black"
-  ) +
-  facet_wrap(
-    contrast ~ metric, scales = "free",
-    labeller = label_both, ncol = 2
-  ) +
-  theme_bw()
-```
-
-We also plot the FDP at 5% FDR across comparisons and workflows using
-bar plots.
-
 ```{r wf_fdp, fig.width=6, fig.height=15, fig.cap=" "}
-ggplot(tpFpTable) +
-  aes(x = contrast, y = FDP, fill = summarisation) +
-  geom_bar(stat = "identity", position = position_dodge(preserve = "single")) +
-  facet_wrap(
-    contrast ~ normalisation, scales = "free_x", labeller = label_both,
-    ncol = 2
-  ) +
-  geom_hline(yintercept = 0.05, linetype = 2) +
-  coord_cartesian(ylim = c(0, 0.45)) +
-  theme_bw()
+plot_tpfp <- function(selected_contrasts) {
+  ggplot(filter(tpFpTable, contrast %in% selected_contrasts)) +
+    aes(x = normalisation, y = count, fill = workflow) +
+    geom_bar(stat = "identity", position = position_dodge(preserve = "single"), color = "black") +
+    facet_grid(contrast ~ metric) +
+    scale_fill_manual(values = colours, breaks = workflow_order) +
+    guides(fill = guide_legend(ncol = 2, byrow = FALSE)) +
+    theme_bw() +
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.title.x = element_blank()
+    )
+}
+
+ggarrange(plotlist = map(contrast_groups, plot_tpfp), 
+          common.legend = TRUE, legend = "bottom")
 ```
 
 ### TPR-FDP curves
@@ -484,16 +499,27 @@ workPoints <- group_by(performance, summarisation, normalisation, contrast) |>
 ```
 
 ```{r wf_fdr_fdp, fig.height=15, fig.width=6, fig.cap=" "}
-ggplot(performance) +
-    aes(y = fdp,
-        x = tpr,
-        colour = summarisation) +
+
+plot_tprfdp <- function(selected_contrasts) {
+  ggplot(filter(performance, contrast %in% selected_contrasts)) +
+    aes(y = fdp, x = tpr, colour = workflow) +
     geom_line() +
-    geom_point(data = workPoints, size = 3) +
+    geom_point(data = filter(workPoints, contrast %in% selected_contrasts), size = 3) +
     geom_hline(yintercept = 0.05, linetype = 2) +
-    facet_wrap(contrast ~ normalisation, ncol = 2, labeller = label_both) +
     coord_flip(ylim = c(0, 0.2)) +
-    theme(legend.position = "bottom")
+    facet_grid(contrast ~.) +
+    scale_colour_manual(values = colours, breaks = workflow_order) +
+    guides(colour = guide_legend(ncol = 2, byrow = FALSE)) +
+    theme_bw() +
+    theme(legend.position = "bottom", legend.title = element_blank())
+}
+
+
+
+ggarrange(plotlist = map(contrast_groups, plot_tprfdp), 
+          common.legend = TRUE, legend = "bottom")
+
+
 ```
 
 
@@ -508,16 +534,28 @@ realLogFC$contrast <- gsub("^([B-E])$", "\\1 - A", realLogFC$contrast)
 ```
 
 ```{r wf_boxplot, fig.height=5, fig.width=10, fig.cap=" "}
-filter(inferences, isEcoli) |> 
-  ggplot() +
-  aes(y = logFC,
-      x = summarisation,
-      colour = summarisation) +
-  geom_boxplot()  +
-  facet_grid(normalisation ~ contrast) +
-  geom_hline(data = realLogFC, aes(yintercept = expectedLogFC), 
-             linetype = "dashed") +
-  theme(legend.position = "bottom", axis.text.x = element_blank())
+plot_boxplots<- function(selected_contrasts) {
+  ggplot(filter(inferences, isEcoli == TRUE & contrast %in% selected_contrasts)) +
+    aes(y = logFC, x = normalisation, colour = workflow) +
+    geom_boxplot() +
+    facet_grid(contrast ~ ., scales = "free") +
+    geom_hline(data = filter(realLogFC, contrast %in% selected_contrasts), 
+               aes(yintercept = expectedLogFC), linetype = "dashed") +
+    scale_colour_manual(values = colours, breaks = workflow_order) +
+    guides(colour = guide_legend(ncol = 2, byrow = FALSE)) +
+    theme_bw() +
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.title.x = element_blank()
+    )
+}
+
+ggarrange(plotlist = map(contrast_groups, plot_boxplots), 
+          common.legend = TRUE, legend = "bottom")
+
 ```
 
 ## Conclusion
