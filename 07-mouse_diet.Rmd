@@ -1,4 +1,4 @@
-# The mouse diet use case: a Skyline TMT DDA dataset {#sec-mouse_diet}
+# The mouse diet use case: a Skyline TMT DDA dataset {#sec-mouse-diet}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")

@@ -1,4 +1,4 @@
-# Optimisation of a data analysis workflow{#sec-workflow_optimisation}
+# Optimisation of a data analysis workflow{#sec-workflow-optimisation}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")
