@@ -454,10 +454,13 @@ ggplot(tpFpTable) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-We see that summarising using the column median leads to poor performance (irrespective of the normalisation method used) as these workflow identify less TPs.
+We see that, while it has minimal impact on the TPs, the median centering normalisation approach increases the number of FPs for some comparisons (E-A and E-B). We therefore suggest to use the Median of ratio's normalisation method.  
+
+More importantly, we see that summarising using the column median leads to poor performance (irrespective of the normalisation method used) as these workflow identify less TPs.
 This can be easily explained as the summarisation step in this workflow does not account for the fact that different PSMs are often observed for a protein in the different samples and that their corresponding intensities largely fluctuate according to the differences in the PSM characteristics. 
-We also see that, while it has minimal impact on the TPs, the median centering normalisation approach increases the number of FPs for some comparisons (E-A and E-B).
 The median polish and the robust summary summarisation show similar performance.
+Note, however, that median polish is computationally less demanding. 
+
 
 ### TPR-FDP curves
 
@@ -482,7 +485,7 @@ computeTPR <- function(pval, tp, nTP = NULL) {
 }
 ```
 
-We apply these function and compute the corresponding metric using the
+We apply these functions and compute the corresponding metric using the
 statistical inference results and the ground truth information.
 
 ```{r, echo= FALSE}
@@ -519,9 +522,9 @@ ggplot(performance) +
     scale_colour_manual(values = colours)
 ```
 
-The TPR-FDP curves clearly indicate a suboptimal performance (lower sensitivity at the same false discovery proportion) of median summarisation.
+Again,  we also observe a benefit of the MedianOfRatios normalisation, which seems to improve the FDR control accross the board^[the dots indicating the sensitivity and FDP when using a 5% FDR cut-off are much closer to the empirical 5% FDP] as well as the sensitivity in contrasts involving the higher spike-in conditions. 
 
-Moreover, we also observe a benefit of the MedianOfRatios normalisation, which seems to improve the FDR control accross the board^[the dots indicating the sensitivity and FDP when using a 5% FDR cut-off are much closer to the empirical 5% FDP] as well as the sensitivity in contrasts involving the higher spike-in conditions. 
+TPR-FDP curves also clearly indicate a suboptimal performance (lower sensitivity at the same false discovery proportion) of median summarisation.
 
 ### Fold change boxplots
 
@@ -584,16 +587,15 @@ top-left corner, with only subtle differences between the two
 approaches. This indicates that explicitly modelling peptide-specific
 effects and down-weighting outliers leads to more reliable
 protein-level quantification and inference. Note that median polish
-summarisation is a simpler approach that is faster to compute, hence 
-we could not find a benefit in performance that justifies the 
-computational overhead.
+summarisation is computationally less demanding and that 
+we could not find a benefit in performance for robust summarisation that justifies its additional computational overhead.
 
-Based on this comprehensive evaluation, we recommended pipeline for
+Based on this comprehensive evaluation, the recommended pipeline for
 this type of dataset is the **median-of-ratios normalisation**
 followed by **median polish summarisation**. This combination provided
-the most accurate and powerful results, demonstrating the strength of
+the best performance in terms of computational complexity, accuracy, sensitivity and FDR control, demonstrating the strength of
 `msqrob2` in identifying truly differentially abundant proteins while
 controlling for false discoveries.
 
-**TODO** discuss that ddata analysis optimisation is data set 
+**TODO** discuss that data analysis optimisation is data set 
 dependent, and other conclusion may be reached on other datasets?
