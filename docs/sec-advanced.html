@@ -13,14 +13,14 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-11-30" />
+<meta name="date" content="2025-12-10" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="/usr/share/javascript/mathjax/MathJax.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <meta name="description" content="3 Advanced statistical analysis with msqrob2 | Statistical analysis of mass spectrometry-based proteomics data">
 
@@ -81,7 +81,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -139,6 +139,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -188,10 +189,10 @@ div.csl-indent {
 <li class="toc"><a href="#conclusion-1"> Conclusion</a></li>
 </ul>
 <a href="sec-benchmarking.html" id="toc-sec-benchmarking"><span class="toc-section-number">4</span> Benchmarking workflows</a>
-<a href="sec-workflow_optimisation.html#sec-workflow_optimisation" id="toc-sec-workflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
+<a href="sec-workflow-optimisation.html" id="toc-sec-workflow-optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
 <a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
 <a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
-<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
+<a href="sec-mouse-diet.html" id="toc-sec-mouse-diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
 <a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Useful links and session information</a>
 </div>
 </li>
@@ -1447,11 +1448,11 @@ differ from protein to protein.</p>
 <p>We could estimate this model from the data using
 <code>msqrob()</code> (described in the <a href="sec-basics.html#sec-msqrob">previous chapter</a>), i.e. the
 model translates into the following code:</p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="sec-advanced.html#cb128-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
-<span id="cb128-2"><a href="sec-advanced.html#cb128-2" tabindex="-1"></a>    spikein,  <span class="at">i =</span> <span class="st">"proteins"</span>,</span>
-<span id="cb128-3"><a href="sec-advanced.html#cb128-3" tabindex="-1"></a>    <span class="at">formula =</span> <span class="sc">~</span> Condition, <span class="do">## fixed effect for experimental condition</span></span>
-<span id="cb128-4"><a href="sec-advanced.html#cb128-4" tabindex="-1"></a>    <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb128-5"><a href="sec-advanced.html#cb128-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="sec-advanced.html#cb128-1" tabindex="-1"></a><span class="co"># spikein &lt;- msqrob(</span></span>
+<span id="cb128-2"><a href="sec-advanced.html#cb128-2" tabindex="-1"></a><span class="co">#     spikein,  i = "proteins",</span></span>
+<span id="cb128-3"><a href="sec-advanced.html#cb128-3" tabindex="-1"></a><span class="co">#     formula = ~ Condition, ## fixed effect for experimental condition</span></span>
+<span id="cb128-4"><a href="sec-advanced.html#cb128-4" tabindex="-1"></a><span class="co">#     robust = TRUE, ridge = TRUE</span></span>
+<span id="cb128-5"><a href="sec-advanced.html#cb128-5" tabindex="-1"></a><span class="co"># )</span></span></code></pre></div>
 <p>This model, however, does not model all sources of variation in the experiment and relying on its results would lead
 to incorrect conclusions. We therefore did not run the modelling command and will
 expand the model.</p>
@@ -1547,12 +1548,12 @@ Suppose every run contains three samples, then</p>
 \end{array}\right]
 \]</span></p>
 <p>This translates in the following code:</p>
-<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="sec-advanced.html#cb129-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
-<span id="cb129-2"><a href="sec-advanced.html#cb129-2" tabindex="-1"></a>    spikein,  <span class="at">i =</span> <span class="st">"proteins"</span>,</span>
-<span id="cb129-3"><a href="sec-advanced.html#cb129-3" tabindex="-1"></a>    <span class="at">formula =</span> <span class="sc">~</span> Condition <span class="sc">+</span> <span class="do">## fixed effect for experimental condition</span></span>
-<span id="cb129-4"><a href="sec-advanced.html#cb129-4" tabindex="-1"></a>        (<span class="dv">1</span> <span class="sc">|</span> Run), <span class="do">## random effect for MS run</span></span>
-<span id="cb129-5"><a href="sec-advanced.html#cb129-5" tabindex="-1"></a>    <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb129-6"><a href="sec-advanced.html#cb129-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="sec-advanced.html#cb129-1" tabindex="-1"></a><span class="co"># spikein &lt;- msqrob(</span></span>
+<span id="cb129-2"><a href="sec-advanced.html#cb129-2" tabindex="-1"></a><span class="co">#     spikein,  i = "proteins",</span></span>
+<span id="cb129-3"><a href="sec-advanced.html#cb129-3" tabindex="-1"></a><span class="co">#     formula = ~ Condition + ## fixed effect for experimental condition</span></span>
+<span id="cb129-4"><a href="sec-advanced.html#cb129-4" tabindex="-1"></a><span class="co">#         (1 | Run), ## random effect for MS run</span></span>
+<span id="cb129-5"><a href="sec-advanced.html#cb129-5" tabindex="-1"></a><span class="co">#     robust = TRUE, ridge = TRUE</span></span>
+<span id="cb129-6"><a href="sec-advanced.html#cb129-6" tabindex="-1"></a><span class="co"># )</span></span></code></pre></div>
 <p>This model is still incomplete and is not executed as we still need to
 account that multiple samples are acquired within the same run thanks to TMT labelling.</p>
 </div>
@@ -1584,13 +1585,13 @@ label <span class="math inline">\(l\)</span>. Note that the <span class="math in
 indexing, but we now explicitly define the observational unit as the
 sample that has been measured in run <span class="math inline">\(r\)</span> and labelled with label <span class="math inline">\(l\)</span>.</p>
 <p>Specifying label as a random effect translates in the following code:</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="sec-advanced.html#cb130-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
-<span id="cb130-2"><a href="sec-advanced.html#cb130-2" tabindex="-1"></a>    spikein,  <span class="at">i =</span> <span class="st">"proteins"</span>,</span>
-<span id="cb130-3"><a href="sec-advanced.html#cb130-3" tabindex="-1"></a>    <span class="at">formula =</span> <span class="sc">~</span> Condition <span class="sc">+</span> <span class="do">## fixed effect for experimental condition</span></span>
-<span id="cb130-4"><a href="sec-advanced.html#cb130-4" tabindex="-1"></a>        (<span class="dv">1</span> <span class="sc">|</span> Run) <span class="sc">+</span> <span class="do">## random effect for MS run</span></span>
-<span id="cb130-5"><a href="sec-advanced.html#cb130-5" tabindex="-1"></a>        (<span class="dv">1</span> <span class="sc">|</span> Label), <span class="do">## random effect for label</span></span>
-<span id="cb130-6"><a href="sec-advanced.html#cb130-6" tabindex="-1"></a>    <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
-<span id="cb130-7"><a href="sec-advanced.html#cb130-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="sec-advanced.html#cb130-1" tabindex="-1"></a><span class="co"># spikein &lt;- msqrob(</span></span>
+<span id="cb130-2"><a href="sec-advanced.html#cb130-2" tabindex="-1"></a><span class="co">#     spikein,  i = "proteins",</span></span>
+<span id="cb130-3"><a href="sec-advanced.html#cb130-3" tabindex="-1"></a><span class="co">#     formula = ~ Condition + ## fixed effect for experimental condition</span></span>
+<span id="cb130-4"><a href="sec-advanced.html#cb130-4" tabindex="-1"></a><span class="co">#         (1 | Run) + ## random effect for MS run</span></span>
+<span id="cb130-5"><a href="sec-advanced.html#cb130-5" tabindex="-1"></a><span class="co">#         (1 | Label), ## random effect for label</span></span>
+<span id="cb130-6"><a href="sec-advanced.html#cb130-6" tabindex="-1"></a><span class="co">#     robust = TRUE, ridge = TRUE</span></span>
+<span id="cb130-7"><a href="sec-advanced.html#cb130-7" tabindex="-1"></a><span class="co"># )</span></span></code></pre></div>
 <p>This model is still incomplete and is not executed as we still need to
 account that each mixture has been replicated three times.</p>
 </div>
@@ -1639,12 +1640,14 @@ additional levels of correlation. Indeed, the intensities for the
 different reporter ions in a TMT run within the same spectrum (PSM)
 will be more similar than the intensities between PSMs. We therefore
 need to add a random effect term to account for the within PSM
-correlation structure, i.e. <span class="math inline">\(u^\text{PSM}_{rp} \sim N(0,\sigma^{2,\text{PSM}})\)</span>. Moreover, in each label of a run multiple
+correlation structure, i.e. <span class="math inline">\(u^\text{PSM}_{rp} \sim
+N(0,\sigma^{2,\text{PSM}})\)</span>. Moreover, in each label of a run multiple
 PSM intensities are picked up for each protein. Hence, intensities
 from different PSMs for a protein in the same label of a run will be
 more alike than intensities of different PSMs for the same protein
 between labels of runs, and we will address this correlation with a
-label-specific random effect nested in run, i.e. <span class="math inline">\(u_{rl}^{label} \sim N(0,\sigma^{2,\text{label}})\)</span>. The model then becomes:</p>
+label-specific random effect nested in run, i.e. <span class="math inline">\(u_{rl}^{label} \sim
+N(0,\sigma^{2,\text{label}})\)</span>. The model then becomes:</p>
 <p><span class="math display">\[
 y_{rlmp} =
 \mathbf{x}^T_{rlmp} \beta + u_r^\text{run} + u_{l}^\text{label} +
@@ -1700,7 +1703,8 @@ is:</p>
 <p><span class="math display">\[
 \sum\limits_{i = 1}^n \rho \left(y_i - \mathbf{x}_i^T \boldsymbol{\beta}\right)
 \]</span></p>
-<p>where <span class="math inline">\(\rho(z)\)</span> is a symmetric function with a minimum at <span class="math inline">\(\rho(0) = 0\)</span> and increases as <span class="math inline">\(|z|\)</span> increases. So the robust regression through
+<p>where <span class="math inline">\(\rho(z)\)</span> is a symmetric function with a minimum at <span class="math inline">\(\rho(0) =
+0\)</span> and increases as <span class="math inline">\(|z|\)</span> increases. So the robust regression through
 M-estimation minimises the maximal bias of the estimators as the
 derivative of <span class="math inline">\(\rho\)</span> is bounded. A popular function for robust
 regression (and which is used by <code>msqrob2</code>) is the Huber function:</p>
@@ -1751,7 +1755,8 @@ penalised version of the OLS loss:</p>
 with <span class="math inline">\(\mathbf{D}\)</span> a diagonal matrix that include a 1 on the diagonal elements for the model parameters that are penalised and a 0 otherwise.</p>
 <p>Note, that in msqrob2 we leave the intercept <span class="math inline">\(\beta_0\)</span> unpenalised so the first diagonal element of <span class="math inline">\(\mathbf{D}\)</span> is set at zero and we only penalise the remaining <span class="math inline">\(m-1\)</span> slope parameters <span class="math inline">\(\boldsymbol{\beta}_s=[\beta_1 \ldots \beta_{m-1}]^T\)</span>. Hence,
 <span class="math inline">\(\boldsymbol{\beta}^T\mathbf{D}\boldsymbol{\beta}\)</span> reduces to the squared L2 norm of
-<span class="math inline">\(\boldsymbol{\beta}_s\)</span>, i.e. <span class="math inline">\(||\boldsymbol{\beta}_s||_2^2 = \sum\limits_{j = 1}^{m-1} \beta_j^2\)</span>.</p>
+<span class="math inline">\(\boldsymbol{\beta}_s\)</span>, i.e. <span class="math inline">\(||\boldsymbol{\beta}_s||_2^2 =
+\sum\limits_{j = 1}^{m-1} \beta_j^2\)</span>.</p>
 <p>Due to the penality term in the loss function, the estimates of penalised slope terms <span class="math inline">\(\boldsymbol{\beta}_s\)</span> will be
 shrunken towards zero, especially for irrelevant covariates in
 <span class="math inline">\(\mathbf{X}\)</span>. In other words, the parameters are stabilised by
@@ -1794,7 +1799,7 @@ order to obtain a fit with two slope terms (one for each group) so as to enable 
 </h2>
 <p>We can now convert the biological question “does the spike-in
 condition affect the protein intensities?” into a statistical
-hypothesis. In other words, we need to define the <a href="sec-basics.html#sec-inference">contrast</a>.
+hypothesis. In other words, we need to translate this question in a null and alternative hypothesis on a single model parameter or a linear combination of model parameters, which is also referred to with a <a href="sec-basics.html#sec-inference">contrast</a>.
 We plot an overview of the model parameters.</p>
 <div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="sec-advanced.html#cb135-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ExploreModelMatrix"</span>)</span>
 <span id="cb135-2"><a href="sec-advanced.html#cb135-2" tabindex="-1"></a>vd <span class="ot">&lt;-</span> <span class="fu">VisualizeDesign</span>(</span>
@@ -1813,7 +1818,7 @@ only systematically differ from each other according to the
 <h3>
 <span class="header-section-number">3.7.1</span> Hypothesis testing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('hypothesis-testing')" onmouseout="reset_tooltip('hypothesis-testing-tooltip')"><span class="tooltiptext" id="hypothesis-testing-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
-<p>The average difference intensity between the 1x and the 0.5x
+<p>The average difference in the log2-intensity between the 1x and the 0.5x
 conditions is provided by the contrast <code>ridgeCondition1 - ridgeCondition0.5</code>. This is, however, not the only difference we could
 assess. As described in the <a href="sec-basics.html#sec-multiple_contrasts">previous
 chapter</a>, we will generate a contrast matrix
@@ -2278,7 +2283,7 @@ predicted values.</p>
 <a href="sec-benchmarking.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-11-30
+2025-12-10
  using 
 R version 4.5.2 (2025-10-31)
 </p>

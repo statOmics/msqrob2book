@@ -1065,7 +1065,7 @@ ggplot(resultsIon) +
 This section provides a complement to the [TPR-FDR
 curves](#sec-tpr_fdp)
 
-### Benchmark using all proteins in the data{#sec-appendix3_1}
+### TPR-FDP curves using all proteins in the data{#sec-appendix3_1}
 
 This code is almost the same as for the main plot, except we removed
 the `na.exclude()` statement. This means that all proteins, even if

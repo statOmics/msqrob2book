@@ -895,11 +895,11 @@ model translates into the following code:
 
 
 ``` r
-spikein <- msqrob(
-    spikein,  i = "proteins",
-    formula = ~ Condition, ## fixed effect for experimental condition
-    robust = TRUE, ridge = TRUE
-)
+# spikein <- msqrob(
+#     spikein,  i = "proteins",
+#     formula = ~ Condition, ## fixed effect for experimental condition
+#     robust = TRUE, ridge = TRUE
+# )
 ```
 
 This model, however, does not model all sources of variation in the experiment and relying on its results would lead
@@ -1008,12 +1008,12 @@ This translates in the following code:
 
 
 ``` r
-spikein <- msqrob(
-    spikein,  i = "proteins",
-    formula = ~ Condition + ## fixed effect for experimental condition
-        (1 | Run), ## random effect for MS run
-    robust = TRUE, ridge = TRUE
-)
+# spikein <- msqrob(
+#     spikein,  i = "proteins",
+#     formula = ~ Condition + ## fixed effect for experimental condition
+#         (1 | Run), ## random effect for MS run
+#     robust = TRUE, ridge = TRUE
+# )
 ```
 
 This model is still incomplete and is not executed as we still need to 
@@ -1050,13 +1050,13 @@ Specifying label as a random effect translates in the following code:
 
 
 ``` r
-spikein <- msqrob(
-    spikein,  i = "proteins",
-    formula = ~ Condition + ## fixed effect for experimental condition
-        (1 | Run) + ## random effect for MS run
-        (1 | Label), ## random effect for label
-    robust = TRUE, ridge = TRUE
-)
+# spikein <- msqrob(
+#     spikein,  i = "proteins",
+#     formula = ~ Condition + ## fixed effect for experimental condition
+#         (1 | Run) + ## random effect for MS run
+#         (1 | Label), ## random effect for label
+#     robust = TRUE, ridge = TRUE
+# )
 ```
 
 This model is still incomplete and is not executed as we still need to 
@@ -1294,7 +1294,7 @@ order to obtain a fit with two slope terms (one for each group) so as to enable 
 
 We can now convert the biological question "does the spike-in
 condition affect the protein intensities?" into a statistical
-hypothesis. In other words, we need to define the [contrast](#sec-inference).
+hypothesis. In other words, we need to translate this question in a null and alternative hypothesis on a single model parameter or a linear combination of model parameters, which is also referred to with a [contrast](#sec-inference).
 We plot an overview of the model parameters.
 
 
@@ -1321,7 +1321,7 @@ only systematically differ from each other according to the
 
 ### Hypothesis testing
 
-The average difference intensity between the 1x and the 0.5x
+The average difference in the log2-intensity between the 1x and the 0.5x
 conditions is provided by the contrast `ridgeCondition1 -
 ridgeCondition0.5`. This is, however, not the only difference we could
 assess. As described in the [previous

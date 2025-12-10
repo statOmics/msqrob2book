@@ -13,14 +13,14 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-11-30" />
+<meta name="date" content="2025-12-10" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="/usr/share/javascript/mathjax/MathJax.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <meta name="description" content="2 Statistical analysis with msqrob2 | Statistical analysis of mass spectrometry-based proteomics data">
 
@@ -81,7 +81,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -139,6 +139,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -187,10 +188,10 @@ div.csl-indent {
 </ul>
 <a href="sec-advanced.html" id="toc-sec-advanced"><span class="toc-section-number">3</span> Advanced statistical analysis with msqrob2</a>
 <a href="sec-benchmarking.html" id="toc-sec-benchmarking"><span class="toc-section-number">4</span> Benchmarking workflows</a>
-<a href="sec-workflow_optimisation.html#sec-workflow_optimisation" id="toc-sec-workflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
+<a href="sec-workflow-optimisation.html" id="toc-sec-workflow-optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
 <a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
 <a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
-<a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
+<a href="sec-mouse-diet.html" id="toc-sec-mouse-diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
 <a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Useful links and session information</a>
 </div>
 </li>
@@ -2864,7 +2865,8 @@ by the histogram below.</p>
 <img src="figure/unnamed-chunk-30-1.png" alt="plot of chunk unnamed-chunk-30"><div class="figcaption">plot of chunk unnamed-chunk-30</div>
 </div>
 <p><strong>TODO</strong> assigned:Lieven DO WE USE THE SAME STRATEGY AS IN EDGER? Observe in at least as many samples as in the smallest group or in the minimum of 1/leverage for more complex designs? minSampleSize &lt;- 1/max(hat(design))</p>
-<p>We keep peptides that were observed at last 4 times out of the <span class="math inline">\(n = 20\)</span> samples, so that we can estimate the peptide characteristics. We tolerate the following proportion of NAs:
+<p>We keep peptides that were observed at last 4 times out of the <span class="math inline">\(n
+= 20\)</span> samples, so that we can estimate the peptide characteristics. We tolerate the following proportion of NAs:
 <span class="math inline">\(\text{pNA} = \frac{(n - 4)}{n} = 0.8\)</span>, so we keep peptides that
 are observed in at least 20% of the samples, which corresponds to one treatment condition. This is an arbitrary
 value that may need to be adjusted depending on the experiment and the
@@ -3801,7 +3803,7 @@ by the analysis of a TMT-labelled spike-in experiment.</p>
 <a href="sec-advanced.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-11-30
+2025-12-10
  using 
 R version 4.5.2 (2025-10-31)
 </p>

@@ -114,7 +114,7 @@ sec-ion_level_modelling
 appendix
 sec-appendix3_1
 sec-appendix3_2
-sec-workflow_optimisation
+sec-workflow-optimisation
 load-packages-3
 data-2
 psm-table
@@ -179,7 +179,7 @@ heatmap-3
 interaction
 volcano-plot-4
 conclusion-4
-sec-mouse_diet
+sec-mouse-diet
 introduction-2
 load-packages-6
 load-data-2

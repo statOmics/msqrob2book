@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="5 Optimisation of a data analysis workflow | Statistical analysis of mass spectrometry-based proteomics data" />
+<meta property="og:type" content="book" />
+
+
+
+
+<meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
+
+<meta name="date" content="2025-12-10" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="5 Optimisation of a data analysis workflow | Statistical analysis of mass spectrometry-based proteomics data">
+
+<title>5 Optimisation of a data analysis workflow | Statistical analysis of mass spectrometry-based proteomics data</title>
+
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/envisioned.css" rel="stylesheet" />
+<link href="libs/msmb-css-0/msmb.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+
+if(f.classList.contains('fa-plus-square')) {
+    f.classList.add('fa-minus-square')
+    f.classList.remove('fa-plus-square')
+} else {
+    f.classList.add('fa-plus-square')
+    f.classList.remove('fa-minus-square')
+}
+
+}
+</script>
+<script>
+function copy_link(id) {
+  var dummy = document.createElement('input'),
+  text = window.location.href.split(/[?#]/)[0] + '#' + id;
+  document.body.appendChild(dummy);
+  dummy.value = text;
+  dummy.select();
+  document.execCommand('copy');
+  document.body.removeChild(dummy);
+  
+  var tooltip = document.getElementById(id + '-tooltip');
+  tooltip.innerHTML = 'Copied!';
+}
+
+function reset_tooltip(id) {
+  var tooltip = document.getElementById(id);
+  tooltip.innerHTML = 'Copy link';
+}
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul class="navbar">
+<li class="msmb"><p class="title">Statistical analysis of mass spectrometry-based proteomics data<p><p class="author">Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement</p>
+<li class="dropdown" style="float:right">
+<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>
+<div class="dropdown-content">
+<a href="index.html" id="toc-preamble"><span class="toc-section-number">1</span> Preamble</a>
+<a href="sec-basics.html" id="toc-sec-basics"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
+<a href="sec-advanced.html" id="toc-sec-advanced"><span class="toc-section-number">3</span> Advanced statistical analysis with msqrob2</a>
+<a href="sec-benchmarking.html" id="toc-sec-benchmarking"><span class="toc-section-number">4</span> Benchmarking workflows</a>
+<a id="active-page" href="sec-workflow-optimisation.html" id="toc-sec-workflow-optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a><ul class="toc-sections">
+<li class="toc"><a href="#load-packages-3"> Load packages</a></li>
+<li class="toc"><a href="#data-2"> Data</a></li>
+<li class="toc"><a href="#data-preprocessing-2"> Data preprocessing</a></li>
+<li class="toc"><a href="#data-modelling-1"> Data modelling</a></li>
+<li class="toc"><a href="#performance-evaluation"> Performance Evaluation</a></li>
+<li class="toc"><a href="#conclusion-2"> Conclusion</a></li>
+</ul>
+<a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
+<a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
+<a href="sec-mouse-diet.html" id="toc-sec-mouse-diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
+<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Useful links and session information</a>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="sec-workflow-optimisation" class="section level1" number="5">
+<h1>
+<span class="header-section-number">5</span> Optimisation of a data analysis workflow</h1>
+<p>In the previous chapter we have seen how to benchmark the data
+analysis performance when starting from different types of data. This
+chapter presents how to assess the impact of different methods for the
+same sequence of steps on the same data, effectively optimising the
+workflow.</p>
+<p>To illustrate the approach, we will again use the data set by
+<span class="citation">(<label for="tufte-mn-20" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-20" class="margin-toggle">Shen et al. 2018<span class="marginnote">Shen, Xiaomeng, Shichen Shen, Jun Li, Qiang Hu, Lei Nie, Chengjian Tu, Xue Wang, et al. 2018. <span>“<span>IonStar</span> Enables High-Precision, Low-Missing-Data Proteomics Quantification in Large Biological Cohorts.”</span> <em>Proc. Natl. Acad. Sci. U. S. A.</em> 115 (21): E4767–76.</span>)</span>, a spike-in data set with known ground truth. The
+optimisation focuses on two steps: we will explore different methods
+for normalisation and summarisation.</p>
+<p><strong>Important</strong>: the first sections of the chapter are again meant for
+advanced users that are familiar with R scripting. Novice users
+interested in the key messages and best practices can refer to the
+<a href="sec-benchmarking.html#sec-take_home">take home message section</a>.</p>
+<div id="load-packages-3" class="section level2" number="5.1">
+<h2>
+<span class="header-section-number">5.1</span> Load packages<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('load-packages-3')" onmouseout="reset_tooltip('load-packages-3-tooltip')"><span class="tooltiptext" id="load-packages-3-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We load the <code>msqrob2</code> package, along with additional packages for data
+manipulation and visualisation.</p>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="sec-workflow-optimisation.html#cb219-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"msqrob2"</span>)</span>
+<span id="cb219-2"><a href="sec-workflow-optimisation.html#cb219-2" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb219-3"><a href="sec-workflow-optimisation.html#cb219-3" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb219-4"><a href="sec-workflow-optimisation.html#cb219-4" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyr"</span>)</span>
+<span id="cb219-5"><a href="sec-workflow-optimisation.html#cb219-5" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb219-6"><a href="sec-workflow-optimisation.html#cb219-6" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb219-7"><a href="sec-workflow-optimisation.html#cb219-7" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyverse"</span>)</span></code></pre></div>
+<p>We also configure the <a href="sec-basics.html#sec-parallel">parallelisation</a> framework.</p>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="sec-workflow-optimisation.html#cb220-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocParallel"</span>)</span>
+<span id="cb220-2"><a href="sec-workflow-optimisation.html#cb220-2" tabindex="-1"></a><span class="fu">register</span>(<span class="fu">SerialParam</span>())</span></code></pre></div>
+</div>
+<div id="data-2" class="section level2" number="5.2">
+<h2>
+<span class="header-section-number">5.2</span> Data<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-2')" onmouseout="reset_tooltip('data-2-tooltip')"><span class="tooltiptext" id="data-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We will reuse the data by <span class="citation">(<label for="tufte-mn-21" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-21" class="margin-toggle">Shen et al. 2018<span class="marginnote">Shen, Xiaomeng, Shichen Shen, Jun Li, Qiang Hu, Lei Nie, Chengjian Tu, Xue Wang, et al. 2018. <span>“<span>IonStar</span> Enables High-Precision, Low-Missing-Data Proteomics Quantification in Large Biological Cohorts.”</span> <em>Proc. Natl. Acad. Sci. U. S. A.</em> 115 (21): E4767–76.</span>)</span> as in chapter
+<a href="sec-basics.html#sec-basics">2</a> and <a href="sec-benchmarking.html#sec-benchmarking">4</a>. The
+<a href="sec-basics.html#sec-ecoli_data">data</a> were reanalysed using MaxQuant, and we will
+use start from the evidence file as suggested in the <a href="sec-benchmarking.html#sec-benchmarking">previous
+chapter</a>.</p>
+<div id="psm-table" class="section level3" number="5.2.1">
+<h3>
+<span class="header-section-number">5.2.1</span> PSM table<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('psm-table')" onmouseout="reset_tooltip('psm-table-tooltip')"><span class="tooltiptext" id="psm-table-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h3>
+<p>We here retrieve the evidence file containig the <a href="sec-advanced.html#sec-psm_table">PSM
+table</a>.</p>
+<p><strong>TODO</strong>: put data on Zenodo or MsDataHub, and update code below</p>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="sec-workflow-optimisation.html#cb221-1" tabindex="-1"></a><span class="co"># myurl &lt;- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/evidence.zip"</span></span>
+<span id="cb221-2"><a href="sec-workflow-optimisation.html#cb221-2" tabindex="-1"></a><span class="co"># download.file(myurl,"data/sticker2020/evidence.zip", method = "curl", extra = "-L")</span></span>
+<span id="cb221-3"><a href="sec-workflow-optimisation.html#cb221-3" tabindex="-1"></a><span class="co"># unzip("data/sticker2020/evidence.zip", exdir = "data/sticker2020/")</span></span>
+<span id="cb221-4"><a href="sec-workflow-optimisation.html#cb221-4" tabindex="-1"></a>evidenceFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/evidence.txt"</span></span></code></pre></div>
+<p>We also load the <a href="sec-basics.html#sec-annotation_table">annotation table</a>) that has
+been generated by the authors. Since the evidence, peptides and
+protein-groups tables all contain the same samples, the annotation
+table will be shared across the MaxQuant data tables.</p>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="sec-workflow-optimisation.html#cb222-1" tabindex="-1"></a>annotFile <span class="ot">&lt;-</span> <span class="st">"data/sticker2020/sticker2020_annotation.csv"</span></span>
+<span id="cb222-2"><a href="sec-workflow-optimisation.html#cb222-2" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(annotFile)</span></code></pre></div>
+<p>We retrieve all the E. coli protein identifiers to later identify
+which proteins are known to be differentially abundant (E. coli
+proteins) or constant (human) across condition.</p>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="sec-workflow-optimisation.html#cb223-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BiocFileCache"</span>)</span>
+<span id="cb223-2"><a href="sec-workflow-optimisation.html#cb223-2" tabindex="-1"></a>bfc <span class="ot">&lt;-</span> <span class="fu">BiocFileCache</span>()</span>
+<span id="cb223-3"><a href="sec-workflow-optimisation.html#cb223-3" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">bfcrpath</span>(bfc, <span class="st">"https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/refs/heads/master/spikein/data/fasta/ecoli_up000000625_7_06_2018.fasta"</span>)</span>
+<span id="cb223-4"><a href="sec-workflow-optimisation.html#cb223-4" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">readLines</span>(ecoli)</span>
+<span id="cb223-5"><a href="sec-workflow-optimisation.html#cb223-5" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> ecoli[<span class="fu">grepl</span>(<span class="st">"^&gt;"</span>, ecoli)]</span>
+<span id="cb223-6"><a href="sec-workflow-optimisation.html#cb223-6" tabindex="-1"></a>ecoli <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&gt;sp</span><span class="sc">\\</span><span class="st">|(.*)</span><span class="sc">\\</span><span class="st">|.*"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1"</span>, ecoli)</span></code></pre></div>
+</div>
+<div id="convert-to-qfeatures-1" class="section level3" number="5.2.2">
+<h3>
+<span class="header-section-number">5.2.2</span> Convert to QFeatures<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('convert-to-qfeatures-1')" onmouseout="reset_tooltip('convert-to-qfeatures-1-tooltip')"><span class="tooltiptext" id="convert-to-qfeatures-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h3>
+<p>We combine the evidence file with the annotation table into a
+<a href="sec-basics.html#sec-qfeatures"><code>QFeatures</code> object</a>.</p>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="sec-workflow-optimisation.html#cb224-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">fread</span>(evidenceFile, <span class="at">check.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb224-2"><a href="sec-workflow-optimisation.html#cb224-2" tabindex="-1"></a>coldata<span class="sc">$</span>runCol <span class="ot">&lt;-</span> coldata<span class="sc">$</span>Raw.file</span>
+<span id="cb224-3"><a href="sec-workflow-optimisation.html#cb224-3" tabindex="-1"></a>(spikein <span class="ot">&lt;-</span> <span class="fu">readQFeatures</span>(</span>
+<span id="cb224-4"><a href="sec-workflow-optimisation.html#cb224-4" tabindex="-1"></a>    spikein, <span class="at">colData =</span> coldata, <span class="at">runCol =</span> <span class="st">"Raw.file"</span>, </span>
+<span id="cb224-5"><a href="sec-workflow-optimisation.html#cb224-5" tabindex="-1"></a>    <span class="at">quantCols =</span> <span class="st">"Intensity"</span></span>
+<span id="cb224-6"><a href="sec-workflow-optimisation.html#cb224-6" tabindex="-1"></a>))</span></code></pre></div>
+<pre><code>## An instance of class QFeatures (type: bulk) with 20 sets:
+## 
+##  [1] B03_02_150304_human_ecoli_B_3ul_3um_column_95_HCD_OT_2hrs_30B_9B: SummarizedExperiment with 40057 rows and 1 columns 
+##  [2] B03_03_150304_human_ecoli_C_3ul_3um_column_95_HCD_OT_2hrs_30B_9B: SummarizedExperiment with 41266 rows and 1 columns 
+##  [3] B03_04_150304_human_ecoli_D_3ul_3um_column_95_HCD_OT_2hrs_30B_9B: SummarizedExperiment with 41396 rows and 1 columns 
+##  ...
+##  [18] B03_19_150304_human_ecoli_B_3ul_3um_column_95_HCD_OT_2hrs_30B_9B: SummarizedExperiment with 39388 rows and 1 columns 
+##  [19] B03_20_150304_human_ecoli_A_3ul_3um_column_95_HCD_OT_2hrs_30B_9B: SummarizedExperiment with 39000 rows and 1 columns 
+##  [20] B03_21_150304_human_ecoli_A_3ul_3um_column_95_HCD_OT_2hrs_30B_9B: SummarizedExperiment with 38783 rows and 1 columns</code></pre>
+<p>We now have a <code>QFeatures</code> object with 20 sets, as many as the number
+of MS runs. We cannot yet join the sets together since we don’t have a
+specific feature identifier and the data does not fullfill to the
+modelling assumptions, yet. We will therefore preprocess the data
+first.</p>
+</div>
+</div>
+<div id="data-preprocessing-2" class="section level2" number="5.3">
+<h2>
+<span class="header-section-number">5.3</span> Data preprocessing<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-preprocessing-2')" onmouseout="reset_tooltip('data-preprocessing-2-tooltip')"><span class="tooltiptext" id="data-preprocessing-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>We will follow the same data <a href="%7B#sec-preprocess_evidence%7D">preprocessing
+workflow</a> as in the previous chapter. We
+will however explore different normalisation strategies and
+summarisation methods.</p>
+<ol style="list-style-type: decimal">
+<li>Encoding missing values as zeros.</li>
+</ol>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="sec-workflow-optimisation.html#cb226-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(spikein, <span class="fu">names</span>(spikein))</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Log2 transforming</li>
+</ol>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="sec-workflow-optimisation.html#cb227-1" tabindex="-1"></a>inputNames <span class="ot">&lt;-</span> <span class="fu">names</span>(spikein)</span>
+<span id="cb227-2"><a href="sec-workflow-optimisation.html#cb227-2" tabindex="-1"></a>logNames <span class="ot">&lt;-</span> <span class="fu">paste0</span>(inputNames, <span class="st">"_log"</span>)</span>
+<span id="cb227-3"><a href="sec-workflow-optimisation.html#cb227-3" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">logTransform</span>(spikein, inputNames, <span class="at">name =</span> logNames, <span class="at">base =</span> <span class="dv">2</span>)</span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>Keeping only the most intense PSM per ion (see
+<a href="sec-advanced.html#sec-duplicated_psms">here</a> for a step-by-step explanation of the
+code). Upon this filtering every feature is unique to a ion
+identifier (peptide sequence + charge), and we hence can join sets
+using that identifier.</li>
+</ol>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="sec-workflow-optimisation.html#cb228-1" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> logNames) {</span>
+<span id="cb228-2"><a href="sec-workflow-optimisation.html#cb228-2" tabindex="-1"></a>  rowdata <span class="ot">&lt;-</span> <span class="fu">rowData</span>(spikein[[i]]) </span>
+<span id="cb228-3"><a href="sec-workflow-optimisation.html#cb228-3" tabindex="-1"></a>  rowdata<span class="sc">$</span>ionID <span class="ot">&lt;-</span> <span class="fu">paste0</span>(rowdata<span class="sc">$</span>Sequence, rowdata<span class="sc">$</span>Charge) </span>
+<span id="cb228-4"><a href="sec-workflow-optimisation.html#cb228-4" tabindex="-1"></a>  rowdata<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">assay</span>(spikein[[i]])[, <span class="dv">1</span>]</span>
+<span id="cb228-5"><a href="sec-workflow-optimisation.html#cb228-5" tabindex="-1"></a>  rowdata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(rowdata) <span class="sc">|&gt;</span></span>
+<span id="cb228-6"><a href="sec-workflow-optimisation.html#cb228-6" tabindex="-1"></a>    <span class="fu">group_by</span>(ionID) <span class="sc">|&gt;</span></span>
+<span id="cb228-7"><a href="sec-workflow-optimisation.html#cb228-7" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">psmRank =</span> <span class="fu">rank</span>(<span class="sc">-</span>value))</span>
+<span id="cb228-8"><a href="sec-workflow-optimisation.html#cb228-8" tabindex="-1"></a>  <span class="fu">rowData</span>(spikein[[i]])<span class="sc">$</span>psmRank <span class="ot">&lt;-</span> rowdata<span class="sc">$</span>psmRank</span>
+<span id="cb228-9"><a href="sec-workflow-optimisation.html#cb228-9" tabindex="-1"></a>  <span class="fu">rowData</span>(spikein[[i]])<span class="sc">$</span>ionID <span class="ot">&lt;-</span> rowdata<span class="sc">$</span>ionID</span>
+<span id="cb228-10"><a href="sec-workflow-optimisation.html#cb228-10" tabindex="-1"></a>}</span>
+<span id="cb228-11"><a href="sec-workflow-optimisation.html#cb228-11" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(spikein, <span class="sc">~</span> psmRank <span class="sc">==</span> <span class="dv">1</span>, <span class="at">keep =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb228-12"><a href="sec-workflow-optimisation.html#cb228-12" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">joinAssays</span>(spikein, logNames, <span class="st">"ions_log"</span>, <span class="st">"ionID"</span>)</span></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li>Feature filtering</li>
+</ol>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="sec-workflow-optimisation.html#cb229-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterFeatures</span>(</span>
+<span id="cb229-2"><a href="sec-workflow-optimisation.html#cb229-2" tabindex="-1"></a>        spikein, <span class="sc">~</span> Proteins <span class="sc">!=</span> <span class="st">""</span> <span class="sc">&amp;</span> <span class="do">## Remove failed protein inference</span></span>
+<span id="cb229-3"><a href="sec-workflow-optimisation.html#cb229-3" tabindex="-1"></a>          <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">";"</span>, Proteins) <span class="sc">&amp;</span> <span class="do">## Remove protein groups</span></span>
+<span id="cb229-4"><a href="sec-workflow-optimisation.html#cb229-4" tabindex="-1"></a>          Reverse <span class="sc">!=</span> <span class="st">"+"</span> <span class="sc">&amp;</span> <span class="do">## Remove decoys</span></span>
+<span id="cb229-5"><a href="sec-workflow-optimisation.html#cb229-5" tabindex="-1"></a>          (Potential.contaminant <span class="sc">!=</span> <span class="st">"+"</span>) <span class="do">## Remove contaminants</span></span>
+<span id="cb229-6"><a href="sec-workflow-optimisation.html#cb229-6" tabindex="-1"></a>)</span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li>Missing value filtering</li>
+</ol>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="sec-workflow-optimisation.html#cb230-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(spikein[[<span class="st">"ions_log"</span>]])</span>
+<span id="cb230-2"><a href="sec-workflow-optimisation.html#cb230-2" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">filterNA</span>(spikein, <span class="at">i =</span> <span class="st">"ions_log"</span>, <span class="at">pNA =</span> (n <span class="sc">-</span> <span class="dv">4</span>) <span class="sc">/</span> n)</span></code></pre></div>
+<div id="explore-normalisation-methods" class="section level3" number="5.3.1">
+<h3>
+<span class="header-section-number">5.3.1</span> Explore normalisation methods<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('explore-normalisation-methods')" onmouseout="reset_tooltip('explore-normalisation-methods-tooltip')"><span class="tooltiptext" id="explore-normalisation-methods-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h3>
+<p><a href="sec-basics.html#sec-norm">Remember</a> that normalisation aims to correct for
+systematic fluctuations across samples, as illustrated by plotting the
+intensity distribution for each sample. The method applies the
+following operation on each sample <span class="math inline">\(i\)</span> across all PSMs <span class="math inline">\(p\)</span>:</p>
+<p><span class="math display">\[
+y_{ip}^{\text{norm}} = y_{ip} - \hat{\mu}_i
+\]</span></p>
+<p>with <span class="math inline">\(\mathbf{y}\)</span> the log intensities and _i$ the norm
+factor.</p>
+<p>We previously showed that the <a href="sec-basics.html#sec-norm">Median of Ratios</a>
+(popularized by DESeq2) method could (partly) correct for these
+systematic fluctuations. We abbreviate this method as the MedianOfRatios method.
+The norm factor used by MedianOfRatios is estimated as follows:</p>
+<p><span class="math display">\[
+\hat{\mu}^\text{MedianOfRatios}_i = \text{median}(y_{i\cdot} - \frac{1}{n}\sum\limits_{i = 1}^ny_{i\cdot})
+\]</span></p>
+<p>We create a new set called <code>ions_norm_MedianOfRatios</code> that contains the
+values normalised by MedianOfRatios.</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="sec-workflow-optimisation.html#cb231-1" tabindex="-1"></a>pseudoRef <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">assay</span>(spikein[[<span class="st">"ions_log"</span>]]), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb231-2"><a href="sec-workflow-optimisation.html#cb231-2" tabindex="-1"></a>nfLog <span class="ot">&lt;-</span> <span class="fu">sweep</span>(<span class="fu">assay</span>(spikein[[<span class="st">"ions_log"</span>]]), <span class="at">MARGIN =</span> <span class="dv">1</span>, pseudoRef) <span class="sc">|&gt;</span> </span>
+<span id="cb231-3"><a href="sec-workflow-optimisation.html#cb231-3" tabindex="-1"></a>  <span class="fu">colMedians</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb231-4"><a href="sec-workflow-optimisation.html#cb231-4" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">sweep</span>(</span>
+<span id="cb231-5"><a href="sec-workflow-optimisation.html#cb231-5" tabindex="-1"></a>  spikein, <span class="at">MARGIN =</span> <span class="dv">2</span>, <span class="at">STATS =</span> nfLog, </span>
+<span id="cb231-6"><a href="sec-workflow-optimisation.html#cb231-6" tabindex="-1"></a>  <span class="at">i =</span> <span class="st">"ions_log"</span>, <span class="at">name =</span> <span class="st">"ions_norm_MedianOfRatios"</span></span>
+<span id="cb231-7"><a href="sec-workflow-optimisation.html#cb231-7" tabindex="-1"></a>)</span></code></pre></div>
+<p>However, other methods exist, median centering being the most popular.
+Median centering normalisation subtracts the median intensity of each
+sample from all its measurements. A key assumption for this method is
+that the majority of proteins are not differentially abundant. We
+abbreviate this method as the MedianCentering method. The norm factor used by MedianOfRatios
+is estimated as follows:</p>
+<p><span class="math display">\[
+\hat{\mu}^\text{MedianCentering}_i = \text{median}(y_{i\cdot})
+\]</span></p>
+<p>We create a new set called <code>ions_norm_MedianCentering</code> that contains the
+values normalised by MedianCentering.</p>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="sec-workflow-optimisation.html#cb232-1" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">normalize</span>(</span>
+<span id="cb232-2"><a href="sec-workflow-optimisation.html#cb232-2" tabindex="-1"></a>  spikein, <span class="at">method =</span> <span class="st">"center.median"</span>, <span class="at">i =</span> <span class="st">"ions_log"</span>, </span>
+<span id="cb232-3"><a href="sec-workflow-optimisation.html#cb232-3" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"ions_norm_MedianCentering"</span></span>
+<span id="cb232-4"><a href="sec-workflow-optimisation.html#cb232-4" tabindex="-1"></a>)</span></code></pre></div>
+<p>We visually explore the impact of the normalisation methods on the
+intensity distribution for each sample.</p>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="sec-workflow-optimisation.html#cb233-1" tabindex="-1"></a><span class="fu">longForm</span>(</span>
+<span id="cb233-2"><a href="sec-workflow-optimisation.html#cb233-2" tabindex="-1"></a>  spikein[, , <span class="fu">c</span>(<span class="st">"ions_norm_MedianOfRatios"</span>, <span class="st">"ions_norm_MedianCentering"</span>)],</span>
+<span id="cb233-3"><a href="sec-workflow-optimisation.html#cb233-3" tabindex="-1"></a>  <span class="at">colvars =</span> <span class="fu">c</span>(<span class="st">"Concentration"</span>, <span class="st">"Condition"</span>)</span>
+<span id="cb233-4"><a href="sec-workflow-optimisation.html#cb233-4" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb233-5"><a href="sec-workflow-optimisation.html#cb233-5" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb233-6"><a href="sec-workflow-optimisation.html#cb233-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">normalisation =</span> <span class="fu">sub</span>(<span class="st">"ions_norm_"</span>, <span class="st">""</span>, assay)) <span class="sc">|&gt;</span></span>
+<span id="cb233-7"><a href="sec-workflow-optimisation.html#cb233-7" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb233-8"><a href="sec-workflow-optimisation.html#cb233-8" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> value,</span>
+<span id="cb233-9"><a href="sec-workflow-optimisation.html#cb233-9" tabindex="-1"></a>      <span class="at">colour =</span> Condition,</span>
+<span id="cb233-10"><a href="sec-workflow-optimisation.html#cb233-10" tabindex="-1"></a>      <span class="at">group =</span> colname) <span class="sc">+</span></span>
+<span id="cb233-11"><a href="sec-workflow-optimisation.html#cb233-11" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb233-12"><a href="sec-workflow-optimisation.html#cb233-12" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span> normalisation, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb233-13"><a href="sec-workflow-optimisation.html#cb233-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Intensity distribution for all samples"</span>,</span>
+<span id="cb233-14"><a href="sec-workflow-optimisation.html#cb233-14" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"After normalisation"</span>)</span></code></pre></div>
+<p><img src="figure/wf_optimisation_after_norm-1.png"></p>
+<p>Both the median centering and median or ratio normalisation achieve
+similar alignment of the intensity distributions. Although they appear
+visually similar, we will see later that they can lead to different
+results in statistical inference.</p>
+<p>Notice that the <code>QFeatures</code> object contains two diverging assays, one
+for each normalisation method.</p>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="sec-workflow-optimisation.html#cb234-1" tabindex="-1"></a><span class="fu">plot</span>(spikein, <span class="at">interactive =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Error in loadNamespace(name): there is no package called 'webshot'</code></pre>
+</div>
+<div id="explore-summarisation-methods" class="section level3" number="5.3.2">
+<h3>
+<span class="header-section-number">5.3.2</span> Explore summarisation methods<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('explore-summarisation-methods')" onmouseout="reset_tooltip('explore-summarisation-methods-tooltip')"><span class="tooltiptext" id="explore-summarisation-methods-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h3>
+<p>With the data normalised, the next step is to
+<a href="sec-basics.html#sec-summarisation">summarise</a> ion-level intensities to obtain
+protein-level expression values. In this chapter, we will compare
+three summarisation methods:</p>
+<ul>
+<li>
+<strong>Robust summarisation</strong> <span class="citation">(<label for="tufte-mn-22" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-22" class="margin-toggle">Sticker et al. 2020<span class="marginnote">Sticker, Adriaan, Ludger Goeminne, Lennart Martens, and Lieven Clement. 2020. <span>“Robust Summarization and Inference in Proteome-Wide Label-Free Quantification.”</span> <em>Mol. Cell. Proteomics</em> 19 (7): 1209–19.</span>)</span>, as we described in a
+<a href="sec-basics.html#sec-summarisation">previous chapter</a>.</li>
+<li>
+<strong>Median summarisation</strong>, which calculates the median of the
+log-transformed intensities of all peptides belonging to a protein
+for each sample separately. While robust to outliers, it can be
+heavily influenced by inconsistent peptide identification across
+samples.</li>
+<li>
+<strong>Median polish summarisation</strong>, a non-parametric iterative method
+that decomposes the peptide-by-sample intensity matrix into peptide
+effects (rows) and sample effects (columns). The resulting column
+effects are used as the summarised protein abundances. It is robust
+and much faster than model-based approaches.</li>
+</ul>
+<p>All these summarisation methods are available in <code>MsCoreUtils</code> and can
+be integrated feeded to <code>QFeatures</code>.</p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="sec-workflow-optimisation.html#cb236-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"MsCoreUtils"</span>)</span>
+<span id="cb236-2"><a href="sec-workflow-optimisation.html#cb236-2" tabindex="-1"></a>summMethods <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb236-3"><a href="sec-workflow-optimisation.html#cb236-3" tabindex="-1"></a>  <span class="at">robustSummary =</span> MsCoreUtils<span class="sc">::</span>robustSummary, </span>
+<span id="cb236-4"><a href="sec-workflow-optimisation.html#cb236-4" tabindex="-1"></a>  <span class="at">colMedians =</span> colMedians, </span>
+<span id="cb236-5"><a href="sec-workflow-optimisation.html#cb236-5" tabindex="-1"></a>  <span class="at">medianPolish =</span> MsCoreUtils<span class="sc">::</span>medianPolish</span>
+<span id="cb236-6"><a href="sec-workflow-optimisation.html#cb236-6" tabindex="-1"></a>)</span></code></pre></div>
+<p>We will therefore create a loop that iterates over the normalised data
+sets and over the summarisation methods.</p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="sec-workflow-optimisation.html#cb237-1" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"ions_norm_MedianOfRatios"</span>, <span class="st">"ions_norm_MedianCentering"</span>)) {</span>
+<span id="cb237-2"><a href="sec-workflow-optimisation.html#cb237-2" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">names</span>(summMethods)) {</span>
+<span id="cb237-3"><a href="sec-workflow-optimisation.html#cb237-3" tabindex="-1"></a>    newSet <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"proteins_"</span>, <span class="fu">sub</span>(<span class="st">"ions_norm_"</span>, <span class="st">""</span>, i), <span class="st">"_"</span>, j)</span>
+<span id="cb237-4"><a href="sec-workflow-optimisation.html#cb237-4" tabindex="-1"></a>    spikein <span class="ot">&lt;-</span> <span class="fu">aggregateFeatures</span>(</span>
+<span id="cb237-5"><a href="sec-workflow-optimisation.html#cb237-5" tabindex="-1"></a>      spikein, <span class="at">i =</span> i, </span>
+<span id="cb237-6"><a href="sec-workflow-optimisation.html#cb237-6" tabindex="-1"></a>      <span class="at">name =</span> newSet,</span>
+<span id="cb237-7"><a href="sec-workflow-optimisation.html#cb237-7" tabindex="-1"></a>      <span class="at">fcol =</span> <span class="st">"Proteins"</span>, </span>
+<span id="cb237-8"><a href="sec-workflow-optimisation.html#cb237-8" tabindex="-1"></a>      <span class="at">fun =</span> summMethods[[j]],</span>
+<span id="cb237-9"><a href="sec-workflow-optimisation.html#cb237-9" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb237-10"><a href="sec-workflow-optimisation.html#cb237-10" tabindex="-1"></a>    )</span>
+<span id="cb237-11"><a href="sec-workflow-optimisation.html#cb237-11" tabindex="-1"></a>  }</span>
+<span id="cb237-12"><a href="sec-workflow-optimisation.html#cb237-12" tabindex="-1"></a>}</span></code></pre></div>
+<p>The data processing is now complete. The <code>QFeatures</code> object now
+contains a workflow of assays, from input PSMs to normalised and
+summarised proteins. The data set contains 2 sets obtained using 2
+normalisation methods, and each normalised set has been summarised
+with 3 different methods.</p>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="sec-workflow-optimisation.html#cb238-1" tabindex="-1"></a><span class="fu">plot</span>(spikein, <span class="at">interactive =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Error in loadNamespace(name): there is no package called 'webshot'</code></pre>
+</div>
+</div>
+<div id="data-modelling-1" class="section level2" number="5.4">
+<h2>
+<span class="header-section-number">5.4</span> Data modelling<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('data-modelling-1')" onmouseout="reset_tooltip('data-modelling-1-tooltip')"><span class="tooltiptext" id="data-modelling-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>The preprocessed data for all 6 workflows<label for="tufte-sn-32" class="margin-toggle sidenote-number">32</label><input type="checkbox" id="tufte-sn-32" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">32</span> There are 2 normalisaion
+methods * 3 summarisation methods.</span> can now be modelled to assess our
+research hypothesis using the same approach, as described in the
+<a href="sec-basics.html#sec-modelling">basics chapter</a><label for="tufte-sn-33" class="margin-toggle sidenote-number">33</label><input type="checkbox" id="tufte-sn-33" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">33</span> Note that while we changed the
+preprocessing workflow, the sources of variation and the model to
+estimate remain the same as in Chapter <a href="sec-basics.html#sec-basics">2</a>.</span>. Remember,
+the central research question is to “prioritise proteins that have
+been spiked in across the conditions.” Since we know the ground truth,
+we can assess how accurately the model estimates the fold changes
+between spike-in conditions, and hence which preprocessing workflow
+leads to the best results.</p>
+<p>We loop over the different assays to fit the model for the different
+preprocessed sets<label for="tufte-sn-34" class="margin-toggle sidenote-number">34</label><input type="checkbox" id="tufte-sn-34" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">34</span> Those sets that start with <code>proteins_</code>.</span>. Recall
+that the model estimation results are stored in the <code>rowData</code> of each
+set.</p>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="sec-workflow-optimisation.html#cb240-1" tabindex="-1"></a>proteinSets <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"proteins_"</span>, <span class="fu">names</span>(spikein), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb240-2"><a href="sec-workflow-optimisation.html#cb240-2" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> proteinSets) {</span>
+<span id="cb240-3"><a href="sec-workflow-optimisation.html#cb240-3" tabindex="-1"></a>  spikein <span class="ot">&lt;-</span> <span class="fu">msqrob</span>(</span>
+<span id="cb240-4"><a href="sec-workflow-optimisation.html#cb240-4" tabindex="-1"></a>    spikein,  <span class="at">i =</span> i, <span class="at">formula =</span> <span class="sc">~</span> Condition, <span class="at">ridge =</span> <span class="cn">TRUE</span>, <span class="at">robust =</span> <span class="cn">TRUE</span></span>
+<span id="cb240-5"><a href="sec-workflow-optimisation.html#cb240-5" tabindex="-1"></a>  )</span>
+<span id="cb240-6"><a href="sec-workflow-optimisation.html#cb240-6" tabindex="-1"></a>}</span></code></pre></div>
+<p>We enable <a href="sec-advanced.html#sec-robust">M-estimation</a> (<code>robust = TRUE</code>) for improved
+robustness against outliers and <a href="sec-advanced.html#sec-ridge">ridge regression</a> (<code>ridge = TRUE</code>) to stabilise parameter estimates. While the stabilising
+effects of ridge regression are most pronounced in complex models with
+many parameters, we enable it here to ensure robust parameter
+estimation and for consistency with more advanced workflows.</p>
+<p>We can create our <a href="sec-basics.html#sec-inference">contrasts of interest</a> and perform
+<a href="sec-basics.html#sec-hypothesis_testing">hypothesis testing</a>.</p>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="sec-workflow-optimisation.html#cb241-1" tabindex="-1"></a>allContrasts <span class="ot">&lt;-</span> <span class="fu">createPairwiseContrasts</span>(</span>
+<span id="cb241-2"><a href="sec-workflow-optimisation.html#cb241-2" tabindex="-1"></a>    <span class="sc">~</span> Condition, <span class="fu">colData</span>(spikein), <span class="at">var =</span> <span class="st">"Condition"</span>, <span class="at">ridge =</span> <span class="cn">TRUE</span></span>
+<span id="cb241-3"><a href="sec-workflow-optimisation.html#cb241-3" tabindex="-1"></a>)</span>
+<span id="cb241-4"><a href="sec-workflow-optimisation.html#cb241-4" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">makeContrast</span>(</span>
+<span id="cb241-5"><a href="sec-workflow-optimisation.html#cb241-5" tabindex="-1"></a>    allContrasts, </span>
+<span id="cb241-6"><a href="sec-workflow-optimisation.html#cb241-6" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"ridgeConditionB"</span>, <span class="st">"ridgeConditionC"</span>, <span class="st">"ridgeConditionD"</span>, <span class="st">"ridgeConditionE"</span>)</span>
+<span id="cb241-7"><a href="sec-workflow-optimisation.html#cb241-7" tabindex="-1"></a>)</span>
+<span id="cb241-8"><a href="sec-workflow-optimisation.html#cb241-8" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">lapply</span>(proteinSets, <span class="cf">function</span>(i) {</span>
+<span id="cb241-9"><a href="sec-workflow-optimisation.html#cb241-9" tabindex="-1"></a>  spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(spikein, i, <span class="at">contrast =</span> L)</span>
+<span id="cb241-10"><a href="sec-workflow-optimisation.html#cb241-10" tabindex="-1"></a>  inference <span class="ot">&lt;-</span> <span class="fu">msqrobCollect</span>(spikein[[i]], L)</span>
+<span id="cb241-11"><a href="sec-workflow-optimisation.html#cb241-11" tabindex="-1"></a>  inference<span class="sc">$</span>method <span class="ot">&lt;-</span> i</span>
+<span id="cb241-12"><a href="sec-workflow-optimisation.html#cb241-12" tabindex="-1"></a>  inference</span>
+<span id="cb241-13"><a href="sec-workflow-optimisation.html#cb241-13" tabindex="-1"></a>})</span>
+<span id="cb241-14"><a href="sec-workflow-optimisation.html#cb241-14" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, inferences)</span></code></pre></div>
+<p>We also add the information whether a protein is differentially
+abundant or not, since all E. Coli proteins are known to be spiked in
+different concentrations.</p>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="sec-workflow-optimisation.html#cb242-1" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb242-2"><a href="sec-workflow-optimisation.html#cb242-2" tabindex="-1"></a>  inferences,</span>
+<span id="cb242-3"><a href="sec-workflow-optimisation.html#cb242-3" tabindex="-1"></a>  <span class="at">isEcoli =</span> feature <span class="sc">%in%</span> ecoli,</span>
+<span id="cb242-4"><a href="sec-workflow-optimisation.html#cb242-4" tabindex="-1"></a>  <span class="at">normalisation =</span> <span class="fu">sub</span>(<span class="st">"(.*)_(.*)_(.*)"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">2"</span>, method),</span>
+<span id="cb242-5"><a href="sec-workflow-optimisation.html#cb242-5" tabindex="-1"></a>  <span class="at">summarisation =</span> <span class="fu">sub</span>(<span class="st">"(.*)_(.*)_(.*)"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">3"</span>, method),</span>
+<span id="cb242-6"><a href="sec-workflow-optimisation.html#cb242-6" tabindex="-1"></a>  <span class="at">contrast =</span> <span class="fu">gsub</span>(<span class="st">"ridgeCondition"</span>, <span class="st">""</span>, contrast),</span>
+<span id="cb242-7"><a href="sec-workflow-optimisation.html#cb242-7" tabindex="-1"></a>  <span class="at">contrast =</span> <span class="fu">gsub</span>(<span class="st">"^([B-E])$"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 - A"</span>, contrast),</span>
+<span id="cb242-8"><a href="sec-workflow-optimisation.html#cb242-8" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="performance-evaluation" class="section level2" number="5.5">
+<h2>
+<span class="header-section-number">5.5</span> Performance Evaluation<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('performance-evaluation')" onmouseout="reset_tooltip('performance-evaluation-tooltip')"><span class="tooltiptext" id="performance-evaluation-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>Since we have ground truth information (i.e., we know which proteins
+are from E. coli and should be differentially abundant), we can
+objectively evaluate the performance of each workflow. Similarly to
+the <a href="sec-benchmarking.html#sec-performance">previous chapter</a>, we will assess the number of
+true positives (TP, that are correctly identified E. coli proteins)
+and false positives (FP, that are human proteins incorrectly
+identified as significant), the false discovery proportion (FDP), the
+accuracy of the estimated log2 fold changes (LFC), and finally, the
+overall performance using True Positive Rate (TPR) versus False
+Discovery Proportion (FDP) curves.</p>
+<p>Before delving into the performance plot, we will first create a
+colour scheme in order to compare the different workflows. We will
+assign a colour to each combination of normalisation and summarisation
+method.</p>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="sec-workflow-optimisation.html#cb243-1" tabindex="-1"></a>inferences <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
+<span id="cb243-2"><a href="sec-workflow-optimisation.html#cb243-2" tabindex="-1"></a>  inferences,</span>
+<span id="cb243-3"><a href="sec-workflow-optimisation.html#cb243-3" tabindex="-1"></a>  <span class="at">workflow =</span> <span class="fu">paste0</span>(normalisation, <span class="st">"_"</span>, summarisation)</span>
+<span id="cb243-4"><a href="sec-workflow-optimisation.html#cb243-4" tabindex="-1"></a>)</span>
+<span id="cb243-5"><a href="sec-workflow-optimisation.html#cb243-5" tabindex="-1"></a>colours <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb243-6"><a href="sec-workflow-optimisation.html#cb243-6" tabindex="-1"></a>  <span class="at">MedianCentering_colMedians =</span> <span class="st">"#fcba03"</span>,</span>
+<span id="cb243-7"><a href="sec-workflow-optimisation.html#cb243-7" tabindex="-1"></a>  <span class="at">MedianCentering_medianPolish =</span> <span class="st">"#c29310"</span>,</span>
+<span id="cb243-8"><a href="sec-workflow-optimisation.html#cb243-8" tabindex="-1"></a>  <span class="at">MedianCentering_robustSummary =</span> <span class="st">"#423512"</span>,</span>
+<span id="cb243-9"><a href="sec-workflow-optimisation.html#cb243-9" tabindex="-1"></a>  <span class="at">MedianOfRatios_colMedians =</span> <span class="st">"#5bb4fc"</span>,</span>
+<span id="cb243-10"><a href="sec-workflow-optimisation.html#cb243-10" tabindex="-1"></a>  <span class="at">MedianOfRatios_medianPolish =</span> <span class="st">"#0b69b5"</span>,</span>
+<span id="cb243-11"><a href="sec-workflow-optimisation.html#cb243-11" tabindex="-1"></a>  <span class="at">MedianOfRatios_robustSummary =</span> <span class="st">"#0f2a40"</span></span>
+<span id="cb243-12"><a href="sec-workflow-optimisation.html#cb243-12" tabindex="-1"></a>)</span></code></pre></div>
+<div id="tp-and-fp-at-5-fdr-1" class="section level3" number="5.5.1">
+<h3>
+<span class="header-section-number">5.5.1</span> TP and FP at 5% FDR<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('tp-and-fp-at-5-fdr-1')" onmouseout="reset_tooltip('tp-and-fp-at-5-fdr-1-tooltip')"><span class="tooltiptext" id="tp-and-fp-at-5-fdr-1-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h3>
+<p>We will first construct the table with TPs and FPs obtained
+from each data modelling approach for each comparison.</p>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="sec-workflow-optimisation.html#cb244-1" tabindex="-1"></a>tpFpTable <span class="ot">&lt;-</span> <span class="fu">group_by</span>(inferences, normalisation, workflow, contrast) <span class="sc">|&gt;</span></span>
+<span id="cb244-2"><a href="sec-workflow-optimisation.html#cb244-2" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb244-3"><a href="sec-workflow-optimisation.html#cb244-3" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="st">"True Positives"</span> <span class="ot">=</span> <span class="fu">sum</span>(isEcoli),</span>
+<span id="cb244-4"><a href="sec-workflow-optimisation.html#cb244-4" tabindex="-1"></a>              <span class="st">"False Positives"</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span>isEcoli),</span>
+<span id="cb244-5"><a href="sec-workflow-optimisation.html#cb244-5" tabindex="-1"></a>              <span class="at">FDP =</span> <span class="fu">mean</span>(<span class="sc">!</span>isEcoli)) <span class="sc">|&gt;</span></span>
+<span id="cb244-6"><a href="sec-workflow-optimisation.html#cb244-6" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"True Positives"</span>, <span class="st">"False Positives"</span>),</span>
+<span id="cb244-7"><a href="sec-workflow-optimisation.html#cb244-7" tabindex="-1"></a>                 <span class="at">names_to =</span> <span class="st">"metric"</span>, <span class="at">values_to =</span> <span class="st">"count"</span>)</span></code></pre></div>
+<p>We then plot the table as a bar plot, facetting for every comparison.</p>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="sec-workflow-optimisation.html#cb245-1" tabindex="-1"></a><span class="fu">ggplot</span>(tpFpTable) <span class="sc">+</span></span>
+<span id="cb245-2"><a href="sec-workflow-optimisation.html#cb245-2" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb245-3"><a href="sec-workflow-optimisation.html#cb245-3" tabindex="-1"></a>    <span class="at">x =</span> normalisation, <span class="at">y =</span> count,</span>
+<span id="cb245-4"><a href="sec-workflow-optimisation.html#cb245-4" tabindex="-1"></a>    <span class="at">fill =</span> workflow</span>
+<span id="cb245-5"><a href="sec-workflow-optimisation.html#cb245-5" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb245-6"><a href="sec-workflow-optimisation.html#cb245-6" tabindex="-1"></a>  <span class="fu">geom_bar</span>(</span>
+<span id="cb245-7"><a href="sec-workflow-optimisation.html#cb245-7" tabindex="-1"></a>    <span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">preserve =</span> <span class="st">"single"</span>),</span>
+<span id="cb245-8"><a href="sec-workflow-optimisation.html#cb245-8" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"black"</span></span>
+<span id="cb245-9"><a href="sec-workflow-optimisation.html#cb245-9" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb245-10"><a href="sec-workflow-optimisation.html#cb245-10" tabindex="-1"></a>  <span class="fu">facet_grid</span>(contrast <span class="sc">~</span> metric, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb245-11"><a href="sec-workflow-optimisation.html#cb245-11" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> colours) <span class="sc">+</span></span>
+<span id="cb245-12"><a href="sec-workflow-optimisation.html#cb245-12" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+<p><img src="figure/wf_tp_fp-1.png"></p>
+<p>We see that, while it has minimal impact on the TPs, the median centering normalisation approach increases the number of FPs for some comparisons (E-A and E-B). We therefore suggest to use the Median of ratio’s normalisation method.</p>
+<p>More importantly, we see that summarising using the column median leads to poor performance (irrespective of the normalisation method used) as these workflow identify less TPs.
+This can be easily explained as the summarisation step in this workflow does not account for the fact that different PSMs are often observed for a protein in the different samples and that their corresponding intensities largely fluctuate according to the differences in the PSM characteristics.
+The median polish and the robust summary summarisation show similar performance.
+Note, however, that median polish is computationally less demanding.</p>
+</div>
+<div id="tpr-fdp-curves" class="section level3" number="5.5.2">
+<h3>
+<span class="header-section-number">5.5.2</span> TPR-FDP curves<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('tpr-fdp-curves')" onmouseout="reset_tooltip('tpr-fdp-curves-tooltip')"><span class="tooltiptext" id="tpr-fdp-curves-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h3>
+<p>We generate the <a href="sec-benchmarking.html#sec-tpr_fdp">TPR-FDP curves</a> to assess the
+performance of the different workflows to prioritise differentially
+abundant proteins. Again, these curves are built using the ground
+truth information about which proteins are differentially abundant
+(spiked in) and which proteins are constant across samples. We create
+two functions to compute the TPR and the FDP.</p>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="sec-workflow-optimisation.html#cb246-1" tabindex="-1"></a>computeFDP <span class="ot">&lt;-</span> <span class="cf">function</span>(pval, tp) {</span>
+<span id="cb246-2"><a href="sec-workflow-optimisation.html#cb246-2" tabindex="-1"></a>    ord <span class="ot">&lt;-</span> <span class="fu">order</span>(pval)</span>
+<span id="cb246-3"><a href="sec-workflow-optimisation.html#cb246-3" tabindex="-1"></a>    fdp <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(<span class="sc">!</span>tp[ord]) <span class="sc">/</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(tp)</span>
+<span id="cb246-4"><a href="sec-workflow-optimisation.html#cb246-4" tabindex="-1"></a>    fdp[<span class="fu">order</span>(ord)]</span>
+<span id="cb246-5"><a href="sec-workflow-optimisation.html#cb246-5" tabindex="-1"></a>}</span>
+<span id="cb246-6"><a href="sec-workflow-optimisation.html#cb246-6" tabindex="-1"></a>computeTPR <span class="ot">&lt;-</span> <span class="cf">function</span>(pval, tp, <span class="at">nTP =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb246-7"><a href="sec-workflow-optimisation.html#cb246-7" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(nTP)) nTP <span class="ot">&lt;-</span> <span class="fu">sum</span>(tp)</span>
+<span id="cb246-8"><a href="sec-workflow-optimisation.html#cb246-8" tabindex="-1"></a>    ord <span class="ot">&lt;-</span> <span class="fu">order</span>(pval)</span>
+<span id="cb246-9"><a href="sec-workflow-optimisation.html#cb246-9" tabindex="-1"></a>    tpr <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(tp[ord]) <span class="sc">/</span> nTP</span>
+<span id="cb246-10"><a href="sec-workflow-optimisation.html#cb246-10" tabindex="-1"></a>    tpr[<span class="fu">order</span>(ord)]</span>
+<span id="cb246-11"><a href="sec-workflow-optimisation.html#cb246-11" tabindex="-1"></a>}</span></code></pre></div>
+<p>We apply these functions and compute the corresponding metric using the
+statistical inference results and the ground truth information.</p>
+<p>We also highlight the observed FDP at a 5% FDR threshold.</p>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="sec-workflow-optimisation.html#cb247-1" tabindex="-1"></a>workPoints <span class="ot">&lt;-</span> <span class="fu">group_by</span>(performance, summarisation, normalisation, contrast) <span class="sc">|&gt;</span></span>
+<span id="cb247-2"><a href="sec-workflow-optimisation.html#cb247-2" tabindex="-1"></a>    <span class="fu">filter</span>(adjPval <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb247-3"><a href="sec-workflow-optimisation.html#cb247-3" tabindex="-1"></a>    <span class="fu">slice_max</span>(adjPval)</span></code></pre></div>
+<p>We can now generate the plot<label for="tufte-sn-35" class="margin-toggle sidenote-number">35</label><input type="checkbox" id="tufte-sn-35" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">35</span> Note that the code to build the TPR-FDP
+curves is identical to the workflow in the previous chapter on data
+benchmarking.</span>.</p>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="sec-workflow-optimisation.html#cb248-1" tabindex="-1"></a><span class="fu">ggplot</span>(performance) <span class="sc">+</span></span>
+<span id="cb248-2"><a href="sec-workflow-optimisation.html#cb248-2" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb248-3"><a href="sec-workflow-optimisation.html#cb248-3" tabindex="-1"></a>        <span class="at">y =</span> fdp,</span>
+<span id="cb248-4"><a href="sec-workflow-optimisation.html#cb248-4" tabindex="-1"></a>        <span class="at">x =</span> tpr,</span>
+<span id="cb248-5"><a href="sec-workflow-optimisation.html#cb248-5" tabindex="-1"></a>        <span class="at">colour =</span> workflow</span>
+<span id="cb248-6"><a href="sec-workflow-optimisation.html#cb248-6" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb248-7"><a href="sec-workflow-optimisation.html#cb248-7" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb248-8"><a href="sec-workflow-optimisation.html#cb248-8" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> workPoints, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb248-9"><a href="sec-workflow-optimisation.html#cb248-9" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb248-10"><a href="sec-workflow-optimisation.html#cb248-10" tabindex="-1"></a>    <span class="fu">facet_grid</span>(contrast <span class="sc">~</span> .) <span class="sc">+</span></span>
+<span id="cb248-11"><a href="sec-workflow-optimisation.html#cb248-11" tabindex="-1"></a>    <span class="fu">coord_flip</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>)) <span class="sc">+</span></span>
+<span id="cb248-12"><a href="sec-workflow-optimisation.html#cb248-12" tabindex="-1"></a>    <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> colours)</span></code></pre></div>
+<p><img src="figure/wf_fdr_fdp-1.png"></p>
+<p>Again, we also observe a benefit of the MedianOfRatios normalisation, which seems to improve the FDR control accross the board<label for="tufte-sn-36" class="margin-toggle sidenote-number">36</label><input type="checkbox" id="tufte-sn-36" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">36</span> the dots indicating the sensitivity and FDP when using a 5% FDR cut-off are much closer to the empirical 5% FDP</span> as well as the sensitivity in contrasts involving the higher spike-in conditions.</p>
+<p>TPR-FDP curves also clearly indicate a suboptimal performance (lower sensitivity at the same false discovery proportion) of median summarisation.</p>
+</div>
+<div id="fold-change-boxplots" class="section level3" number="5.5.3">
+<h3>
+<span class="header-section-number">5.5.3</span> Fold change boxplots<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('fold-change-boxplots')" onmouseout="reset_tooltip('fold-change-boxplots-tooltip')"><span class="tooltiptext" id="fold-change-boxplots-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h3>
+<p>Finally, we estimate the accuracy and precision of the log2-fold changes using <a href="sec-benchmarking.html#sec-benchmark_with_boxplots">boxplots</a>. We first create a table with the ground truth information from the spike-in experiment.</p>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="sec-workflow-optimisation.html#cb249-1" tabindex="-1"></a>realLogFC <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb249-2"><a href="sec-workflow-optimisation.html#cb249-2" tabindex="-1"></a>  <span class="at">expectedLogFC =</span> <span class="fu">t</span>(L) <span class="sc">%*%</span> <span class="fu">lm</span>(<span class="fu">log2</span>(Concentration) <span class="sc">~</span> Condition, <span class="fu">colData</span>(spikein))<span class="sc">$</span>coef[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb249-3"><a href="sec-workflow-optimisation.html#cb249-3" tabindex="-1"></a>)</span>
+<span id="cb249-4"><a href="sec-workflow-optimisation.html#cb249-4" tabindex="-1"></a>realLogFC<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ridgeCondition"</span>,<span class="st">""</span>,<span class="fu">colnames</span>(L))</span>
+<span id="cb249-5"><a href="sec-workflow-optimisation.html#cb249-5" tabindex="-1"></a>realLogFC<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^([B-E])$"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 - A"</span>, realLogFC<span class="sc">$</span>contrast)</span></code></pre></div>
+<p>We now plot the estimated log2-fold changes, focusing on the differentially abundant proteins (E. Coli proteins). The dashed line represents the true log2-fold change for each comparison.</p>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="sec-workflow-optimisation.html#cb250-1" tabindex="-1"></a><span class="fu">filter</span>(inferences, isEcoli) <span class="sc">|&gt;</span> </span>
+<span id="cb250-2"><a href="sec-workflow-optimisation.html#cb250-2" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb250-3"><a href="sec-workflow-optimisation.html#cb250-3" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb250-4"><a href="sec-workflow-optimisation.html#cb250-4" tabindex="-1"></a>      <span class="at">y =</span> logFC,</span>
+<span id="cb250-5"><a href="sec-workflow-optimisation.html#cb250-5" tabindex="-1"></a>      <span class="at">x =</span> normalisation,</span>
+<span id="cb250-6"><a href="sec-workflow-optimisation.html#cb250-6" tabindex="-1"></a>      <span class="at">colour =</span> workflow</span>
+<span id="cb250-7"><a href="sec-workflow-optimisation.html#cb250-7" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb250-8"><a href="sec-workflow-optimisation.html#cb250-8" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()  <span class="sc">+</span></span>
+<span id="cb250-9"><a href="sec-workflow-optimisation.html#cb250-9" tabindex="-1"></a>  <span class="fu">facet_grid</span>(contrast <span class="sc">~</span> ., <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb250-10"><a href="sec-workflow-optimisation.html#cb250-10" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> realLogFC, <span class="fu">aes</span>(<span class="at">yintercept =</span> expectedLogFC), </span>
+<span id="cb250-11"><a href="sec-workflow-optimisation.html#cb250-11" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb250-12"><a href="sec-workflow-optimisation.html#cb250-12" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> colours) <span class="sc">+</span></span>
+<span id="cb250-13"><a href="sec-workflow-optimisation.html#cb250-13" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+<p><img src="figure/wf_boxplot-1.png"></p>
+<p>The plots show that median summarisation produces biased fold change estimates, again because it does not account for the differences in the characteristics of the PSMs that are observed in the different samples.</p>
+</div>
+</div>
+<div id="conclusion-2" class="section level2" number="5.6">
+<h2>
+<span class="header-section-number">5.6</span> Conclusion<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('conclusion-2')" onmouseout="reset_tooltip('conclusion-2-tooltip')"><span class="tooltiptext" id="conclusion-2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
+</h2>
+<p>In this chapter, we objectively compared different normalisation and
+summarisation strategies using a spike-in dataset with known ground
+truth.</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Normalisation is critical</strong>: The performance evaluation clearly
+shows that the choice of normalisation method has a significant impact
+on the results. Workflows using the median-of-ratios normalisation
+consistently outperformed those using simple median centering. They
+yielded more true positives, better control of the false discovery
+proportion, and more accurate log2-fold change estimates, particularly
+for smaller fold changes.</p></li>
+<li><p><strong>Column median summarisation is suboptimal</strong>: we found that
+summarising peptide data to protein intensities using the column
+(sample) median leads to reduced sensitivity (low True Positive Rate)
+and specificity (low False Discovery Proportion), but also to lower
+accuracy (i.e. the estimated log2-fold changes are further from the
+true value on average) and precision (the estimations are more spread
+around the average estimation).</p></li>
+<li><p><strong>Median polish and robust summary provide comparable performance</strong>:
+the TPR-FDP curves show that the pipelines incorporating robust
+summarisation and median polish are consistently closer to the ideal
+top-left corner, with only subtle differences between the two
+approaches. This indicates that explicitly modelling peptide-specific
+effects and down-weighting outliers leads to more reliable
+protein-level quantification and inference. Note that median polish
+summarisation is computationally less demanding and that
+we could not find a benefit in performance for robust summarisation that justifies its additional computational overhead.</p></li>
+</ol>
+<p>Based on this comprehensive evaluation, the recommended pipeline for
+this type of dataset is the <strong>median-of-ratios normalisation</strong>
+followed by <strong>median polish summarisation</strong>. This combination provided
+the best performance in terms of computational complexity, accuracy, sensitivity and FDR control, demonstrating the strength of
+<code>msqrob2</code> in identifying truly differentially abundant proteins while
+controlling for false discoveries.</p>
+<p><strong>TODO</strong> discuss that data analysis optimisation is data set
+dependent, and other conclusion may be reached on other datasets?</p>
+
+</div>
+</div>
+<p style="text-align: center;">
+<a href="sec-benchmarking.html"><button class="btn btn-default">Previous</button></a>
+<a href="sec-francisella.html"><button class="btn btn-default">Next</button></a>
+</p>
+<p class="build-date">Page built: 
+2025-12-10
+ using 
+R version 4.5.2 (2025-10-31)
+</p>
+</div>
+</div>
+
+
+
+</body>
+</html>

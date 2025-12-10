@@ -757,7 +757,6 @@ There are 59 proteins significantly differentially expressed at the 5% FDR level
 
 Below you can find the list of significant proteins. 
 
-
 ``` r
 inferenceRight |>
   na.exclude() |>
