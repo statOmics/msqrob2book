@@ -299,8 +299,6 @@ pe <- msqrob(
 )
 ```
 
-**TODO** DISCUSS DO WE NEED TO USE RIDGE HERE? RESULTS REMAIN IN LINE. Slightly more features detected
-
 ## Statistical inference
 
 Once the models are estimated, we can start answering biological

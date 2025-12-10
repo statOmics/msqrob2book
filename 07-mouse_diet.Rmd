@@ -1,4 +1,4 @@
-# The mouse diet use case: a Skyline TMT DDA dataset {#sec-mouse_diet}
+# The mouse diet use case: a Skyline TMT DDA dataset {#sec-mouse-diet}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")
@@ -389,7 +389,7 @@ accounted for by the model:
    diet type can be different whether the mice were fed for a short or
    long duration.
 
-2. **Pseudo-replication effect**: the experiment involves biological
+2. **Pseudo-replication**: the experiment involves biological
    replication as the adipose tissue extracts were sampled from 20
    mice (5 mice per Diet x Duration combination). The tissue from each
    mouse was prepared in a single TMT mixture, but each mixture was
@@ -398,13 +398,13 @@ accounted for by the model:
    actually measure 9 fractions as an outcome (observational unit). We
    refer to **pseudo-replication** when the observational unit is
    different from the experimental unit. We therefore need to account
-   for the potential increased correlation among pseudo-replicates
+   for the potential correlation among pseudo-replicates
    from the same mouse compared to between different mice. These
    effects are typically modelled as [random
    effects](#sec-random_effect), and are assumed to be i.i.d normally
    distributed with mean 0 and constant variance, $u_{mouse} \sim
-   N(0,\sigma^{2,\text{mouse}})$. The use of random effects thus
-   models the correlation in the data, explicitly.
+   N(0,\sigma^{2,\text{mouse}})$. This random effect 
+   models the correlation of the log2-intensities of pseudo replicates, explicitly.
 
 ```{r}
 length(unique(mouse$BioReplicate))
@@ -432,8 +432,8 @@ length(unique(mouse$Label))
 table(mouse$Mixture)
 ```
 
-5. **Run effects**: protein intensities that are measured within the 
-   same run will be more similar than protein intensities between
+5. **Run effects**: log2-intensities that are measured within the 
+   same run will be more similar than log2-intensities between
    runs. We will use a random effect for run to explicitly model this
    correlation in the data. Note that each sample has been acquired in
    9 fractions, each fraction being measured in a separate run.
