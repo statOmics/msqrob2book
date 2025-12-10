@@ -1,4 +1,4 @@
-# Usefull links and session information{#sec-end}
+# Useful links and session information{#sec-end}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")

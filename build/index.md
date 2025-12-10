@@ -2,7 +2,7 @@
 title: "Statistical analysis of mass spectrometry-based proteomics data"
 subtitle: "A dive into the msqrob2 universe"
 author: "Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement"
-date: "2025-11-16"
+date: "2025-11-30"
 output:
   msmbstyle::msmb_html_book:
     highlight: tango
@@ -23,14 +23,17 @@ This book provides comprehensive hands-on tutorials on how to apply the
 `msqrob2` software for the statistical analysis of mass spectrometry
 (MS)-based proteomics data. It includes the latest improvements of the
 software that enable statistical modelling for a wide panel of use
-cases. The book will first introduce the general concepts behind
-the statistical analysis of proteomics data and `msqrob2`. Further
+cases. The book first introduces general concepts of
+statistical proteomics data analysis and `msqrob2`. Further
 chapters will demonstrate the application of `msqrob2` for assessing
 different biological questions starting from datasets with different
 experimental designs, acquisition strategies, instruments, and search
-engines. The book aims to help proteomics researchers tailoring their
-statistical analysis workflow to their specific datasets and research
-questions.
+engines. The book aims to help proteomics researchers and data analysists tailoring their statistical analysis workflow to their specific datasets and research questions.
+
+<div class="figure">
+<img src="figs/lfq_workflow.png" alt="The sticker is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)." width="30%" />
+<p class="caption">The sticker is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).</p>
+</div>
 
 ## Why msqrob2?
 
@@ -68,13 +71,10 @@ The book is divided in three parts.
 
 ### Concepts
 
-This parts introduces the user to the concepts for . It explains the
-theory behind proteomics data analysis and provides extensive
-description of the code. While this part is conceptual, the concepts
-are illustrated using a real spike-in study.
+This parts introduces the user to the key concepts in differential proteomics data analysis and provides extensive description of the code. While this part is conceptual, the concepts are illustrated using a real spike-in study.
 
 - Chapter \@ref(sec-basics) introduces the basic concepts for MS-based 
-  proteomics analysis. We **recommend** user to first read this 
+  proteomics analysis. We **recommend** our users to first read this 
   chapter before reading any other chapter. 
 - Chapter \@ref(sec-advanced) builds upon the previous chapter and 
   introduces more more concepts that will be used in later chapters
@@ -91,11 +91,16 @@ users that want to understand how to apply the guidelines and
 recommendations to their analyses.
 
 - Chapter \@ref(sec-benchmarking) explains how to conduct a 
-  benchmarking experiment to assess different data analysis workflows.
-  As an example, the chapter compares the performance when starting
-  from the different MaxQuant input files: the evidence file, the
-  peptides file, and the protein-group file.
-- Chapter **TODO** summarise Stijn's chapter.
+  benchmarking experiment to assess the impact of starting from
+  different data sources. As an example, the chapter compares the
+  performance when starting from the different MaxQuant input files:
+  the evidence file, the peptides file, and the protein-group file.
+- Chapter \@ref(sec-workflow_optimisation) demonstrates how to optimise
+  a data analysis workflows on one data set. As an example, the 
+  chapter compares the performance of two normalisation approaches
+  (median of ratios and median centering) in combination with three
+  summarisation approaches (median, median polish, and robust
+  regression).
 
 ### Use cases{#sec-overview_use_cases}
 

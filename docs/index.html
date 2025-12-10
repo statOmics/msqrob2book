@@ -13,7 +13,7 @@
 
 <meta name="author" content="Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement" />
 
-<meta name="date" content="2025-11-16" />
+<meta name="date" content="2025-11-30" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -185,11 +185,11 @@ div.csl-indent {
 <a href="sec-basics.html" id="toc-sec-basics"><span class="toc-section-number">2</span> Statistical analysis with msqrob2</a>
 <a href="sec-advanced.html" id="toc-sec-advanced"><span class="toc-section-number">3</span> Advanced statistical analysis with msqrob2</a>
 <a href="sec-benchmarking.html" id="toc-sec-benchmarking"><span class="toc-section-number">4</span> Benchmarking workflows</a>
-<a href="sec-worflow_optimisation.html#sec-worflow_optimisation" id="toc-sec-worflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
+<a href="sec-workflow_optimisation.html#sec-workflow_optimisation" id="toc-sec-workflow_optimisation"><span class="toc-section-number">5</span> Optimisation of a data analysis workflow</a>
 <a href="sec-francisella.html" id="toc-sec-francisella"><span class="toc-section-number">6</span> The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</a>
 <a href="sec-heart.html" id="toc-sec-heart"><span class="toc-section-number">7</span> Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</a>
 <a href="sec-mouse_diet.html#sec-mouse_diet" id="toc-sec-mouse_diet"><span class="toc-section-number">8</span> The mouse diet use case: a Skyline TMT DDA dataset</a>
-<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Usefull links and session information</a>
+<a href="sec-end.html" id="toc-sec-end"><span class="toc-section-number">9</span> Useful links and session information</a>
 </div>
 </li>
 </ul>
@@ -205,14 +205,17 @@ div.csl-indent {
 <code>msqrob2</code> software for the statistical analysis of mass spectrometry
 (MS)-based proteomics data. It includes the latest improvements of the
 software that enable statistical modelling for a wide panel of use
-cases. The book will first introduce the general concepts behind
-the statistical analysis of proteomics data and <code>msqrob2</code>. Further
+cases. The book first introduces general concepts of
+statistical proteomics data analysis and <code>msqrob2</code>. Further
 chapters will demonstrate the application of <code>msqrob2</code> for assessing
 different biological questions starting from datasets with different
 experimental designs, acquisition strategies, instruments, and search
-engines. The book aims to help proteomics researchers tailoring their
-statistical analysis workflow to their specific datasets and research
-questions.</p>
+engines. The book aims to help proteomics researchers and data analysists tailoring their statistical analysis workflow to their specific datasets and research questions.</p>
+<div class="figure">
+<img src="figs/lfq_workflow.png" alt="The sticker is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)." width="30%"><p class="caption marginnote shownote">
+The sticker is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+</p>
+</div>
 <div id="why-msqrob2" class="section level2" number="1.1">
 <h2>
 <span class="header-section-number">1.1</span> Why msqrob2?<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('why-msqrob2')" onmouseout="reset_tooltip('why-msqrob2-tooltip')"><span class="tooltiptext" id="why-msqrob2-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
@@ -255,13 +258,10 @@ competing software <span class="citation">(<label for="tufte-mn-1" class="margin
 <h3>
 <span class="header-section-number">1.2.1</span> Concepts<div class="tooltip"><button class="internal-link-btn" onclick="copy_link('concepts')" onmouseout="reset_tooltip('concepts-tooltip')"><span class="tooltiptext" id="concepts-tooltip">Copy link</span><i class="fa fa-link"></i></button></div>
 </h3>
-<p>This parts introduces the user to the concepts for . It explains the
-theory behind proteomics data analysis and provides extensive
-description of the code. While this part is conceptual, the concepts
-are illustrated using a real spike-in study.</p>
+<p>This parts introduces the user to the key concepts in differential proteomics data analysis and provides extensive description of the code. While this part is conceptual, the concepts are illustrated using a real spike-in study.</p>
 <ul>
 <li>Chapter <a href="sec-basics.html#sec-basics">2</a> introduces the basic concepts for MS-based
-proteomics analysis. We <strong>recommend</strong> user to first read this
+proteomics analysis. We <strong>recommend</strong> our users to first read this
 chapter before reading any other chapter.</li>
 <li>Chapter <a href="sec-advanced.html#sec-advanced">3</a> builds upon the previous chapter and
 introduces more more concepts that will be used in later chapters
@@ -281,11 +281,16 @@ users that want to understand how to apply the guidelines and
 recommendations to their analyses.</p>
 <ul>
 <li>Chapter <a href="sec-benchmarking.html#sec-benchmarking">4</a> explains how to conduct a
-benchmarking experiment to assess different data analysis workflows.
-As an example, the chapter compares the performance when starting
-from the different MaxQuant input files: the evidence file, the
-peptides file, and the protein-group file.</li>
-<li>Chapter <strong>TODO</strong> summarise Stijn’s chapter.</li>
+benchmarking experiment to assess the impact of starting from
+different data sources. As an example, the chapter compares the
+performance when starting from the different MaxQuant input files:
+the evidence file, the peptides file, and the protein-group file.</li>
+<li>Chapter @ref(sec-workflow_optimisation) demonstrates how to optimise
+a data analysis workflows on one data set. As an example, the
+chapter compares the performance of two normalisation approaches
+(median of ratios and median centering) in combination with three
+summarisation approaches (median, median polish, and robust
+regression).</li>
 </ul>
 </div>
 <div id="sec-overview_use_cases" class="section level3" number="1.2.3">
@@ -388,7 +393,7 @@ distribute your contributions under the same license as the original.</p>
 <a href="sec-basics.html"><button class="btn btn-default">Next</button></a>
 </p>
 <p class="build-date">Page built: 
-2025-11-16
+2025-11-30
  using 
 R version 4.5.2 (2025-10-31)
 </p>

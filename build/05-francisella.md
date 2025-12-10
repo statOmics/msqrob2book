@@ -634,17 +634,13 @@ effects contained only two levels. However, it is possible to disable
 ridge regression within `mssqrob()` thanks to the argument `ridge =
 FALSE`.
 
-Third, this data set has a complex experimental design since there
+Third, this data set has a more complex experimental design since there
 each biological replicate has been acquired in technical triplicate.
-Were the design a block design, where every experimental condition
-(here genotype) is acquired in a block (here the francisella culture
-batch), then we could have corrected for the francisella culture
-effect using a fixed effect. However, every francisella strain can
-only be of one genotype (either D8 or WT), so we resort to modelling 
-the francisella cultur effect as a random effect instead. Read the
-[heart use case](#sec-heart_chapter) for an example of randomised
-block design were the blocking variable can be modelled as a fixed 
-effect.
+Hence, we had to model 
+
+- the variation according to the treatment, effect of interest and modelled using a fixed effect
+- variation between biological repeats, random effect as the francisella cultures will change each time we repeat the experiment, and 
+- technical variability, run to run variability and other sources of technical variability which are lumped in the residual variance.
 
 Note, that we could have performed the differential abundance analysis
 at the protein-level using [ion- or peptide-level

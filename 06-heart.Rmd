@@ -230,7 +230,8 @@ baselines.
 ```{r,warning=FALSE}
 pe <- aggregateFeatures(
   pe, i = "peptides_norm", fcol = "Proteins", 
-  fun = MsCoreUtils::robustSummary, na.rm = TRUE, name = "proteins"
+  fun = MsCoreUtils::medianPolish, 
+  na.rm = TRUE, name = "proteins"
 )
 ```
 
@@ -293,7 +294,9 @@ variables defined in `model` are automatically retrieved from the
 `colData` (i.e. `"tissue"`, `"location"`, and `"patient"`). 
 
 ```{r, cache=TRUE}
-pe <- msqrob(pe, i = "proteins", formula = model, robust = TRUE)
+pe <- msqrob(
+  pe, i = "proteins", formula = model, robust = TRUE, ridge = TRUE
+)
 ```
 
 ## Statistical inference
@@ -409,12 +412,12 @@ We can set up the four contrasts:
 design <- model.matrix(~ location*tissue + patient, data = colData(pe))
 L <- makeContrast(
   c(
-    "tissueV = 0",
-    "tissueV + locationR:tissueV = 0",
-    "tissueV + 0.5*locationR:tissueV = 0",
-    "locationR:tissueV = 0"
+    "ridgetissueV = 0",
+    "ridgetissueV + ridgelocationR:tissueV = 0",
+    "ridgetissueV + 0.5*ridgelocationR:tissueV = 0",
+    "ridgelocationR:tissueV = 0"
   ),
-  parameterNames = colnames(design)
+  parameterNames = paste0("ridge", colnames(design))
   )
 ```
 
@@ -663,15 +666,15 @@ proteomics data set with technical replication. We followed the
 workflow described in the previous chapters with minimal changes.
 
 The experiment presented in this chapter presents a complex design and
-is an excellent illustration on how to model data with an interaction.
+is an excellent illustration on how to model data with main effects, interactions and block effects.
 We could investigate:
 
 1. The difference in protein abundance between the atrium and 
-   ventriculum in the **left** heart.
+   ventriculum in the **left** heart compartment.
 2. The difference in protein abundance between the atrium and 
-   ventriculum in the **right** heart.
+   ventriculum in the **right** heart compartment.
 3. The difference in protein abundance between the atrium and 
-   ventriculum, **averaged** over the right and left heart.
+   ventriculum, **averaged** over the right and left heart compartment.
 4. The interaction, whether the difference between atrium and 
    ventriculum is affected by whether we focus on the left heart or 
-   the right heart.
+   the right heart compartment.

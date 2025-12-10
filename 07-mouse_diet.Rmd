@@ -1,4 +1,4 @@
-# The mouse diet use case: a Skyline TMT DDA dataset {#sec-mouse_diet}
+# The mouse diet use case: a Skyline TMT DDA dataset {#sec-mouse-diet}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")
@@ -151,7 +151,7 @@ mouse
 ```
 
 We now have a `QFeatures` object with 27 sets, each containing data
-associated with an MS run. The 
+associated with an MS run. 
 
 ## Data preprocessing
 
@@ -296,7 +296,7 @@ mouse <- joinAssays(mouse, paste0(sNames, "_proteins"), "proteins")
 
 As [described above](#sec-exp_design_mouse), the samples originate from mice
 that were either subject to a low-fat (`LF`) or high-fat (`HF`) diet.
-Moreover, each of the diet was maintained for a short duration
+Moreover, each diet was maintained for a short duration
 (`Short`) or a long duration (`Long`). Note that each group contains 5
 mice but the peptides from each sample have been fractionated in 9
 fractions, leading to 45 units per group.
@@ -314,7 +314,7 @@ experimental unit (i.e. the mouse, `BioReplicate`), the fraction
 (`Fraction`), the run (`Run`), the TMT mixture (`Mixture`).
 
 We will explore the main sources of variation in the
-data using (see [Data exploration]). Unfortunately, the peptide ion
+data (see [Data exploration]). Unfortunately, the peptide ion
 data contains too many missing values and cannot be explored using
 standard dimension reduction approaches. `omicsGMF` [@Segers2025-ce]
 provides an interesting alternative, but is still in its early stage
@@ -348,11 +348,11 @@ The data exploration leads to several observations:
   acquisition run. 
 - Part of this run effect is influenced by which fraction it contains
   since samples from the same fraction tend to be closer than samples from different
-  fractions. 
+  fractions. (**TODO DISCUSS**)
 - It is difficult to identify an effect of mouse (biological
   replicate) because every run contains distinct mice. However, this
   does not exclude an effect of mice which has been identified as a
-  potential source of variation and hence should still be modelled.
+  potential source of variation and hence should still be modelled. (**TODO DISCUSS**)
 - There is potentially also an effect of TMT mixture since samples
   from the same mixtures tend to cluster together (in the center of
   the plot). However, this effect are more subtle to detect and
@@ -389,21 +389,22 @@ accounted for by the model:
    diet type can be different whether the mice were fed for a short or
    long duration.
 
-2. **Biological replicate effect**: the experiment involves biological
+2. **Pseudo-replication**: the experiment involves biological
    replication as the adipose tissue extracts were sampled from 20
-   mice (5 mice per Diet x Duration combination). Replicate-specific
-   effects occurs due to uncontrollable factors, such as social
-   behavior, feeding behavior, physical activity, occasional
-   injury,... Two mice will never provide exactly the same sample material,
-   even were they genetically identical and manipulated identically.
-   These effects are typically modelled as random effects which are
-   considered as a random sample from the population of all possible
-   mice and are assumed to be i.i.d normally distributed with mean 0
-   and constant variance, $u_{mouse} \sim
-   N(0,\sigma^{2,\text{mouse}})$. The use of random effects thus
-   models the correlation in the data, explicitly. We expect that
-   intensities from the same mouse are more alike than intensities
-   between mice.
+   mice (5 mice per Diet x Duration combination). The tissue from each
+   mouse was prepared in a single TMT mixture, but each mixture was
+   acquired in 9 fractions, so we have 9 measures for each mice. While
+   the treatment is applied at the mice level (experimental unit), we
+   actually measure 9 fractions as an outcome (observational unit). We
+   refer to **pseudo-replication** when the observational unit is
+   different from the experimental unit. We therefore need to account
+   for the potential correlation among pseudo-replicates
+   from the same mouse compared to between different mice. These
+   effects are typically modelled as [random
+   effects](#sec-random_effect), and are assumed to be i.i.d normally
+   distributed with mean 0 and constant variance, $u_{mouse} \sim
+   N(0,\sigma^{2,\text{mouse}})$. This random effect 
+   models the correlation of the log2-intensities of pseudo replicates, explicitly.
 
 ```{r}
 length(unique(mouse$BioReplicate))
@@ -415,7 +416,7 @@ length(unique(mouse$BioReplicate))
    measured within different TMT labels. Since these effects may not
    be reproducible from one experiment to another, for instance
    because each TMT kit may potentially contain different impurity
-   ratios, we can account for this correlation using a random effect
+   ratios, we can account for this source of variation using a random effect
    for TMT label.
 
 ```{r}
@@ -423,7 +424,7 @@ length(unique(mouse$Label))
 ```
 
 4. **Mixture effects**: the 20 mouse samples were assigned to one out
-   of 3 mixtures. Again, we expect protein intensities from the same
+   of 3 mixtures. Again, we expect that protein intensities from the same
    mixture will be more alike than those of different mixtures. Hence,
    we will add a random effect for mixture.
 
@@ -431,8 +432,8 @@ length(unique(mouse$Label))
 table(mouse$Mixture)
 ```
 
-5. **Run effects**: protein intensities that are measured within the 
-   same run will be more similar than protein intensities between
+5. **Run effects**: log2-intensities that are measured within the 
+   same run will be more similar than log2-intensities between
    runs. We will use a random effect for run to explicitly model this
    correlation in the data. Note that each sample has been acquired in
    9 fractions, each fraction being measured in a separate run.
@@ -448,7 +449,7 @@ length(unique(mouse$Run))
    additional levels of correlation. The intensities for the different
    TMT labels in the same spectrum (PSM) within a run will be
    more similar than the intensities between spectra. We therefore
-   need to add a random effect term to account for the within specrum
+   need to add a random effect term to account for the within spectrum
    correlation structure. Note that a spectrum here contains the data
    from one peptide ion within a run. Hence, modelling a random effect
    for spectrum boils down to modelling a random effect for peptide
@@ -520,9 +521,11 @@ A first question one can ask is: how are protein abundance affected by
 diet when only considering a short diet duration? We need to convert
 this question in a combination of the model parameters, also referred
 to as a contrast. To aid defining contrasts, we will visualise the
-experimental design using the `ExploreModelMatrix` package. Since we
-are not interested in technical effects, we will only focus on the
-variables of interest, here `Diet * Duration`.
+experimental design using the `ExploreModelMatrix` package. 
+Note that with ExploreModelMatrix we can only visualise fixed effects
+part of the model. This is fine as the mean protein abundances can
+only systematically differ from each other according to the
+main effects for `Diet` and `Duration` and the `Diet:Duration` interaction.
 
 ```{r mouse_diet_VisualizeDesign, fig.cap=" "}
 library("ExploreModelMatrix")
@@ -584,9 +587,7 @@ head(inference, 10)
 The table contains the hypothesis testing results for every protein.
 Notice that several rows contain missing values. This is because data
 modelling resulted in a `fitError`. The model cannot be estimated for
-some proteins either because of patterns in missing values, for
-instance a protein was not measured only in one of the groups of
-interest, or because a protein was measured from a single peptide ion
+some proteins either because of patterns in missing values, or because a protein was measured from a single peptide ion
 alleviating the estimation of spectrum effects (see [how to deal with
 `fitError`s](#sec-fiterror)).
 
@@ -595,8 +596,7 @@ We can use the table above directly to build a volcano plot using
 
 ```{r mouse_diet_volcano_short, fig.cap=" "}
 ggplot(inference) +
-    aes(x = logFC, y = -log10(adjPval)) +
-    geom_hline(yintercept = -log10(0.05)) +
+    aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
     geom_text_repel(data = filter(inference, adjPval < 0.05),
                     aes(label = Protein)) +
     geom_point() +
@@ -689,8 +689,7 @@ And we plot the results.
 
 ```{r mouse_diet_volcano_long, fig.cap=" "}
 ggplot(inference) +
-    aes(x = logFC, y = -log10(adjPval)) +
-    geom_hline(yintercept = -log10(0.05)) +
+    aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
     geom_text_repel(data = filter(inference, adjPval < 0.05),
                     aes(label = Protein)) +
     geom_point() +
@@ -742,8 +741,7 @@ And we plot the results.
 
 ```{r mouse_diet_volcano_average, fig.cap=" "}
 ggplot(inference) +
-    aes(x = logFC, y = -log10(adjPval)) +
-    geom_hline(yintercept = -log10(0.05)) +
+    aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
     geom_text_repel(data = filter(inference, adjPval < 0.05),
                     aes(label = Protein)) +
     geom_point() +
@@ -787,8 +785,7 @@ And we plot the results.
 
 ```{r mouse_diet_volcano_interaction, fig.cap=" "}
 ggplot(inference) +
-    aes(x = logFC, y = -log10(adjPval)) +
-    geom_hline(yintercept = -log10(0.05)) +
+    aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
     geom_text_repel(data = filter(inference, adjPval < 0.05),
                     aes(label = Protein)) +
     geom_point() +
@@ -796,8 +793,8 @@ ggplot(inference) +
             paste("Hypothesis test:", gsub("ridgeCondition", "", colnames(L)), "= 0"))
 ```
 
-There is only one protein for which duration impacts the effect of
-diet. Let us visually explore this changes for the most significant
+There are only `r sum(inference$adjPval<0.05,na.rm=TRUE)` proteins for which the effect of
+diet changes according to the duration. Let us visually explore this changes for the most significant
 protein.
 
 ```{r}
@@ -842,7 +839,7 @@ that the result rely on sparse and highly unbalanced data. The results
 may hence require further experimental validation.
 
 Note that we performed the statistical analysis for each hypothesis
-separately. However, `msqrob2` can assess multiple hypothesis at once.
+separately. However, `msqrob2` can assess multiple hypotheses at once.
 
 ```{r}
 L <- makeContrast(
@@ -874,8 +871,7 @@ volcanoPlots <- lapply(colnames(inferenceTables), function(i) {
     inference <- inferenceTables[[i]]
     inference$Protein <- rownames(inference)
     ggplot(inference) +
-        aes(x = logFC, y = -log10(adjPval)) +
-        geom_hline(yintercept = -log10(0.05)) +
+        aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
         geom_text_repel(data = filter(inference, adjPval < 0.05),
                         aes(label = Protein)) +
         geom_point() +
@@ -945,8 +941,7 @@ volcanoPlotsSum <- lapply(names(inferenceTablesSum), function(i) {
     inference <- inferenceTablesSum[[i]]
     inference$Protein <- rownames(inference)
     ggplot(inference) +
-        aes(x = logFC, y = -log10(adjPval)) +
-        geom_hline(yintercept = -log10(0.05)) +
+        aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
         geom_text_repel(data = filter(inference, adjPval < 0.05),
                         aes(label = Protein)) +
         geom_point() +
@@ -984,10 +979,11 @@ how to model the data at the protein level.
 The experiment aims to understand the proteomic changes in mouse
 adipose tissue that occur upon feeding the mice with low-fat or
 high-fat diets, during a short or a long duration. We showed how to
-model these data as two factor and how to translate biological
-questions to statistical hypothesis and contrast matrices using our
-msqrob2TMT workflow. To allow for the diet duration to influence the
-impact of diet type, we included an interaction term. The unique
+model the effect of these two factors using main effects and an interaction, which allows that the effect of diet can change according to the duration, and vice versa. We also showed how to translate biological
+questions into statistical hypothesis and corresponding contrast matrices using our
+msqrob2TMT workflow. 
+
+A unique
 feature of `msqrob2` is that its flexible approach can include more
 than 2 variables (with multiple interaction terms) as well as
 including numerical variables, which may be essential in other
@@ -1003,15 +999,15 @@ use cases. For instance, we saw how a protein-level model upon
 aggregation simplifies the model. However, spectrum effects can no
 longer be accounted for. This means that an appropriate summarisation
 approach is needed to correctly account for these spectrum effects
-when computing the summaries. Median polish (exemplified here) or
+when computing the protein-level summaries. Median polish (exemplified here) or
 robust summary do account for this, at least partially depending on
-the experimental design. Label-free experiments, which do not perform
+the experimental design. 
+
+Label-free experiments, which do not perform
 chemical labelling of the samples, do not contain labelling effects
 which therefore are omitted. Moreover, every sample is acquired as
 part of a single run hence no run effect can be modelled. This
-simplified model is easier to understand but bear in mind that the
-unmodelled effects (eg. spectrum effects or run effect) may end up
-increasing the residual variance, hence reduce statistical power.
+simplified model is easier to understand but bear in mind that these sources of variation (eg. spectrum effects or run effect)  end up in the residual variance, which might reduce statistical power.
 
 Hence, we here demonstrated the power and flexibility of `msqrob2` and
 the msqrob2TMT workflows to help researchers answer

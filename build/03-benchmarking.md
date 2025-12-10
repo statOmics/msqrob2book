@@ -203,7 +203,7 @@ Here is an overview of the data processing workflow:
    data prior to normalisation will be used for ion-level and
    peptide-level modelling. 
 
-The workflow is implmented in a functions with one argument, `object`,
+The workflow is implemented in a functions with one argument, `object`,
 which is the `QFeatures` we generated, either from the evidence file, 
 the peptides file or the protein-groups file. 
 
@@ -533,7 +533,7 @@ ggplot(tpFpTable) +
 
 ![ ](figure/benchmarking_tp_fp-1.png)
 
-The plot clearly shows that starting from the protein groups leads to 
+The plot clearly shows that starting from MaxQuant's proteinGroups file leads to 
 a severe decrease in performance as the number of TP is systematically
 lower compared to other approaches, while there is no dramatic
 difference with the number of FPs. 
@@ -636,10 +636,10 @@ ggplot(performance) +
 ![ ](figure/benchmarking_tpr_fdp_curve1-1.png)
 
 The results are in line with the previous bechmark criteria, that is
-starting from the protein group file lead to a severe backlash on
+starting from the proteinGroups file lead to a severe backlash on
 performance. The other approaches show comparable performance,
 although for challenging comparisons where the performance is
-generally low (C-B, D-C, ED) we find a subtle increase in performance 
+generally low (C-B, D-C, E-D) we find a subtle increase in performance 
 for ion/peptide level models.
 
 Overal, we find that all approaches lead to a good FDR control. A
@@ -653,15 +653,14 @@ data]({#sec-appendix3_1) or when considering [proteins estimated by
 all approaches]({#sec-appendix3_2), indicating that the conclusions do
 not depend on the set of proteins considered. 
 
-### Fold change boxplots
+### Fold change boxplots{#sec-benchmark_with_boxplots}
 
 Next to correctly prioritising the differentially abundant proteins,
 another object is to correctly estimate the log2-fold change between
 conditions. Since every condition contains E. Coli proteins that have
-been spiked in experimentally controlled amounts, we now what is the
-expected log2-fold change between any two condtions. We will explore
+been spiked in experimentally controlled amounts, we know the real log2-fold change between any two conditions. We will explore
 the model accuracy, i.e. how close the estimations are from the
-expected value on average, and the model precision, i.e. how narrow
+true value on average, and the model precision, i.e. how narrow
 the estimations are spread around the average estimation. In this data
 set, there are two target values. For E. Coli proteins, the expected
 value is the experimentally induced log2-fold change. For human
@@ -747,7 +746,7 @@ types of data input. Note that the same framework could be used to
 compare different search and quantification engines. Similarly, this
 framework can also be applied to compare different instruments or
 analytical protocols and setups. In the [next
-chapter](sec-worflow_optimisation) we demonstrate how to compare the
+chapter](sec-workflow_optimisation) we demonstrate how to compare the
 impact of analysis steps for the same data.
 
 In the remainder of this section, we provide a recap on how to perform
