@@ -1,0 +1,26 @@
+project:
+  type: book
+
+book:
+  title: "Statistical analysis of mass spectrometry-based proteomics data"
+  author: ["Christophe Vanderaa", "Stijn Vandenbulcke", "Lieven Clement"]
+  date: today
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+execute:
+  freeze: auto
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+
+
+
