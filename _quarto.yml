@@ -16,7 +16,6 @@ book:
     - 06-heart.qmd
     - 07-mouse_diet.qmd
     - 99-end.qmd
-    - references.qmd
 
 bibliography: references.bib
 
