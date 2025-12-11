@@ -3,12 +3,19 @@ project:
 
 book:
   title: "Statistical analysis of mass spectrometry-based proteomics data"
+  subtitle: "A dive into the msqrob2 universe"
   author: ["Christophe Vanderaa", "Stijn Vandenbulcke", "Lieven Clement"]
   date: today
   chapters:
     - index.qmd
-    - intro.qmd
-    - summary.qmd
+    - 01-basics.qmd
+    - 02-advanced.qmd
+    - 03-benchmarking.qmd
+    - 04-workflow_optimisation.qmd
+    - 05-francisella.qmd
+    - 06-heart.qmd
+    - 07-mouse_diet.qmd
+    - 99-end.qmd
     - references.qmd
 
 bibliography: references.bib

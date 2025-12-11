@@ -1,29 +1,4 @@
----
-title: "Statistical analysis of mass spectrometry-based proteomics data"
-subtitle: "A dive into the msqrob2 universe"
-author: "Christophe Vanderaa, Stijn Vandenbulcke, Lieven Clement"
-date: "`r Sys.Date()`"
-output:
-  msmbstyle::msmb_html_book:
-    highlight: tango
-    toc: TRUE
-    toc_depth: 1
-    split_by: chapter
-    margin_references: TRUE
-    css: style.css
-bibliography: [refs.bib]
-link-citations: yes
----
-
-# Preamble
-
-```{r setup, echo = FALSE}
-options(bitmapType = "cairo")
-knitr::opts_chunk$set(
-    warning = FALSE,
-    message = FALSE
-)
-```
+# Preamble {.unnumbered}
 
 This book provides comprehensive hands-on tutorials on how to apply the
 `msqrob2` software for the statistical analysis of mass spectrometry
@@ -37,7 +12,7 @@ experimental designs, acquisition strategies, instruments, and search
 engines. The book aims to help proteomics researchers and data analysists tailoring their statistical analysis workflow to their specific datasets and research questions.
 
 ```{r, echo = FALSE, out.width = "30%", fig.cap = "The sticker is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)."}
-knitr::include_graphics("figs/lfq_workflow.png")
+knitr::include_graphics("figs/msqrob2.png")
 ```
 
 ## Why msqrob2?
