@@ -1,4 +1,4 @@
-# Benchmarking workflows{#sec-benchmarking}
+# Benchmarking workflows {#sec-benchmarking}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")
@@ -64,11 +64,11 @@ register(SerialParam())
 
 ## Data
 
-We will reuse the data by [@Shen2018-gw] as in chapter
-\@ref(sec-basics). The [data](#sec-ecoli_data) were reanalysed using
-MaxQuant, which generates results at three levels: the evidence file
-containing the [PSM table](#sec-psm_table), the [peptides
-file](#sec-peptide_table), and the protein group file.
+We will reuse the data by [@Shen2018-gw] as in @sec-basics. The
+[data](#sec-ecoli_data) were reanalysed using MaxQuant, which
+generates results at three levels: the evidence file containing the
+[PSM table](#sec-psm_table), the [peptides file](#sec-peptide_table),
+and the protein group file.
 
 ### Data files
 

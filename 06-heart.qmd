@@ -1,4 +1,4 @@
-# Heart use case: a MaxQuant LFQ DDA dataset with a more complex design{#sec-heart}
+# Heart use case: a MaxQuant LFQ DDA dataset with a more complex design {#sec-heart}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")

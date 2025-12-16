@@ -1,4 +1,4 @@
-# Optimisation of a data analysis workflow{#sec-workflow-optimisation}
+# Optimisation of a data analysis workflow {#sec-workflow-optimisation}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")
@@ -44,11 +44,10 @@ register(SerialParam())
 
 ## Data
 
-We will reuse the data by [@Shen2018-gw] as in chapter
-\@ref(sec-basics) and \@ref(sec-benchmarking). The
-[data](#sec-ecoli_data) were reanalysed using MaxQuant, and we will
-use start from the evidence file as suggested in the [previous
-chapter](#sec-benchmarking).
+We will reuse the data by [@Shen2018-gw] as in @sec-basics and
+@sec-benchmarking. The [data](#sec-ecoli_data) were reanalysed using
+MaxQuant, and we will use start from the evidence file as suggested in
+the [previous chapter](#sec-benchmarking).
 
 ### PSM table
 
@@ -324,7 +323,7 @@ methods * 3 summarisation methods.] can now be modelled to assess our
 research hypothesis using the same approach, as described in the
 [basics chapter](#sec-modelling)^[Note that while we changed the
 preprocessing workflow, the sources of variation and the model to
-estimate remain the same as in Chapter \@ref(sec-basics).]. Remember,
+estimate remain the same as in @sec-basics.]. Remember,
 the central research question is to "prioritise proteins that have
 been spiked in across the conditions." Since we know the ground truth,
 we can assess how accurately the model estimates the fold changes

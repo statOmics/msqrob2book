@@ -29,7 +29,7 @@ be the focus of the current tutorial.
 ### TMT workflow{#sec-tmt_workflow}
 
 TMT-based workflow highly overlap with  [label-free
-workflows]({#sec-lfq_workflow}). However, TMT-based workflows have an
+workflows](#sec-lfq_workflow). However, TMT-based workflows have an
 additional sample preparation step, where the digested peptides from
 each sample are labelled with a TMT reagent and samples with different
 TMT reagents are pooled in a single TMT mixture^[Depending on the

@@ -1,4 +1,4 @@
-# Links, references and session information{#sec-end}
+# Additional information {#sec-end}
 
 ```{r, echo = FALSE}
 source("R/knitr_setup.R")
@@ -58,7 +58,7 @@ Link to data: https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/
 
 Link to data in archive: **TODO** add link to Zenodo
 
-Used in chapters \@ref(sec-basics), and \@ref(sec-benchmarking).
+Used in @sec-basics and @sec-benchmarking.
 
 ### TMT spike-in data set
 
@@ -76,7 +76,7 @@ Data source: MassIVE repository (RMSV000000265)
 
 Link to data from archive: https://zenodo.org/records/14767905
 
-Used in chapter \@ref(sec-advanced).
+Used in @sec-advanced.
 
 ### Francisella data set
 

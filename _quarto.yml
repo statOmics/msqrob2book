@@ -1,11 +1,17 @@
 project:
   type: book
+  output-dir: _book
 
 book:
   title: "Statistical analysis of mass spectrometry-based proteomics data"
   subtitle: "A dive into the msqrob2 universe"
   author: ["Christophe Vanderaa", "Stijn Vandenbulcke", "Lieven Clement"]
   date: today
+  sidebar:
+    logo: figs/msqrob2.png
+    style: floating
+    search: true
+    collapse-level: 2
   chapters:
     - index.qmd
     - 01-basics.qmd
@@ -17,6 +23,9 @@ book:
     - 07-mouse_diet.qmd
     - 99-end.qmd
 
+website:
+  favicon: figs/msqrob2.png
+
 bibliography: references.bib
 
 execute:
@@ -26,7 +35,10 @@ format:
   html:
     theme:
       - cosmo
-      - brand
-
-
-
+      - custom.scss
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    number-depth: 3
+    code-copy: true
