@@ -35,6 +35,8 @@ vignettes/*.pdf
 
 # knitr file directory (created when kniting a single vignette)
 *_files/
+# except for the docs
+!docs/*_files
 
 # Temporary files created by R markdown
 *.utf8.md
@@ -43,7 +45,7 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# pkgdown site
+# quarto site
 # docs/
 
 # translation temp files
@@ -56,6 +58,6 @@ rsconnect/
 data/
 
 # Temporary compilation files
-figure/
-build/msqrob2book.rds
 .Rbuildignore
+
+/.quarto/
