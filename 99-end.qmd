@@ -1,0 +1,124 @@
+# Additional information {#sec-end}
+
+```{r, echo = FALSE}
+source("R/knitr_setup.R")
+```
+
+## Citation
+
+Please cite this book as:
+
+**TODO**: add citation once published
+
+Please cite the `msqrob2` package as: 
+
+> Goeminne L, Gevaert K, Clement L (2016). "Peptide-level Robust 
+  Ridge Regression Improves Estimation, Sensitivity, and Specificity
+  in Data-dependent Quantitative Label-free Shotgun Proteomics."
+  _Molecular & Cellular Proteomics_, *15*(2), 657-668.
+  doi:[10.1074/mcp.m115.055897](https://doi.org/10.1074/mcp.m115.055897).
+
+If you opt for a summarisation-based workflow, you can also cite: 
+
+> Sticker A, Goeminne L, Martens L, Clement L (2020). "Robust 
+  Summarization and Inference in Proteome-wide Label-free
+  Quantification." _Molecular & Cellular Proteomics_, *19*(7),
+  1209-1219.
+  doi:[10.1074/mcp.ra119.001624](https://doi.org/10.1074/mcp.ra119.001624).
+
+If you use TMT-based workflows, please cite
+
+> Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L.
+msqrob2TMT: robust linear mixed models for inferring differential
+abundant proteins in labelled experiments with arbitrarily complex
+design. bioRxiv. Published online March 29, 2024:2024.03.29.587218.
+doi:10.1101/2024.03.29.587218
+
+## References {.unnumbered}
+
+::: {#refs}
+:::
+
+## Data sets
+
+We refer here the data sources used in the book:
+
+### E. Coli LFQ spike-in data set
+
+Original study: Shen X, Shen S, Li J, Hu Q, Nie L, Tu C, et al. (2018)
+Ionstar enables high-precision, low-missing-data proteomics
+quantification in large bio- logical cohorts. Proc.  Natl.  Acad.
+Sci. U.S.A. 115, E4767–E4776
+
+Reanalysis study: Sticker A, Goeminne L, Martens L, Clement L. Robust
+Summarization and Inference in Proteome-wide Label-free
+Quantification. Mol Cell Proteomics. 2020;19(7):1209-1219.
+
+Link to data: https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/peptides.zip
+
+Link to data in archive: **TODO** add link to Zenodo
+
+Used in @sec-basics and @sec-benchmarking.
+
+### TMT spike-in data set
+
+Original study: Huang T, Choi M, Tzouros M, Golling S, Pandya NJ,
+Banfai B, et al. MSstatsTMT: Statistical Detection of Differentially
+Abundant Proteins in Experiments with Isobaric Labeling and Multiple
+Mixtures. Mol Cell Proteomics. 2020;19(10):1706-1723.
+
+Reanalysis study: Vandenbulcke S, Vanderaa C, Crook O, Martens L,
+Clement L. Msqrob2TMT: Robust linear mixed models for inferring
+differential abundant proteins in labeled experiments with arbitrarily
+complex design. Mol Cell Proteomics. 2025;24(7):101002.
+  
+Data source: MassIVE repository (RMSV000000265)
+
+Link to data from archive: https://zenodo.org/records/14767905
+
+Used in @sec-advanced.
+
+### Francisella data set
+
+**TODO**
+
+### Heart data set
+
+**TODO**
+
+### Mouse diet data set
+
+**TODO**
+
+## License
+
+<a rel="license"
+href="http://creativecommons.org/licenses/by-sa/4.0/"><img
+alt="Creative Commons Licence" style="border-width:0"
+src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br
+/>This material is licensed under a <a rel="license"
+href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+Attribution-ShareAlike 4.0 International License</a>. You are free to
+**share** (copy and redistribute the material in any medium or format)
+and **adapt** (remix, transform, and build upon the material) for any
+purpose, even commercially, as long as you give appropriate credit and
+distribute your contributions under the same license as the original.
+
+## Session Info
+
+The following packages have been used to generate this document.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+## Load package dependencies 
+devtools::load_all()
+## Load package dependencies listed in Suggests
+read.dcf("DESCRIPTION")[, "Suggests"] |> 
+  strsplit(",\\s*") |> 
+  unlist() |> 
+  lapply(require, character.only = TRUE, quietly = TRUE) |> 
+  invisible()
+```
+
+```{r}
+sessionInfo()
+```
