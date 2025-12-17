@@ -57,9 +57,9 @@ table](#sec-psm_table).
 **TODO**: put data on Zenodo or MsDataHub, and update code below
 
 ```{r}
-# myurl <- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/evidence.zip"
-# download.file(myurl,"data/sticker2020/evidence.zip", method = "curl", extra = "-L")
-# unzip("data/sticker2020/evidence.zip", exdir = "data/sticker2020/")
+#myurl <- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/evidence.zip"
+#download.file(myurl,"data/sticker2020/evidence.zip", method = "curl", extra = "-L")
+#unzip("data/sticker2020/evidence.zip", exdir = "data/sticker2020/")
 evidenceFile <- "data/sticker2020/evidence.txt"
 ```
 
@@ -69,8 +69,15 @@ protein-groups tables all contain the same samples, the annotation
 table will be shared across the MaxQuant data tables.
 
 ```{r}
-annotFile <- "data/sticker2020/sticker2020_annotation.csv"
-coldata <- read.csv(annotFile)
+spikein <- fread(evidenceFile, check.names = TRUE)
+spikein$Raw.file <-  gsub("B03_|_150304_human_ecoli_|_3ul_3um_column_95_HCD_OT_2hrs_30B_9B","",spikein$Raw.file)
+coldata <- data.frame(runCol = unique(spikein$Raw.file))
+coldata$Condition <- gsub("[0-9]","",coldata$runCol)
+
+concentrations <- (2:6) * 1.5
+names(concentrations) <- LETTERS[1:5]
+
+coldata$Concentration <- concentrations[coldata$Condition]
 ```
 
 We retrieve all the E. coli protein identifiers to later identify
@@ -92,8 +99,6 @@ We combine the evidence file with the annotation table into a
 [`QFeatures` object](#sec-qfeatures).
 
 ```{r}
-spikein <- fread(evidenceFile, check.names = TRUE)
-coldata$runCol <- coldata$Raw.file
 (spikein <- readQFeatures(
     spikein, colData = coldata, runCol = "Raw.file", 
     quantCols = "Intensity"
@@ -251,8 +256,8 @@ results in statistical inference.
 Notice that the `QFeatures` object contains two diverging assays, one
 for each normalisation method.
 
-```{r wf_qf_plot_norm, fig.cap=" "}
-plot(spikein, interactive = TRUE)
+```{r wf_qf_plot_norm, fig.cap=" ", eval =FALSE}
+#plot(spikein, interactive = TRUE)
 ```
 
 
@@ -280,7 +285,6 @@ All these summarisation methods are available in `MsCoreUtils` and can
 be integrated feeded to `QFeatures`.
 
 ```{r}
-library("MsCoreUtils")
 summMethods <- c(
   robustSummary = MsCoreUtils::robustSummary, 
   colMedians = colMedians, 
@@ -312,8 +316,8 @@ summarised proteins. The data set contains 2 sets obtained using 2
 normalisation methods, and each normalised set has been summarised
 with 3 different methods.
 
-```{r wf_qf_plot_summarisation, fig.cap=" "}
-plot(spikein, interactive = TRUE)
+```{r wf_qf_plot_summarisation, fig.cap=" ", eval =FALSE}
+#plot(spikein, interactive = TRUE)
 ```
 
 ## Data modelling
@@ -342,6 +346,7 @@ for (i in proteinSets) {
     spikein,  i = i, formula = ~ Condition, ridge = TRUE, robust = TRUE
   )
 }
+#saveRDS(spikein,"spikein.rds")
 ```
 
 We enable [M-estimation](#sec-robust) (`robust = TRUE`) for improved
