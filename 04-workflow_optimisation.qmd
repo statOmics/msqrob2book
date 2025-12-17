@@ -416,12 +416,18 @@ inferences <- mutate(
   workflow = paste0(normalisation, "_", summarisation)
 )
 colours <- c(
-  MedianCentering_colMedians = "#fcba03",
-  MedianCentering_medianPolish = "#c29310",
-  MedianCentering_robustSummary = "#423512",
-  MedianOfRatios_colMedians = "#5bb4fc",
-  MedianOfRatios_medianPolish = "#0b69b5",
-  MedianOfRatios_robustSummary = "#0f2a40"
+  "MedianCentering_colMedians"      = "#FFD580", 
+  "MedianCentering_medianPolish"    = "#E69F00", 
+  "MedianCentering_robustSummary"   = "#8B4513", 
+  "MedianOfRatios_colMedians"       = "#ADD8E6", 
+  "MedianOfRatios_medianPolish"     = "#56B4E9", 
+  "MedianOfRatios_robustSummary"    = "#000080",
+)
+
+all_contrasts <- unique(tpFpTable$contrast)
+contrast_groups <- list(
+  left = all_contrasts[1:5],
+  right = all_contrasts[6:10]
 )
 ```
 
@@ -432,30 +438,40 @@ We will first construct the table with TPs and FPs obtained
 from each data modelling approach for each comparison.
 
 ```{r}
-tpFpTable <- group_by(inferences, normalisation, workflow, contrast) |>
-    filter(adjPval < 0.05) |>
-    summarise("True Positives" = sum(isEcoli),
-              "False Positives" = sum(!isEcoli),
-              FDP = mean(!isEcoli)) |>
-    pivot_longer(cols = c("True Positives", "False Positives"),
+tpFpTable <- inferences %>%
+  na.omit() %>%
+  mutate(TP = adjPval < 0.05 & isEcoli,
+         FP = adjPval < 0.05 & !isEcoli) %>%
+  group_by(normalisation,workflow,contrast) %>%
+  summarise("TruePositives" = sum(TP),
+            "FalsePositives" = sum(FP)) %>%
+  mutate(FDP = FalsePositives/(TruePositives+FalsePositives)) %>%
+      pivot_longer(cols = c("TruePositives", "FalsePositives"),
                  names_to = "metric", values_to = "count")
 ```
 
 We then plot the table as a bar plot, facetting for every comparison. 
 
-```{r wf_tp_fp, fig.width=6, fig.height=15, fig.cap=" "}
-ggplot(tpFpTable) +
-  aes(
-    x = normalisation, y = count,
-    fill = workflow
-  ) +
-  geom_bar(
-    stat = "identity", position = position_dodge(preserve = "single"),
-    color = "black"
-  ) +
-  facet_grid(contrast ~ metric, scales = "free") +
-  scale_fill_manual(values = colours) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```{r wf_tp_fp, fig.width=6, fig.height=10, fig.cap=" "}
+plot_tpfp <- function(selected_contrasts) {
+  ggplot(filter(tpFpTable, contrast %in% selected_contrasts)) +
+    aes(x = normalisation, y = count, fill = workflow) +
+    geom_bar(stat = "identity", position = position_dodge(preserve = "single"), color = "black") +
+    facet_grid(contrast ~ metric) +
+    scale_fill_manual(values = colours, breaks = names(colours)) +
+    guides(fill = guide_legend(ncol = 2, byrow = FALSE)) +
+    theme_bw() +
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.title.x = element_blank()
+    )
+}
+
+ggarrange(plotlist = lapply(X = contrast_groups, FUN = plot_tpfp), 
+          common.legend = TRUE, legend = "bottom")
 ```
 
 We see that, while it has minimal impact on the TPs, the median centering normalisation approach increases the number of FPs for some comparisons (E-A and E-B). We therefore suggest to use the Median of ratio's normalisation method.  
@@ -511,19 +527,23 @@ We can now generate the plot^[Note that the code to build the TPR-FDP
 curves is identical to the workflow in the previous chapter on data
 benchmarking.].
 
-```{r wf_fdr_fdp, fig.height=15, fig.width=5, fig.cap=" "}
-ggplot(performance) +
-    aes(
-        y = fdp,
-        x = tpr,
-        colour = workflow
-    ) +
+```{r wf_fdr_fdp, fig.height=10, fig.width=10, fig.cap=" "}
+plot_tprfdp <- function(selected_contrasts) {
+  ggplot(filter(performance, contrast %in% selected_contrasts)) +
+    aes(y = fdp, x = tpr, colour = workflow) +
     geom_line() +
-    geom_point(data = workPoints, size = 3) +
+    geom_point(data = filter(workPoints, contrast %in% selected_contrasts), size = 3) +
     geom_hline(yintercept = 0.05, linetype = 2) +
-    facet_grid(contrast ~ .) +
     coord_flip(ylim = c(0, 0.2)) +
-    scale_colour_manual(values = colours)
+    facet_grid(contrast ~.) +
+    scale_colour_manual(values = colours, breaks = names(colours)) +
+    guides(colour = guide_legend(ncol = 2, byrow = FALSE)) +
+    theme_bw() +
+    theme(legend.position = "bottom", legend.title = element_blank())
+}
+
+ggarrange(plotlist = map(contrast_groups, plot_tprfdp), 
+          common.legend = TRUE, legend = "bottom")
 ```
 
 Again,  we also observe a benefit of the MedianOfRatios normalisation, which seems to improve the FDR control accross the board^[the dots indicating the sensitivity and FDP when using a 5% FDR cut-off are much closer to the empirical 5% FDP] as well as the sensitivity in contrasts involving the higher spike-in conditions. 
@@ -544,20 +564,28 @@ realLogFC$contrast <- gsub("^([B-E])$", "\\1 - A", realLogFC$contrast)
 
 We now plot the estimated log2-fold changes, focusing on the differentially abundant proteins (E. Coli proteins). The dashed line represents the true log2-fold change for each comparison. 
 
-```{r wf_boxplot, fig.height=15, fig.width=5, fig.cap=" "}
-filter(inferences, isEcoli) |> 
-  ggplot() +
-  aes(
-      y = logFC,
-      x = normalisation,
-      colour = workflow
-  ) +
-  geom_boxplot()  +
-  facet_grid(contrast ~ ., scales = "free") +
-  geom_hline(data = realLogFC, aes(yintercept = expectedLogFC), 
-             linetype = "dashed") +
-  scale_colour_manual(values = colours) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```{r wf_boxplot, fig.height=10, fig.width=10, fig.cap=" "}
+plot_boxplots<- function(selected_contrasts) {
+  ggplot(filter(inferences, isEcoli == TRUE & contrast %in% selected_contrasts)) +
+    aes(y = logFC, x = normalisation, colour = workflow) +
+    geom_boxplot() +
+    facet_grid(contrast ~ ., scales = "free") +
+    geom_hline(data = filter(realLogFC, contrast %in% selected_contrasts), 
+               aes(yintercept = expectedLogFC), linetype = "dashed") +
+    scale_colour_manual(values = colours, breaks = names(colours)) +
+    guides(colour = guide_legend(ncol = 2, byrow = FALSE)) +
+    theme_bw() +
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.title.x = element_blank()
+    )
+}
+
+ggarrange(plotlist = lapply(contrast_groups, plot_boxplots), 
+          common.legend = TRUE, legend = "bottom")
 ```
 
 The plots show that median summarisation produces biased fold change estimates, again because it does not account for the differences in the characteristics of the PSMs that are observed in the different samples. 
