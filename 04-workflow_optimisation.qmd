@@ -470,7 +470,7 @@ plot_tpfp <- function(selected_contrasts) {
     )
 }
 
-ggarrange(plotlist = lapply(X = contrast_groups, FUN = plot_tpfp), 
+ggarrange(plotlist = lapply(contrast_groups, plot_tpfp), 
           common.legend = TRUE, legend = "bottom")
 ```
 
@@ -542,7 +542,7 @@ plot_tprfdp <- function(selected_contrasts) {
     theme(legend.position = "bottom", legend.title = element_blank())
 }
 
-ggarrange(plotlist = map(contrast_groups, plot_tprfdp), 
+ggarrange(plotlist = lapply(contrast_groups, plot_tprfdp), 
           common.legend = TRUE, legend = "bottom")
 ```
 
