@@ -256,8 +256,8 @@ results in statistical inference.
 Notice that the `QFeatures` object contains two diverging assays, one
 for each normalisation method.
 
-```{r wf_qf_plot_norm, fig.cap=" ", eval =FALSE}
-#plot(spikein, interactive = TRUE)
+```{r wf_qf_plot_norm, fig.cap=" "}
+plot(spikein, interactive = TRUE)
 ```
 
 
@@ -316,8 +316,8 @@ summarised proteins. The data set contains 2 sets obtained using 2
 normalisation methods, and each normalised set has been summarised
 with 3 different methods.
 
-```{r wf_qf_plot_summarisation, fig.cap=" ", eval =FALSE}
-#plot(spikein, interactive = TRUE)
+```{r wf_qf_plot_summarisation, fig.cap=" "}
+plot(spikein, interactive = TRUE)
 ```
 
 ## Data modelling
@@ -346,7 +346,6 @@ for (i in proteinSets) {
     spikein,  i = i, formula = ~ Condition, ridge = TRUE, robust = TRUE
   )
 }
-#saveRDS(spikein,"spikein.rds")
 ```
 
 We enable [M-estimation](#sec-robust) (`robust = TRUE`) for improved
@@ -436,12 +435,12 @@ tpFpTable <- inferences |>
   na.omit() |>
   mutate(TP = adjPval < 0.05 & isEcoli,
          FP = adjPval < 0.05 & !isEcoli) |>
-  group_by(normalisation,workflow,contrast) |>
+  group_by(normalisation, workflow, contrast) |>
   summarise("TruePositives" = sum(TP),
             "FalsePositives" = sum(FP)) |>
-  mutate(FDP = FalsePositives/(TruePositives+FalsePositives)) |>
+  mutate(FDP = FalsePositives / (TruePositives + FalsePositives)) |>
       pivot_longer(cols = c("TruePositives", "FalsePositives"),
-                 names_to = "metric", values_to = "count")
+                   names_to = "metric", values_to = "count")
 ```
 
 We then plot the table as a bar plot, facetting for every comparison. 
