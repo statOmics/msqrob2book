@@ -432,12 +432,15 @@ We will first construct the table with TPs and FPs obtained
 from each data modelling approach for each comparison.
 
 ```{r}
-tpFpTable <- group_by(inferences, normalisation, workflow, contrast) |>
-    filter(adjPval < 0.05) |>
-    summarise("True Positives" = sum(isEcoli),
-              "False Positives" = sum(!isEcoli),
-              FDP = mean(!isEcoli)) |>
-    pivot_longer(cols = c("True Positives", "False Positives"),
+tpFpTable <- inferences |>
+  na.omit() |>
+  mutate(TP = adjPval < 0.05 & isEcoli,
+         FP = adjPval < 0.05 & !isEcoli) |>
+  group_by(normalisation,workflow,contrast) |>
+  summarise("TruePositives" = sum(TP),
+            "FalsePositives" = sum(FP)) |>
+  mutate(FDP = FalsePositives/(TruePositives+FalsePositives)) |>
+      pivot_longer(cols = c("TruePositives", "FalsePositives"),
                  names_to = "metric", values_to = "count")
 ```
 
