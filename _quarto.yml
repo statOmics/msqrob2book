@@ -18,10 +18,13 @@ book:
   chapters:
     - index.qmd
     - 01-basics.qmd
-
-website:
-    sidebar:
-        logo: figs/msqrob2.png
+    - 02-advanced.qmd
+    - 03-benchmarking.qmd
+    - 04-workflow_optimisation.qmd
+    - 05-francisella.qmd
+    - 06-heart.qmd
+    - 07-mouse_diet.qmd
+    - 99-end.qmd
         
 bibliography: references.bib
 
