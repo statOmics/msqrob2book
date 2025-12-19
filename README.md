@@ -72,8 +72,7 @@ If you opt for a summarisation-based workflow, you can also cite:
 
 If you use TMT-based workflows, please cite
 
-> Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L.
-msqrob2TMT: robust linear mixed models for inferring differential
-abundant proteins in labelled experiments with arbitrarily complex
-design. bioRxiv. Published online March 29, 2024:2024.03.29.587218.
-doi:10.1101/2024.03.29.587218
+> Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L. 
+Msqrob2TMT: Robust linear mixed models for inferring differential 
+abundant proteins in labeled experiments with arbitrarily complex 
+design. Mol Cell Proteomics. 2025;24(7):101002.
