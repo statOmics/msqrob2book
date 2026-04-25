@@ -1,9 +1,5 @@
 # The francisella use case: a MaxQuant LFQ DDA dataset with technical replication {#sec-francisella}
 
-```{r, echo = FALSE}
-source("R/knitr_setup.R")
-```
-
 ## Introduction
 
 In this chapter we show how to analyse LFQ data with technical
@@ -25,10 +21,13 @@ First, we load the `msqrob2` package and additional packages for data
 manipulation and visualisation.
 
 ```{r}
+suppressPackageStartupMessages({
+library("data.table")
 library("msqrob2")
 library("ggplot2")
 library("ggrepel")
 library("dplyr")
+})
 ```
 
 We also configure the [parallelisation](#sec-parallel) framework.
@@ -61,14 +60,12 @@ The data were searched with MaxQuant version 1.4.1.2. and are
 available on the PRIDE repository:
 [PXD001584](https://www.ebi.ac.uk/pride/archive/projects/PXD001584).
 We download the peptides file^[The file is
-[locally cached](#sec-caching)].
-
-**TODO** put on Zenodo and use BiocFileCache
+[locally cached](#sec-caching)] from the github repository msqrob2data.
 
 ```{r}
 library("BiocFileCache")
 bfc <- BiocFileCache()
-pepFile <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/master/Francisella/data/maxquant/peptides.txt")
+pepFile <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/msqrob2data/refs/heads/main/dda/francisellaFull/peptides.txt")
 ```
 
 After downloading the files, we can load the [peptide
@@ -79,7 +76,7 @@ each quantification column (that starts with `"Intensity"`) represents
 a single sample.
 
 ```{r, warning=FALSE, message=FALSE}
-peps <- read.delim(pepFile)
+peps <- fread(pepFile, check.names = TRUE, integer64 = "double")
 quantcols <- grep("Intensity\\.", names(peps), value = TRUE)
 ```
 ```{r, echo=FALSE}
@@ -208,30 +205,12 @@ pe <- logTransform(pe, base = 2, i = "peptides", name = "peptides_log")
 2. Normalisation with the Median of Ratios method.
 
 ```{r}
-pseudoRef <- assay(pe[["peptides_log"]]) |> 
-  rowMeans(na.rm = TRUE) #1. Calculate the row means 
-
-nfLog <- sweep(
-  assay(pe[["peptides_log"]]), 
-  MARGIN = 1, 
-  pseudoRef) |> #2. Subtract the row means row-by-row (MARGIN = 1)
-  colMedians(na.rm = TRUE)  #3. Calculate the column median 
-
 pe <- 
   sweep(pe, 
         MARGIN = 2, 
-        STATS = nfLog , 
+        STATS = nfLogMedianOfRatios(pe,"peptides_log"), 
         i = "peptides_log", 
-        name = "peptides_norm") #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
-```
-
-<!--
-2. Samples are normalised by substracting the sample median (see [Normalisation])
--->
-```{r, echo=FALSE}
-# pe <- normalize(
-#   pe, i = "peptides_log", name = "peptides_norm", method #= "center.median"
-# )
+        name = "peptides_norm") 
 ```
 
 Upon the normalisation the density curves should be nicely centred. To
@@ -317,8 +296,7 @@ We will model two [sources of variation](#sec-modelling):
    modelled as random effects which are considered as a random sample
    from the population of all possible mice and are assumed to be
    i.i.d normally distributed with mean 0 and constant variance,
-   $u_{biorep} \sim
-   N(0,\sigma^{2,\text{b}})$. The use of random effects thus
+   $u_{biorep} \sim N(0,\sigma^{2,\text{b}})$. The use of random effects thus
    models the correlation in the data, explicitly. We expect that
    intensities from the same bacterial culture are more alike than 
    intensities between cultures.
@@ -368,7 +346,7 @@ estimation, but it is irrelevant in this context as the genotype
 factor only has 2 levels (WT and D8), so ridge regression . We will
 therefore leave the ridge regression disabled (default).
 
-```{r, cache=TRUE}
+```{r, cache=TRUE, warning = FALSE, message = FALSE}
 pe <- msqrob(pe, i = "proteins", formula = model, robust = TRUE)
 ```
 
@@ -433,8 +411,7 @@ hypothesis testing results are stored in `rowData` columns named after
 the column names (here `genotypeWT`) of the contrast matrix `L`.
 
 ```{r}
-inference <- rowData(pe[["proteins"]])[[colnames(L)]]
-inference$Protein <- rownames(inference)
+inference <- msqrobCollect(pe[["proteins"]],L)
 head(inference)
 ```
 
@@ -451,12 +428,9 @@ above. We also use `ggrepel` to annotate the 20 most significant
 proteins.
 
 ```{r francisella_volcano, fig.cap=" "}
-ggplot(inference) +
-  aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
-  geom_point() +
+plotVolcano(inference) + 
   geom_text_repel(data = slice_min(inference, adjPval, n = 20),
-                  aes(label = Protein)) +
-  scale_color_manual(values = alpha(c("black", "red"), 0.5)) + 
+                  aes(label = feature)) +
   ggtitle("Statistical inference on differences between WT and D8",
           paste("Hypothesis test:", colnames(L), "= 0"))
 ```
@@ -507,7 +481,7 @@ little data manipulation pipeline:
 5. Plot the data with `ggplot2`.
 
 ```{r francisella_detail_plot, fig.cap=" "}
-targetProtein <- rownames(inference)[which.min(inference$adjPval)] #1
+targetProtein <- inference$feature[which.min(inference$adjPval)] #1
 pe[targetProtein, , "proteins"] |> #2
   longForm(colvars = "genotype") |>  #3
   data.frame() |>

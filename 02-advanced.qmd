@@ -1,7 +1,7 @@
 # Advanced statistical analysis with msqrob2 {#sec-advanced}
 
 ```{r, echo = FALSE}
-source("R/knitr_setup.R")
+#source("R/knitr_setup.R")
 ```
 
 This chapter builds upon the chapter with the [basics](#sec-basics) of differential proteomics data
@@ -107,10 +107,12 @@ We load the `msqrob2` package, along with additional packages for
 data manipulation and visualisation.
 
 ```{r}
+suppressPackageStartupMessages({
 library("msqrob2")
 library("dplyr")
 library("ggplot2")
 library("patchwork")
+})
 ```
 
 We also configure the [parallelisation](#sec-parallel) framework.
@@ -615,9 +617,6 @@ spikein <- normalize(
 )
 ```
 
-**TODO** think about using the Median of Ratio normalisation for tmt 
-data. 
-
 And we confirm that the normalisation resulted in a better alignment
 of the intensity distribution across samples.
 
@@ -705,9 +704,6 @@ data](#sec-summarisation) also apply to TMT data. Briefly:
    doesn't show the same change in intensity between conditions
    compared to majority of the peptides. 
 
-**TODO**: use robust summary instead of median polish for consistency
-with previous vignette? I known median polish is faster, but still?
-
 Here, we summarise the ion-level data into protein intensities
 through the median polish approach, which alternately removes the
 peptide-ions and the sample medians from the data until the summaries
@@ -784,7 +780,9 @@ variation, we here show how to run the model that accounts for all
 relevant sources of variation in the spike-in experiment, which we
 have shown performs best [@Vandenbulcke2025-sj].
 
-```{r, eval = FALSE}
+Note, that we will not fit the model, yet. 
+
+```
 spikein <- msqrobAggregate(
     spikein,  i = "ions",
     formula = ~ Condition + ## fixed effect for experimental condition
@@ -795,7 +793,8 @@ spikein <- msqrobAggregate(
         (1 | Run:ionID), ## random effect for ions in the same spectrum of an MS run
     fcol = "Protein.Accessions",
     modelColumnName = "msqrob_psms_rrilm",
-    robust = TRUE, ridge = TRUE
+    robust = TRUE, 
+    ridge = TRUE
 )
 ```
 
@@ -1023,7 +1022,7 @@ mixture $m$.
 
 The model translates to the following code:
 
-```{r run_msqrob_protein3, cache=TRUE, warning=FALSE}
+```{r run_msqrob_protein3, cache=TRUE, warning=FALSE, message = FALSE}
 spikein <- msqrob(
     spikein,  i = "proteins",
     formula = ~ Condition + ## fixed effect for experimental condition
@@ -1039,8 +1038,8 @@ This model provides a sensible representation of the sources of
 variation in the data if we were to model the data at the protein
 level. This time, we executed the code and will use the result in a
 later section.  However, we found that modelling protein-level effects
-from ion-level data leads to improved performance [@Vandenbulcke2025-sj]. This will require
-an additional model expansion.
+from ion-level data leads to improved performance [@Vandenbulcke2025-sj]. 
+This will require an additional model expansion.
 
 ### Ion-level modelling{#sec-tmt_ion_model}
 
@@ -1081,7 +1080,7 @@ protein-level set, which we call `proteins_msqrob`.
 `msqrob()`, it can also fetch anntations from the `rowData` (i.e.
 `"ionID"`).
 
-```{r msqrob_psm_rrilmm, cache=TRUE, warning=FALSE}
+```{r msqrob_psm_rrilmm, cache=TRUE, warning=FALSE, message = FALSE}
 spikein <- msqrobAggregate(
     spikein,  i = "ions",
     formula = ~ Condition + ## fixed effect for experimental condition
@@ -1196,7 +1195,7 @@ contains an intercept and a single covariate. Indeed, based on a single slope te
 intentionally triggering an error after subsetting only spike-in
 condition `1` and `0.5`.
 
-```{r}
+```{r warning=FALSE, message = FALSE}
 spikeinSubset <- subsetByColData(spikein, spikein$Condition %in% c("1", "0.5"))
 try(msqrobAggregate(
   spikeinSubset,  i = "ions",
@@ -1262,14 +1261,22 @@ ion-level model stored in `proteins_msqrob`.
 
 ```{r}
 spikein <- hypothesisTest(spikein, i = "proteins_msqrob", contrast = L)
-inferences <- rowData(spikein[["proteins_msqrob"]])[, colnames(L)]
+```
+
+We use the msqrobCollect function to retreive the results. 
+
+```{r}
+inferences <- msqrobCollect(spikein[["proteins_msqrob"]], L)
 ```
 
 We can retrieve the results for the comparison between the 1x and the
-0.5x conditions.
+0.5x conditions by filtering for this contrast.
+We then use the head function to show the result for the first six proteins. 
 
 ```{r}
-head(inferences$"ridgeCondition1 - ridgeCondition0.5")
+inferences |> 
+  filter(contrast == "ridgeCondition1 - ridgeCondition0.5") |> 
+  head()
 ```
 
 The last row is filled with missing values because data modelling
@@ -1277,39 +1284,45 @@ resulted in a `fitError` (we will explore in a [later
 section](#sec-fiterror) how we can deal with proteins that could not
 be fit).
 
+1. We remove the string "ridgeCondition" from the names of the contrasts. 
+2. We also rename the contrasts that compare the higher spike-in condition to the 
+reference conditions (i.e. lowest spike-in condition, 0.125) so that they 
+explicitly include that difference with the reference in their name.
+
+```{r}
+  inferences$contrast <- gsub("ridgeCondition", "", inferences$contrast)
+  inferences$contrast <- gsub("^([0-9.]*)$", "\\1 - 0.125", inferences$contrast)
+```
+
 ### Volcano plots
 
 We generate volcano plots for all pairwise comparison between 
-conditions. First, we add new columns to the tables and join them in a
-single table.
+conditions and we plot the volcano plots with each comparison in a separate facet.
+
 
 ```{r}
-inferences <- lapply(colnames(inferences), function(i) {
-  inference <- inferences[[i]]
-  inference$Protein <- rownames(inference)
-  inference$isUps <- grepl("ups", inference$Protein)
-  inference$Comparison <- gsub("ridgeCondition", "", i)
-  inference$Comparison <- gsub("^([0-9.]*)$", "\\1 - 0.125", inference$Comparison)
-  inference
-})
-inferences <- do.call(rbind, inferences) ## combine in a single table
+inferences |> 
+  plotVolcano() +
+  facet_wrap(~ contrast, scales = "free")
 ```
 
-Then, we plot the volcano plots with each comparison in a separate facet.
+As we know the ground truth, i.e. UPS proteins are spiked can also add this information to the plot. 
+We first add a column isUps to the inferences table. 
 
-```{r advanced_volcao, fig.cap=" "}
-ggplot(inferences) +
-    aes(x = logFC,
-        y = -log10(pval),
-        color = isUps,
-        shape = adjPval < 0.05) +
-    geom_point() +
+```{r}
+alpha <- 0.05
+inferences$isUps <- grepl("ups", inferences$feature)
+inferences |> 
+  plotVolcano() +
+    aes(color = isUps, shape = adjPval < alpha) + 
     scale_color_manual(
-      values = c("grey20", "firebrick"), name = "",
-      labels = c("HeLA background", "UPS standard")
-    ) +
-    facet_wrap(~ Comparison, scales = "free") +
-    ggtitle("Statistical inference for all pairwise comparisons") 
+      values = c("grey20", "firebrick"), 
+      name = "species",
+      labels = c("HeLA", "UPS")
+      ) +
+  labs(shape = paste0("FDR < ",alpha)) + 
+  facet_wrap(~ contrast, scales = "free") 
+
 ```
 
 ### Fold change distributions
@@ -1321,8 +1334,8 @@ concentration for the spiked-in UPS standards. We first create a small
 table with the real values.
 
 ```{r}
-realLogFC <- data.frame(Comparison = unique(inferences$Comparison))
-realLogFC$logFC <- paste0("log2(", gsub("-", "/", realLogFC$Comparison), ")") |> 
+realLogFC <- data.frame(contrast = unique(inferences$contrast))
+realLogFC$logFC <- paste0("log2(", gsub("-", "/", realLogFC$contrast), ")") |> 
   sapply(function(x) eval(parse(text = x)))
 ```
 
@@ -1344,7 +1357,7 @@ ggplot(inferences) +
     geom_hline(data = realLogFC, aes(yintercept = logFC), 
                colour = "firebrick") +
     geom_hline(yintercept = 0) +
-    facet_wrap(~ Comparison) +
+    facet_wrap(~ contrast) +
     ggtitle("Distribution of the log2 fold changes")
 ```
 
@@ -1360,7 +1373,7 @@ statistical inference results. For example, let's explore the
 intensities for the protein with the most significant difference.
 
 ```{r}
-(targetProtein <- inferences$Protein[which.min(inferences$adjPval)])
+(targetProtein <- inferences$feature[which.min(inferences$adjPval)])
 ```
 
 To obtain the required data, we perform a [data manipulation
@@ -1401,53 +1414,66 @@ contrast matrix.].
 
 ```{r}
 spikein <- hypothesisTest(spikein, i = "proteins", contrast = L)
-inferences <- rowData(spikein[["proteins"]])[, colnames(L)]
+inferences <- msqrobCollect(spikein[["proteins"]], L)
+```
+
+Note, that we again change the names of the contrasts to make them shorter and
+more informative. 
+
+```{r}
+  inferences$contrast <- gsub("ridgeCondition", "", inferences$contrast)
+  inferences$contrast <- gsub("^([0-9.]*)$", "\\1 - 0.125", inferences$contrast)
 ```
 
 We build the volcano using the same code as above:
 
 ```{r advanced_volcano_proteins, fig.cap=" "}
-inferences <- lapply(colnames(inferences), function(i) {
-  inference <- inferences[[i]]
-  inference$Protein <- rownames(inference)
-  inference$isUps <- grepl("ups", inference$Protein)
-  inference$Comparison <- gsub("ridgeCondition", "", i)
-  inference
-})
-inferences <- do.call(rbind, inferences) ## combine in a single table
-ggplot(inferences) +
-    aes(x = logFC,
-        y = -log10(pval),
-        color = isUps) +
-    geom_point() +
-    geom_hline(yintercept = -log10(0.05)) +
+alpha <- 0.05
+inferences$isUps <- grepl("ups", inferences$feature)
+inferences |> 
+  plotVolcano() +
+    aes(color = isUps, shape = adjPval < alpha) + 
     scale_color_manual(
-      values = c("grey20", "firebrick"), name = "",
-      labels = c("HeLA background", "UPS standard")
-    ) +
-    facet_wrap(~ Comparison, scales = "free") +
-    ggtitle("Statistical inference for all pairwise comparisons",
-            subtitle = "Protein-level modelling") 
+      values = c("grey20", "firebrick"), 
+      name = "species",
+      labels = c("HeLA", "UPS")
+      ) +
+  labs(shape = paste0("FDR < ",alpha)) + 
+  facet_wrap(~ contrast, scales = "free") 
+```
+Note, that we observe an accumulation of false positives for the comparisons that 
+involve the low spike in condition. Again, this is probably due to issues the 
+design of the spike-in study with UPS proteins that are all regulated in the same 
+direction in the sample, which leads to ion suppression effects and puts a 
+burden on the normalisation. This is clearly illustrated by the asymmetry of the 
+non-spiked HeLA features in the volcano plot (in black).
+
+We again extract the real fold changes based on the modified contrast names. 
+
+```{r}
+realLogFC <- data.frame(contrast = unique(inferences$contrast))
+realLogFC$logFC <- paste0("log2(", gsub("-", "/", realLogFC$contrast), ")") |> 
+  sapply(function(x) eval(parse(text = x)))
 ```
 
 We plot the fold change distributions:
 
 ```{r advanced_boxplot_proteins, fig.cap=" "}
-ggplot(inferences) +
+inferences |> 
+  na.omit() |> 
+  ggplot() +
     aes(y = logFC,
         x = isUps,
         colour = isUps) +
     geom_boxplot() +
-    geom_point( ## Adding the expected Log2 fold changes 
-        data = group_by(inferences, Comparison, isUps) |> 
-          summarise(logFC = ifelse(isUps, log2(eval(parse(text = sub("-", "/", Comparison)))), 0)),
-        shape = 10, size = 4
-    ) +
     scale_color_manual(
         values = c("grey20", "firebrick"), name = "",
         labels = c("HeLA background", "UPS standard")
     ) +
-    facet_wrap(~ Comparison) +
+    geom_hline(data = realLogFC, aes(yintercept = logFC), 
+               colour = "firebrick") +
+    geom_hline(yintercept = 0) +
+    facet_wrap(~ contrast) +
     ggtitle("Distribution of the log2 fold changes",
             subtitle = "Protein-level modelling") 
 ```
@@ -1521,12 +1547,42 @@ used for summarisation does not exceed 1 peptide ion across samples.
 oneHitProteins <- rownames(counts)[rowMax(counts) == 1]
 ```
 
+We implemented the msqrobRefit function, which will be included in the next 
+release of msqrob2. 
+
+```{r warning=FALSE, message = FALSE}
+msqrobRefit <- function(object, formula, i, subset, fcol, name,
+                        modelColumnName = "msqrobModels", ...) {
+    seti <- getWithColData(object, i)
+    setj <- getWithColData(object, name)
+    if (any(!subset %in% rowData(seti)[[fcol]]))
+        stop("Some entries in 'subset' not found in '", fcol,
+             "' (rowData of set '", i, "')")
+    setjRefit <- msqrobAggregate(
+        seti[rowData(seti)[[fcol]] %in% subset, ],
+        formula = formula, fcol = fcol, modelColumnName = modelColumnName,
+        ...
+    )
+    rowData(setj)[[modelColumnName]][subset] <-
+        rowData(setjRefit)[[modelColumnName]][subset]
+    modelsNew <- rowData(setj)[[modelColumnName]]
+    hlp <- limma::squeezeVar(
+        var = vapply(modelsNew, getVar, numeric(1)),
+        df = vapply(modelsNew, getDF, numeric(1))
+    )
+    for (ii in seq_along(modelsNew)) {
+        modelsNew[[ii]]@varPosterior <- as.numeric(hlp$var.post[ii])
+        modelsNew[[ii]]@dfPosterior <- as.numeric(hlp$df.prior + getDF(modelsNew[[ii]]))
+    }
+    rowData(object[[name]])[[modelColumnName]] <- modelsNew
+    object
+}
+```
+
 Using `msqrobRefit()` is very similar to `msqrobAggregate()`, see here
 however that we adapted the formula to remove the random effect for
 label nested within run. We also mention which proteins must be
 refit using the `subset` argument.
-
-**TODO**: include msqrobRefit in `msqrob2`.
 
 ```{r msqrobRefit, cache = TRUE}
 spikein <- msqrobRefit(
@@ -1619,7 +1675,7 @@ imputation.
 The function added a new set `ions_imputed` which we can use to fit
 the ion-level model.
 
-```{r msqrob_psm_rrilmm_imputed, cache=TRUE}
+```{r msqrob_psm_rrilmm_imputed, cache=TRUE, warning = FALSE, message = FALSE}
 spikein <- msqrobAggregate(
     spikein,  i = "ions_imputed",
     formula = ~ Condition + ## fixed effect for experimental condition
@@ -1646,7 +1702,7 @@ rowData(spikein[["proteins_msqrob_imputed"]])[["msqrob_psm_rrilmm"]] |>
 
 Again `fitError`s were generated for one-hit-wonder proteins.
 
-```{r, cache=TRUE}
+```{r, cache=TRUE, message = FALSE, warning = FALSE}
 counts <- aggcounts(spikein[["proteins_msqrob_imputed"]])
 oneHitProteins <- rownames(counts)[rowMax(counts) == 1]
 spikein <- msqrobRefit(

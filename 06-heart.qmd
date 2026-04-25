@@ -1,9 +1,5 @@
 # Heart use case: a MaxQuant LFQ DDA dataset with a more complex design {#sec-heart}
 
-```{r, echo = FALSE}
-source("R/knitr_setup.R")
-```
-
 ## Introduction
 
 In this chapter we show how to analyse LFQ data from an experiment
@@ -28,11 +24,19 @@ First, we load the `msqrob2` package and additional packages for data
 manipulation and visualisation.
 
 ```{r}
-library("msqrob2")
+suppressPackageStartupMessages({
+library("QFeatures")  
+library("dplyr") 
+library("tidyr")
 library("ggplot2")
+library("msqrob2")    
+library("stringr")
+library("ExploreModelMatrix")
+library("kableExtra")
+library("ComplexHeatmap")
+library("scater")
 library("patchwork")
-library("ggrepel")
-library("dplyr")
+})
 ```
 
 We also configure the [parallelisation](#sec-parallel) framework.
@@ -46,6 +50,7 @@ register(SerialParam())
 
 ### Getting the data
 
+
 The data were searched with MaxQuant version version 1.5.5.6 and are
 deposited on the PRIDE repository
 [PXD006675](https://www.ebi.ac.uk/pride/archive/projects/PXD006675).
@@ -56,7 +61,7 @@ In this chapter we use a small subset of the data that is available on
 ```{r}
 library("BiocFileCache")
 bfc <- BiocFileCache()
-pepFile <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/PDA21/data/quantification/heart/peptides.txt")
+peptideFile <- bfcrpath(bfc, "https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/heart/peptides.txt")
 ```
 
 After downloading the files, we can load the peptide table, which is
@@ -65,11 +70,12 @@ single peptide and that each quantification column (that starts with
 `"Intensity"`) represents a single sample.
 
 ```{r, warning=FALSE, message=FALSE}
-peps <- read.delim(pepFile)
-quantcols <- grep("Intensity\\.", names(peps), value = TRUE)
+peptides <- data.table::fread(peptideFile, check.names = TRUE, integer64 = "double")
+quantcols <- grep("Intensity[.]", names(peptides), value = TRUE)
 ```
+
 ```{r, echo=FALSE}
-knitr::kable(head(peps))
+knitr::kable(head(peptides))
 ```
 
 We now extract the [sample annotations](#sec-annotation_table). We
@@ -78,11 +84,13 @@ information for one sample (the table below shows the first 6 rows).
 This information is extracted from the sample names.
 
 ```{r}
-coldata <- data.frame(quantCols = quantcols) |> 
-  mutate(location  = substr(quantCols, 11, 11)) |> # heart region left-right
-  mutate(tissue  = substr(quantCols, 12, 12)) |> # tissue Atrium-Ventriculum
-  mutate(patient  = substr(quantCols, 13, 13)) # patient id
+coldata <- data.frame(quantCols = quantcols) |>     
+  mutate(sampleId = gsub("Intensity[.]", "", quantcols), 
+         location  = substr(sampleId, 1, 1), # heart region left-right
+         tissue  = substr(sampleId, 2, 2), # tissue Atrium-Ventriculum
+         patient  = substr(sampleId, 3, 3)) # patient id
 ```
+
 ```{r, echo=FALSE}
 knitr::kable(head(coldata))
 ```
@@ -93,7 +101,7 @@ We combine the two tables into a [`QFeatures` object](#sec-qfeatures).
 
 ```{r}
 (pe <- readQFeatures(
-  peps, colData = coldata, fnames = "Sequence", name = "peptides"
+  peptides, colData = coldata, fnames = "Sequence", name = "peptides"
 ))
 ```
 
@@ -167,6 +175,39 @@ n <- ncol(pe[["peptides"]])
 
 We keep `r nrow(pe[["peptides"]])` peptides upon filtering.
 
+
+### Identifications per sample 
+
+```{r}
+pe[,,"peptides"] |> 
+  longForm(colvars = colnames(colData(pe)), 
+           rowvars= c("Sequence", 
+                      "Proteins")) |>
+  data.frame() |>
+  filter(!is.na(value)) |>
+  group_by(location, tissue, sampleId) |>
+  summarise(Precursors = length(unique(Sequence)),
+            `Protein Groups` = length(unique(Proteins))) |> 
+  pivot_longer(-(1:3),
+               names_to = "Feature",
+               values_to = "IDs") |> 
+  ggplot(aes(x = sampleId, y = IDs, fill = interaction(location,tissue))) +
+  geom_col() +
+  #scale_fill_observable() +
+  facet_wrap(~Feature,
+             scales = "free_y") +
+  labs(title = "Peptide and protein group identificiations per sample",
+       x = "Sample",
+       y = "Identifications") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+There are rather large variations in the peptide and protein identifications 
+across samples. Therefore we will normalise the data using the Median of Ratios 
+method of DESeq2, which can correct for differences in overall loading across 
+runs as well as for differences in sample composition. 
+
 ### Standard preprocessing workflow
 
 We can now prepare the data for modelling. The workflow ensures the
@@ -181,30 +222,15 @@ pe <- logTransform(pe, base = 2, i = "peptides", name = "peptides_log")
 2. Normalisation with Median of Ratios method.
 
 ```{r}
-pseudoRef <- assay(pe[["peptides_log"]]) |> 
-  rowMeans(na.rm = TRUE) #1. Calculate the row means 
-
-nfLog <- sweep(
-  assay(pe[["peptides_log"]]), 
-  MARGIN = 1, 
-  pseudoRef) |> #2. Subtract the row means row-by-row (MARGIN = 1)
-  colMedians(na.rm = TRUE)  #3. Calculate the column median 
-
-pe <- 
-  sweep(pe, 
-        MARGIN = 2, 
-        STATS = nfLog , 
-        i = "peptides_log", 
-        name = "peptides_norm") #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
+pe <- sweep( #Subtract log2 norm factor column-by-column (MARGIN = 2)
+  pe,
+  MARGIN = 2,
+  STATS = nfLogMedianOfRatios(pe,"peptides_log"),
+  i = "peptides_log",
+  name = "peptides_norm"
+)
 ```
-<!--
-2. Samples are normalised by substracting the sample median (see [Normalisation])
--->
-```{r, echo=FALSE}
-# pe <- normalize(
-#  pe, i = "peptides_log", name = "peptides_norm", method #= "center.median"
-# )
-```
+
 
 Upon the normalisation the density curves should be nicely centred. To
 confirm this, we will plot the intensity distributions for each
@@ -226,6 +252,8 @@ We use the robust summary approach to infer protein-level data from
 peptide-level data, accounting for the fact that different peptides
 have ionisation efficiencies hence leading to different intensity
 baselines.
+As the robust summarisation takes a while we shift to medianPolish in this 
+dataset.
 
 ```{r,warning=FALSE}
 pe <- aggregateFeatures(
@@ -293,9 +321,9 @@ We estimate the model with `msqrob()`. Recall that
 variables defined in `model` are automatically retrieved from the
 `colData` (i.e. `"tissue"`, `"location"`, and `"patient"`). 
 
-```{r, cache=TRUE}
+```{r, cache=TRUE, warning = FALSE, message = FALSE}
 pe <- msqrob(
-  pe, i = "proteins", formula = model, robust = TRUE, ridge = TRUE
+  pe, i = "proteins", formula = model, robust = TRUE
 )
 ```
 
@@ -409,15 +437,14 @@ We can set up the four contrasts:
 2. We make the contrast matrix for the four contrasts 
 
 ```{r}
-design <- model.matrix(~ location*tissue + patient, data = colData(pe))
 L <- makeContrast(
   c(
-    "ridgetissueV = 0",
-    "ridgetissueV + ridgelocationR:tissueV = 0",
-    "ridgetissueV + 0.5*ridgelocationR:tissueV = 0",
-    "ridgelocationR:tissueV = 0"
+    "tissueV = 0",
+    "tissueV + locationR:tissueV = 0",
+    "tissueV + 0.5*locationR:tissueV = 0",
+    "locationR:tissueV = 0"
   ),
-  parameterNames = paste0("ridge", colnames(design))
+  parameterNames = colnames(vd$designmatrix)
   )
 ```
 
@@ -425,239 +452,120 @@ We can now falsify the null hypothesis of each contrast:
 
 ```{r}
 pe <- hypothesisTest(
-  object = pe, i = "proteins", contrast = L, overwrite = TRUE
+  object = pe, i = "proteins", contrast = L
 )
 ```
 
-### Evaluate results for contrast $\log_2 FC_{V-A}^L$
 
-Let us retrieve the result table from the `rowData`. Note that the
-hypothesis testing results are stored in `rowData` columns named after
-the column names of the contrast matrix `L`. The first column contains
-the results for contrast $\log_2 FC_{V-A}^L$.
+### Results tables for significant proteins
+
+We first collect the results for all contrasts. 
 
 ```{r}
-inferenceLeft <- rowData(pe[["proteins"]])[[colnames(L)[1]]]
-inferenceLeft$Protein <- rownames(inferenceLeft)
-head(inferenceLeft)
+inferences <- 
+  msqrobCollect(pe[["proteins"]], L) 
+head(inferences)
 ```
 
-Notice that some rows contain missing values. This is because data
-modelling resulted in a `fitError` for some proteins, probably because
-not enough data was available for model fitting due to missing values
-in the quantitative data (see [how to deal with
-`fitError`s](#sec-fiterror)).
+Next, we will return tables of proteins for which the contrasts are significant at the 5% FDR level. 
 
-#### Volcano plot
+1. We set the significance level 
+2. We loop over the contrasts
+3. We filter the significant results for the contrast from the table
+4. We print the table 
 
-Volcano plots are straightforward to generate from the inference table
-above. We also use `ggrepel` to annotate the 20 most significant 
-proteins.
-
-```{r heart_volcano_left, fig.cap=" "}
-ggplot(inferenceLeft) +
-  aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
-  geom_point() +
-  geom_text_repel(data = slice_min(inferenceLeft, adjPval, n = 20),
-                  aes(label = Protein)) +
-  scale_color_manual(values = alpha(c("black", "red"), 0.5)) + 
-  ggtitle("log2 FC V-A left",
-          paste("Hypothesis test:", colnames(L)[1], "= 0"))
+```{r, results='asis'}
+alpha <- 0.05 #1.
+for (contrasti in colnames(L)) #2. 
+{
+  sigList <- inferences |> 
+    filter(contrast == contrasti & adjPval < alpha) #3.
+  cat("**Contrast:**", contrasti, "= 0 (", nrow(sigList), " significant proteins)\n\n") #4.
+  print(kable(sigList, row.names = FALSE) |>
+      kable_styling(full_width = FALSE) |>
+      scroll_box(height = "250px")
+      ) #4.
+  cat("\n\n\n---\n\n") #4.
+}
 ```
 
-#### Heatmap
+Note, that no significant interactions are returned. 
+This is not unexpected. 
+We do not have a lot of subjects in the study and the power to pick up interaction terms is typically lower than to pick up main effects.
 
-We can also build a [heatmap](#sec-heatmaps) for the significant
-proteins which are obtained by filtering the inference table. We first
-retrieve the data with proteins that are differentially abundant
-between the atrium and the ventriculum in the left heart.
+
+### Volcanoplots 
+
+A volcano plot is a common visualisation that provides an overview of
+the hypothesis testing results, plotting the $-\log_{10}$ p-value^[Note, 
+that upon this transformation a value of 1 represents a p-value of 0.1, 2 
+a p-value of 0.01, 3 a p-value of 0.001, etc.] as a function of
+the estimated log fold change. Volcano plots can be used to highlight
+the most interesting proteins that have large fold changes and/or are
+highly significant. We can use the table above directly to build a
+volcano plot using `ggplot2` functionality. We also highlight which
+proteins are UPS standards, known to be differentially abundant by
+experimental design.
+
+Experienced users can make the plot themselves. However, in msqrob2 we also 
+provide the plotVolcano function that generates volcanoplots based on `msqrob2`
+inference tables generated with the `hypothesisTest` function. 
+
+Since the inference table contains multiple contrast we use the `facet_wrap` 
+function to make a separate volcano plot for each contrast. 
 
 ```{r}
-sigNamesLeft <- inferenceLeft |> 
-  filter(!is.na(adjPval), adjPval < 0.05) |> 
-  pull()
-se <- getWithColData(pe, "proteins")[sigNamesLeft, ]
+volcanoplots <- inferences |> 
+  plotVolcano() +
+  facet_wrap(~contrast)
+volcanoplots
 ```
 
-We then plot the protein-wise standardised data as an annotated 
-heatmap.
 
-```{r heart_heatmap_left, fig.cap=" "}
-quants <- t(scale(t(assay(se))))
-library("ComplexHeatmap")
-annotations <- columnAnnotation(
-  tissue = se$tissue,
-  location = se$location
-)
-set.seed(1234) ## annotation colours are randomly generated by default
-Heatmap(
- quants, name = "log2 intensity",
- top_annotation = annotations
-)
-```
+### Heatmaps
 
-There are `r length(sigNamesLeft)` proteins significantly
-differentially expressed at the 5% FDR level. Below you can find the
-list of significant proteins.
+We use a nominal FDR level of 0.05
 
 ```{r}
-inferenceLeft |>
-  na.exclude() |>
-  filter(adjPval<0.05) |>
-  arrange(pval)  |>
-  knitr::kable()
+alpha <- 0.05
 ```
 
-### Evaluate results for contrast $\log_2 FC_{V-A}^R$
+We conduct heatmaps for the significant metabolites for each contrast. 
 
-Let us retrieve the result table from the `rowData`. The second column
-contains the results for contrast $\log_2 FC_{V-A}^R$.
+1. We first extract the assay `proteins` along with its colData. 
+2. We make an empty list `heatmaps` to store the plots.
+3. We will loop over the column names of the contrast matrix `L`
+4. We extract the names of the significant features for contrast `i`
+5. We extract the quant data for the significant metabolites
+6. We extract annotation
+7. We make the heatmap using the quants data. We do not cluster columns (samples) to keep them together according to the design.
+
+We only produce heatmaps for the first three contrasts as no DA proteins were returned for the location x tissue interaction.
 
 ```{r}
-inferenceRight <- rowData(pe[["proteins"]])[[colnames(L)[2]]]
-inferenceRight$Protein <- rownames(inferenceRight)
-head(inferenceRight)
+heatmaps <- lapply(colnames(L)[1:3],
+                   function(contrast, se, alpha)
+                   {
+                     sig <- rowData(se)[[contrast]] |> 
+                       filter(adjPval < alpha) |> 
+                       rownames()
+                     quants <- t(scale(t(assay(se[sig,]))))
+                     colnames(quants) <- paste0(se$location, se$tissue, se$patient)
+                     annotations <- columnAnnotation(condition = paste0(se$location, se$tissue))
+                     set.seed(1234) ## annotation colours are randomly generated by default
+                     return(
+                       Heatmap(
+                       quants, 
+                       name = "log2 intensity",
+                       top_annotation = annotations, 
+                       column_title = paste0(contrast, " = 0")
+                       )
+                     )
+                   },
+                   se = getWithColData(pe, "proteins"),
+                   alpha = alpha)
+heatmaps
 ```
-
-#### Volcano plot
-
-Volcano plots are straightforward to generate from the inference table
-above. We also use `ggrepel` to annotate the 20 most significant 
-proteins.
-
-```{r heart_volcano_right, fig.cap=" "}
-ggplot(inferenceRight) +
-  aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
-  geom_point() +
-  geom_text_repel(data = slice_min(inferenceRight, adjPval, n = 20),
-                  aes(label = Protein)) +
-  scale_color_manual(values = alpha(c("black", "red"), 0.5)) + 
-  ggtitle("log2 FC V-A Right",
-          paste("Hypothesis test:", colnames(L)[2], "= 0"))
-```
-
-
-#### Heatmap
-
-We can also build a heatmap for the significant proteins which are
-obtained by filtering the inference table^[Note that we use the same
-heatmap annotations so we don't need to generate it again.].
-
-```{r heart_heatmap_right, fig.cap=" "}
-sigNamesRight <- inferenceRight |> 
-  filter(!is.na(adjPval), adjPval < 0.05) |> 
-  pull()
-se <- getWithColData(pe, "proteins")[sigNamesRight, ]
-quants <- t(scale(t(assay(se))))
-set.seed(1234) ## annotation colours are randomly generated by default
-Heatmap(
- quants, name = "log2 intensity",
- top_annotation = annotations
-)
-```
-
-There are `r length(sigNamesRight)` proteins significantly differentially expressed at the 5% FDR level.
-
-Below you can find the list of significant proteins. 
-```{r}
-inferenceRight |>
-  na.exclude() |>
-  filter(adjPval<0.05) |>
-  arrange(pval)  |>
-  knitr::kable()
-```
-
-### Evaluate results average contrast $\log_2 FC_{V-A}$
-
-Let us retrieve the result table from the `rowData`. The second column
-contains the results for contrast $\log_2 FC_{V-A}$.
-
-```{r}
-inferenceAvg <- rowData(pe[["proteins"]])[[colnames(L)[3]]]
-inferenceAvg$Protein <- rownames(inferenceAvg)
-head(inferenceAvg)
-```
-
-#### Volcano plot
-
-Volcano plots are straightforward to generate from the inference table
-above. We also use `ggrepel` to annotate the 20 most significant 
-proteins.
-
-
-```{r heart_volcano_average, fig.cap=" "}
-ggplot(inferenceAvg) +
-  aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
-  geom_point() +
-  geom_text_repel(data = slice_min(inferenceAvg, adjPval, n = 20),
-                  aes(label = Protein)) +
-  scale_color_manual(values = alpha(c("black", "red"), 0.5)) + 
-  ggtitle("log2 FC V-A Right",
-          paste("Hypothesis test:", colnames(L)[2], "= 0"))
-```
-
-#### Heatmap
-
-We can also build a heatmap for the significant proteins which are
-obtained by filtering the inference table.
-
-```{r heart_heatmap_average, fig.cap=" "}
-sigNamesAvg <- inferenceAvg |> 
-  filter(!is.na(adjPval), adjPval < 0.05) |> 
-  pull()
-se <- getWithColData(pe, "proteins")[sigNamesAvg, ]
-quants <- t(scale(t(assay(se))))
-set.seed(1234) ## annotation colours are randomly generated by default
-Heatmap(
- quants, name = "log2 intensity",
- top_annotation = annotations
-)
-```
-
-There are `r length(sigNamesAvg)` proteins significantly
-differentially expressed at the 5% FDR level.
-
-Below you can find the list of significant proteins. 
-
-```{r}
-inferenceAvg |>
-  na.exclude() |>
-  filter(adjPval<0.05) |>
-  arrange(pval)  |>
-  knitr::kable()
-```
-
-### Interaction 
-
-Let us retrieve the result table from the `rowData`. The second column
-contains the results for the interaction contrast.
-
-```{r}
-inferenceInt <- rowData(pe[["proteins"]])[[colnames(L)[4]]]
-inferenceInt$Protein <- rownames(inferenceInt)
-head(inferenceInt)
-```
-
-#### Volcano plot
-
-Volcano plots are straightforward to generate from the inference table
-above. We also use `ggrepel` to annotate the 20 most significant 
-proteins.
-
-
-```{r heart_volcano_interaction, fig.cap=" "}
-ggplot(inferenceInt) +
-  aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
-  geom_point() +
-  geom_text_repel(data = slice_min(inferenceInt, adjPval, n = 20),
-                  aes(label = Protein)) +
-  scale_color_manual(values = alpha(c("black", "red"), 0.5)) + 
-  ggtitle("log2 FC V-A Right",
-          paste("Hypothesis test:", colnames(L)[2], "= 0"))
-```
-
-As there are no significant features, we do not return a top table and
-do not make a heatmap for this contrast.
 
 ## Conclusion
 
@@ -678,3 +586,4 @@ We could investigate:
 4. The interaction, whether the difference between atrium and 
    ventriculum is affected by whether we focus on the left heart or 
    the right heart compartment.
+   

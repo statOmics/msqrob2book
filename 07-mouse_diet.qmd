@@ -1,9 +1,5 @@
 # The mouse diet use case: a Skyline TMT DDA dataset {#sec-mouse-diet}
 
-```{r, echo = FALSE}
-source("R/knitr_setup.R")
-```
-
 ## Introduction
 
 If you never used `msqrob2`, we suggest to familiarise yourself with
@@ -30,11 +26,13 @@ First, we load the `msqrob2` package and additional packages for data
 manipulation and visualisation.
 
 ```{r}
+suppressPackageStartupMessages({
 library("msqrob2")
 library("ggplot2")
 library("patchwork")
 library("ggrepel")
 library("dplyr")
+})
 ```
 
 We also configure the [parallelisation](#sec-parallel) framework.
@@ -90,7 +88,7 @@ columns that start with `"Abundance."` contain the quantitative values
 for each TMT label.
 
 ```{r}
-psms <- read.delim(psmFile)
+psms <- data.table::fread(psmFile, check.names = TRUE, integer64 = "double")
 ```
 ```{r, echo=FALSE}
 knitr::kable(head(psms))
@@ -101,7 +99,7 @@ in the annotation table contains information for one sample (the table
 below shows the first 6 rows).
 
 ```{r}
-coldata <- read.csv(annotFile)
+coldata <- data.table::fread(annotFile, check.names = TRUE, integer64 = "double")
 ```
 ```{r, echo=FALSE}
 knitr::kable(head(coldata))
@@ -257,9 +255,12 @@ We can now prepare the data for modelling. The workflow ensures the
 data complies to `msqrob2`'s requirements:
 
 1. Intensities are log-transformed.
-2. Samples are normalised.
+2. Samples are normalised. Here we use median summarisation. Further research is 
+required to adopt methods that can account for differences in compositionality 
+such as Median of Ratios to labelled proteomics experiments.
 3. (optionally) PSMs intensities are summarised into protein abundance
-   values for protein-level workflows.
+   values for protein-level workflows. Note, that we do for labelled experiments
+   run-by-run.
 
 ```{r}
 sNames <- names(mouse)
@@ -496,7 +497,7 @@ from the `rowData` (`"ionID"`). We also enable M-estimation
 (`robust = TRUE`) for improved robustness against outliers and ridge
 penalisation (`ridge = TRUE`) to stabilise the parameter estimation.
 
-```{r run_msqrob_ion, cache=TRUE}
+```{r run_msqrob_ion, cache=TRUE, warning = FALSE, message = FALSE}
 mouse <- msqrobAggregate(
     mouse, i = "ions_norm",
     formula = model,
@@ -579,8 +580,7 @@ Let us retrieve the result table from the `rowData`. Note that the
 model column is named after the column names of the contrast matrix `L`.
 
 ```{r}
-inference <- rowData(mouse[["proteins_msqrob"]])[[colnames(L)]]
-inference$Protein <- rownames(inference)
+inference <- msqrobCollect(mouse[["proteins_msqrob"]], colnames(L))
 head(inference, 10)
 ```
 
@@ -595,11 +595,9 @@ We can use the table above directly to build a volcano plot using
 `ggplot2` functionality.
 
 ```{r mouse_diet_volcano_short, fig.cap=" "}
-ggplot(inference) +
-    aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
+plotVolcano(inference) + 
     geom_text_repel(data = filter(inference, adjPval < 0.05),
-                    aes(label = Protein)) +
-    geom_point() +
+                    aes(label = feature)) +
     ggtitle("Statistical inference on differences between LF and HF (short duration)",
             paste("Hypothesis test:", gsub("ridgeCondition", "", colnames(L)), "= 0"))
 ```
@@ -609,7 +607,7 @@ only a few proteins pass the significance threshold of 5%. Let us
 visualise the protein with the largest fold change.
 
 ```{r}
-(targetProtein <- rownames(inference)[which.max(inference$logFC)])
+(targetProtein <- inference$feature[which.max(inference$logFC)])
 ```
 
 To obtain the required data, we perform a little data manipulation
@@ -681,18 +679,15 @@ L <- makeContrast(
 mouse <- hypothesisTest(
     mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_ion"
 )
-inference <- rowData(mouse[["proteins_msqrob"]])[[colnames(L)]]
-inference$Protein <- rownames(inference)
+inference <- msqrobCollect(mouse[["proteins_msqrob"]], L)
 ```
 
 And we plot the results.
 
 ```{r mouse_diet_volcano_long, fig.cap=" "}
-ggplot(inference) +
-    aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
+plotVolcano(inference) + 
     geom_text_repel(data = filter(inference, adjPval < 0.05),
-                    aes(label = Protein)) +
-    geom_point() +
+                    aes(label = feature)) +
     ggtitle("Statistical inference on differences between LF and HF (long duration)",
             paste("Hypothesis test:", gsub("ridgeCondition", "", colnames(L)), "= 0"))
 ```
@@ -733,19 +728,16 @@ L <- makeContrast(
 mouse <- hypothesisTest(
     mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_ion"
 )
-inference <- rowData(mouse[["proteins_msqrob"]])[[colnames(L)]]
-inference$Protein <- rownames(inference)
+inference <- msqrobCollect(mouse[["proteins_msqrob"]], L)
 ```
 
 And we plot the results.
 
 ```{r mouse_diet_volcano_average, fig.cap=" "}
-ggplot(inference) +
-    aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
+plotVolcano(inference) + 
     geom_text_repel(data = filter(inference, adjPval < 0.05),
-                    aes(label = Protein)) +
-    geom_point() +
-    ggtitle("Statistical inference on average difference between LF and HF",
+                    aes(label = feature)) +
+    ggtitle("Statistical inference on average differences between LF and HF",
             paste("Hypothesis test:", gsub("ridgeCondition", "", colnames(L)), "= 0"))
 ```
 
@@ -777,18 +769,15 @@ L <- makeContrast(
 mouse <- hypothesisTest(
     mouse, i = "proteins_msqrob", L, modelColumn = "msqrob_ion"
 )
-inference <- rowData(mouse[["proteins_msqrob"]])[[colnames(L)]]
-inference$Protein <- rownames(inference)
+inference <- msqrobCollect(mouse[["proteins_msqrob"]], L)
 ```
 
 And we plot the results.
 
 ```{r mouse_diet_volcano_interaction, fig.cap=" "}
-ggplot(inference) +
-    aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
+plotVolcano(inference) + 
     geom_text_repel(data = filter(inference, adjPval < 0.05),
-                    aes(label = Protein)) +
-    geom_point() +
+                    aes(label = feature)) +
     ggtitle("Statistical inference on the effect of duration on the differences between diets",
             paste("Hypothesis test:", gsub("ridgeCondition", "", colnames(L)), "= 0"))
 ```
@@ -798,7 +787,7 @@ diet changes according to the duration. Let us visually explore this changes for
 protein.
 
 ```{r}
-(targetProtein <- rownames(inference)[which.min(inference$adjPval)])
+(targetProtein <- inference$feature[which.min(inference$adjPval)])
 ```
 
 We use again `Qfeatures`'s data manipulation pipeline.
@@ -859,7 +848,7 @@ We retrieve the inference tables from the `rowData` to generate the
 volcano plot.
 
 ```{r}
-inferenceTables <- rowData(mouse[["proteins_msqrob"]])[, colnames(L)]
+inferences <- msqrobCollect(mouse[["proteins_msqrob"]], L)
 ```
 
 We here use a `lapply()` loop to generate the plots. The code chunk is
@@ -867,25 +856,11 @@ elaborate, but follows the same structure as in the previous section.
 This generates a list of volcano plots, one for each hypothesis.
 
 ```{r}
-volcanoPlots <- lapply(colnames(inferenceTables), function(i) {
-    inference <- inferenceTables[[i]]
-    inference$Protein <- rownames(inference)
-    ggplot(inference) +
-        aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
-        geom_text_repel(data = filter(inference, adjPval < 0.05),
-                        aes(label = Protein)) +
-        geom_point() +
-        ggtitle("Hypothesis test:",
-                paste(gsub("ridge", "", i), "= 0"))
-})
+inferences |> 
+  plotVolcano() +
+  facet_wrap(~contrast)
 ```
 
-We combine all the plots in a single figure using the `patchwork`
-packages.
-
-```{r mouse_diet_volcano_all, fig.width=8, fig.height=8, fig.cap=" "}
-wrap_plots(volcanoPlots)
-```
 
 ### Protein-level model
 
@@ -908,7 +883,7 @@ modelSum <- ~ Diet * Duration + ## fixed effect for Diet and Duration with inter
 For protein-level modelling, we use `msqrob()` instead of
 `msqrobAggregate()`, but their function arguments closely overlap.
 
-```{r, cache=TRUE}
+```{r, cache=TRUE, warning = FALSE, message = FALSE}
 mouse <- msqrob(
     mouse, i = "proteins",
     formula = modelSum,
@@ -930,29 +905,18 @@ The inference tables were all stored in the `rowData` as separate
 columns, like previously.
 
 ```{r}
-inferenceTablesSum <- rowData(mouse[["proteins"]])[, colnames(L)]
+inferencesSum <- msqrobCollect(mouse[["proteins"]],L)
 ```
 
 We here use again the `lapply()` loop that generates the list of
 volcano plots, one for each hypothesis.
 
 ```{r}
-volcanoPlotsSum <- lapply(names(inferenceTablesSum), function(i) {
-    inference <- inferenceTablesSum[[i]]
-    inference$Protein <- rownames(inference)
-    ggplot(inference) +
-        aes(x = logFC, y = -log10(pval), color = adjPval < 0.05) +
-        geom_text_repel(data = filter(inference, adjPval < 0.05),
-                        aes(label = Protein)) +
-        geom_point() +
-        ggtitle("Hypothesis test:",
-                paste(gsub("tests_|ridge", "", i), "= 0"))
-})
+inferencesSum |> 
+  plotVolcano() +
+  facet_wrap(~contrast)
 ```
 
-```{r mouse_diet_volcano_all_proteins, fig.width=8, fig.height=8, fig.cap=" "}
-wrap_plots(volcanoPlotsSum)
-```
 
 ## Conclusion
 

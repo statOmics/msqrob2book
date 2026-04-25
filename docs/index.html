@@ -2,17 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.23">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Christophe Vanderaa">
 <meta name="author" content="Stijn Vandenbulcke">
 <meta name="author" content="Lieven Clement">
-<meta name="dcterms.date" content="2025-12-12">
+<meta name="dcterms.date" content="2026-04-25">
 
 <title>Statistical analysis of mass spectrometry-based proteomics data</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -63,7 +66,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -96,10 +98,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-226bd0f977fa82dfae4534cac220d79a.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ac32dca00065cc45e71a60b6df2d2e12.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-b7a3c8d01d4b3c8fd24f5d7f6ef5b30e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -155,7 +157,8 @@ div.csl-indent {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="./index.html" class="sidebar-logo-link">
-      <img src="./figs/msqrob2.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="./figs/msqrob2.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="./figs/msqrob2.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Statistical analysis of mass spectrometry-based proteomics data</a> 
@@ -275,7 +278,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 12, 2025</p>
+      <p class="date">April 25, 2026</p>
     </div>
   </div>
   
@@ -306,7 +309,7 @@ div.csl-indent {
 <ol type="1">
 <li>Modularity: all core functions rely on the <code>QFeatures</code> class, a standardised data structure, meaning that output of a function can be fed as input to any other function. Hence, different functions are assembled as modular blocks into a complete data analysis workflows that can be easily adapted to the peculiarities of any MS-based proteomics data set. Therefore, the approach extends well beyond the use case presented in this chapter</li>
 <li>Flexibility: the <code>msqrob2</code> modelling approach relies on the <code>lme4::lmer()</code> model specification syntax, meaning that any linear model can be specified. For fixed effects, this includes modelling categorical and numerical variables, as well as their interaction. Moreover, <code>msqrob2</code> can model both sample-specific and feature-specific (e.g.&nbsp;peptide or protein) covariates, which unlocks the inference to experiments with arbitrarily complex designs as well as to correct explicitly for feature-specific properties.</li>
-<li>Performance: thanks to the inclusion of robust ridge regression, we demonstrated improved performance of <code>msqrob2</code> workflows upon the competing software <span class="citation" data-cites="Goeminne2016-tr Sticker2020-rl Vandenbulcke2025-sj">(<a href="99-end.html#ref-Goeminne2016-tr" role="doc-biblioref">Goeminne, Gevaert, and Clement 2016</a>; <a href="99-end.html#ref-Sticker2020-rl" role="doc-biblioref">Sticker et al. 2020</a>; <a href="99-end.html#ref-Vandenbulcke2025-sj" role="doc-biblioref">Vandenbulcke et al. 2025</a>)</span>.</li>
+<li>Performance: thanks to the inclusion of robust ridge regression, we demonstrated improved performance of <code>msqrob2</code> workflows upon the competing software <span class="citation" data-cites="Goeminne2016-tr Sticker2020-rl Vandenbulcke2025-sj">(<a href="99-end.html#ref-Goeminne2016-tr" role="doc-biblioref">Goeminne et al. 2016</a>; <a href="99-end.html#ref-Sticker2020-rl" role="doc-biblioref">Sticker et al. 2020</a>; <a href="99-end.html#ref-Vandenbulcke2025-sj" role="doc-biblioref">Vandenbulcke et al. 2025</a>)</span>.</li>
 </ol>
 </section>
 <section id="outline" class="level2">
@@ -324,7 +327,7 @@ div.csl-indent {
 <h3 class="anchored" data-anchor-id="benchmarking">Benchmarking</h3>
 <p>This part illustrates how to benchmark data analysis workflows and demonstrates how the guidelines presented in this book were derived. The main sections of the chapters in this part are intended for advanced users with R programming skills. However, the conclusions in each chapter are more accessible and also intended for entry-level users that want to understand how to apply the guidelines and recommendations to their analyses.</p>
 <ul>
-<li><a href="03-benchmarking.html" class="quarto-xref">Chapter&nbsp;<span>3&nbsp; Benchmarking workflows</span></a> explains how to conduct a benchmarking experiment that compares different workflows. As an example, the chapter compares the performance when starting from the different MaxQuant input files: the evidence file, the peptides file, and the protein-group file. The same benchmark strategy could be used to compare different data sources, such as data generated by different sample preparation protocols, LC-MS approaches and/or search engines.</li>
+<li><a href="03-benchmarking.html" class="quarto-xref"><span>3&nbsp; Benchmarking workflows</span></a> explains how to conduct a benchmarking experiment that compares different workflows. As an example, the chapter compares the performance when starting from the different MaxQuant input files: the evidence file, the peptides file, and the protein-group file. The same benchmark strategy could be used to compare different data sources, such as data generated by different sample preparation protocols, LC-MS approaches and/or search engines.</li>
 <li><a href="04-workflow_optimisation.html" class="quarto-xref"><span>4&nbsp; Optimisation of a data analysis workflow</span></a> demonstrates how to optimise a data analysis workflow. As an example, the chapter compares the performance of two normalisation approaches (median of ratios and median centering) in combination with three summarisation approaches (median, median polish, and robust regression).</li>
 </ul>
 </section>
@@ -349,7 +352,7 @@ div.csl-indent {
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <p>To install all the necessary package, please use the latest release of R and execute:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="fu">c</span>(</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>   <span class="st">"BiocParallel"</span>,</span>
@@ -366,7 +369,7 @@ div.csl-indent {
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>   <span class="st">"scater"</span>,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>   <span class="st">"tidyr"</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>   <span class="st">"bookdown"</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>All software versions used to generate this document are recorded at the end of the book in <a href="99-end.html" class="quarto-xref"><span>8&nbsp; Additional information</span></a>.</p>
 </section>
@@ -377,18 +380,14 @@ div.csl-indent {
 </section>
 <section id="acknowledgments" class="level2">
 <h2 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h2>
-<p>We thank the <a href="https://www.rformassspectrometry.org/">R for Mass Spectrometry</a> initiative:</p>
-<ul>
-<li>For developing the <code>QFeatures</code> package on which <code>msqrob2</code> depends</li>
-<li>For openly sharing their <a href="https://rformassspectrometry.github.io/book">book</a>, which we used as a template.</li>
-</ul>
+<p>We thank the <a href="https://www.rformassspectrometry.org/">R for Mass Spectrometry</a> initiative for developing the <code>QFeatures</code> package on which <code>msqrob2</code> depends.</p>
 </section>
 <section id="license" class="level2">
 <h2 class="anchored" data-anchor-id="license">License</h2>
 <p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"></a><br>This material is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>. You are free to <strong>share</strong> (copy and redistribute the material in any medium or format) and <strong>adapt</strong> (remix, transform, and build upon the material) for any purpose, even commercially, as long as you give appropriate credit and distribute your contributions under the same license as the original.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-Goeminne2016-tr" class="csl-entry" role="listitem">
 Goeminne, Ludger J E, Kris Gevaert, and Lieven Clement. 2016. <span>“Peptide-Level Robust Ridge Regression Improves Estimation, Sensitivity, and Specificity in Data-Dependent Quantitative Label-Free Shotgun Proteomics.”</span> <em>Mol. Cell. Proteomics</em> 15 (2): 657–68.
 </div>
@@ -454,13 +453,14 @@ Vandenbulcke, Stijn, Christophe Vanderaa, Oliver Crook, Lennart Martens, and Lie
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

@@ -1,9 +1,5 @@
 # Additional information {#sec-end}
 
-```{r, echo = FALSE}
-source("R/knitr_setup.R")
-```
-
 ## Citation
 
 Please cite this book as:
@@ -53,9 +49,7 @@ Reanalysis study: Sticker A, Goeminne L, Martens L, Clement L. Robust
 Summarization and Inference in Proteome-wide Label-free
 Quantification. Mol Cell Proteomics. 2020;19(7):1209-1219.
 
-Link to data: https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/peptides.zip
-
-Link to data in archive: **TODO** add link to Zenodo
+Link to data: [https://github.com/statOmics/msqrob2data/dda/](https://github.com/statOmics/msqrob2data/dda/)
 
 Used in @sec-basics and @sec-benchmarking.
 
@@ -79,11 +73,11 @@ Used in @sec-advanced.
 
 ### Francisella data set
 
-**TODO**
+Link to data: [https://github.com/statOmics/msqrob2data/](https://github.com/statOmics/msqrob2data/)
 
 ### Heart data set
 
-**TODO**
+Link to data: [https://github.com/statOmics/msqrob2data/](https://github.com/statOmics/msqrob2data/)
 
 ### Mouse diet data set
 
@@ -109,7 +103,8 @@ The following packages have been used to generate this document.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ## Load package dependencies 
-devtools::load_all()
+#devtools::load_all()
+
 ## Load package dependencies listed in Suggests
 read.dcf("DESCRIPTION")[, "Suggests"] |> 
   strsplit(",\\s*") |> 

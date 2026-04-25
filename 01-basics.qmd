@@ -1,8 +1,5 @@
 # Statistical analysis with msqrob2 {#sec-basics}
 
-```{r, echo = FALSE}
-source("R/knitr_setup.R")
-```
 
 This chapter explains the main concepts for statistical analysis of
 proteomics data using `msqrob2`. To illustrate these concepts, we will
@@ -146,10 +143,13 @@ We load the `msqrob2` package, along with additional packages for
 data manipulation and visualisation.
 
 ```{r}
+suppressPackageStartupMessages({
 library("msqrob2")
 library("dplyr")
 library("ggplot2")
 library("patchwork")
+library("tidyr")
+})
 ```
 
 ### Parallelisation {#sec-parallel}
@@ -186,14 +186,8 @@ E. coli study.
 ```{r}
 library("BiocFileCache")
 bfc <- BiocFileCache()
-# myurl <- "https://github.com/statOmics/MSqRobSumPaper/raw/refs/heads/master/spikein/data/maxquant/peptides.zip"
-# download.file(myurl,"data/sticker2020/peptides.zip", method = "curl", extra = "-L")
-# unzip("data/sticker2020/peptides.zip", exdir = "data/sticker2020/")
-peptideFile <- "data/sticker2020/peptides.txt"
+peptideFile <- bfcrpath(bfc,"https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/shen/peptides.txt")
 ```
-
-**TODO**: put data on Zenodo. BiocFileCache will be used for fetching 
-these data.
 
 #### Peptide table{#sec-peptide_table}
 
@@ -206,8 +200,15 @@ sample. The table format where the quantitative values for each sample
 are contained in a separate column is depicted as the "wide format", 
 as opposed to the "long format" (eg, the [PSM table]).
 
+We will import the data using the `fread` function of the data.table package. 
+We set the `check.names` argument equal to  `TRUE` so that all column names are 
+retrieved using the `$` operator. This will result in a replacement of spaces in 
+the column names with a `.`.
+We also use argument integer64 = "double" because `readQFeatures` from the 
+`QFeatures` package does not process 64-bit integers correctly. 
+
 ```{r}
-peptides <- read.delim(peptideFile)
+peptides <- data.table::fread(peptideFile, check.names = TRUE, integer64 = "double")
 quantCols <- grep("Intensity[.]", names(peptides), value = TRUE)
 ```
 
@@ -229,9 +230,11 @@ sample names, although reporting a detailed design of experiments in a
 table is seen as better practice [@Gatto2023-kk].
 
 ```{r}
-coldata <- data.frame(quantCols = quantCols)
-coldata$condition <- gsub("Intensity.(.).", "\\1", quantCols)
-coldata$concentration <- concentrations[coldata$condition]
+coldata <- data.frame(quantCols = quantCols) |> 
+  mutate(sampleId = gsub("Intensity.(..)", "\\1", quantCols),
+         condition = gsub("Intensity.(.).", "\\1", quantCols),
+         concentration = concentrations[condition]
+         )
 ```
 
 ```{r, echo=FALSE}
@@ -248,7 +251,7 @@ differentially abundant.
 4. We extract the proteins identifiers from the headers
 
 ```{r}
-ecoli <- bfcrpath(bfc, "https://raw.githubusercontent.com/statOmics/MSqRobSumPaper/refs/heads/master/spikein/data/fasta/ecoli_up000000625_7_06_2018.fasta")
+ecoli <- bfcrpath(bfc, "https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/shen/ecoli_up000000625_7_06_2018.fasta")
 ecoli <- readLines(ecoli)
 ecoli <- ecoli[grepl("^>", ecoli)]
 ecoli <- gsub(">sp\\|(.*)\\|.*", "\\1", ecoli)
@@ -287,7 +290,7 @@ which will be used as rownames. See `?readQFeatures()` for more
 details.
 
 ```{r}
-(spikein <- readQFeatures(
+(spikein <- QFeatures::readQFeatures(
   peptides, coldata, name = "peptides", fnames = "Sequence"
 ))
 ```
@@ -424,12 +427,14 @@ p <- ggplot(dat) +
   aes(x = concentration) +
   geom_point() +
   scale_x_continuous(trans = "log2") +
-  labs(x = "Spike-in concentration (fmol/µL)")
+  labs(x = "Spike-in concentration (fmol/µL)") +
+  theme_bw()
 ## Add the x and y axis as linear or log2-transformed
 p + aes(y = value) +
   p + aes(y = log2(value), x = log2(concentration)) +
   plot_annotation(title = "ecoli peptide AAATQEMTLVDTPNAK") +
-  plot_layout(axis_titles = "collect_x")
+  plot_layout(axis_titles = "collect_x") +
+  theme_bw()
 ```
 
 We can see that the variation around the mean for each concentration slightly increases as the mean increases. This is known as heteroskedasticity.
@@ -553,10 +558,9 @@ data.frame(nNaRes$nNArows) |>
   ggplot() +
   aes(x = nNA) +
   geom_histogram(bins = 15) +
-  ggtitle("Number of missing values for each peptide")
+  ggtitle("Number of missing values for each peptide") +
+  theme_bw()
 ```
-
-**TODO** assigned:Lieven DO WE USE THE SAME STRATEGY AS IN EDGER? Observe in at least as many samples as in the smallest group or in the minimum of 1/leverage for more complex designs?  minSampleSize <- 1/max(hat(design))
 
 We keep peptides that were observed at last 4 times out of the $n
 = 20$ samples, so that we can estimate the peptide characteristics. We tolerate the following proportion of NAs:
@@ -572,6 +576,34 @@ n <- ncol(spikein[["peptides_log"]])
 ```
 
 We keep `r nrow(spikein[["peptides_log"]])` peptides upon filtering.
+
+
+### Identifications per sample 
+
+```{r}
+spikein[,,"peptides"] |> 
+  longForm(colvars = colnames(colData(spikein)), 
+           rowvars= c("Sequence", 
+                      "Proteins")) |>
+  data.frame() |>
+  filter(!is.na(value)) |>
+  group_by(condition, sampleId) |>
+  summarise(peptides = length(unique(Sequence)),
+            Proteins = length(unique(Proteins))) |> 
+  pivot_longer(-(1:2),
+               names_to = "Feature",
+               values_to = "IDs") |> 
+  ggplot(aes(x = sampleId, y = IDs, fill = condition)) +
+  geom_col() +
+  #scale_fill_observable() +
+  facet_wrap(~Feature,
+             scales = "free_y") +
+  labs(title = "Peptide and protein group identificiations per sample",
+       x = "Sample",
+       y = "Identifications") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90))
+```
 
 ### Normalisation{#sec-norm}
 
@@ -600,7 +632,8 @@ spikein[, , "peptides_log"] |> ## 1.
   aes(x = value,
       colour = condition,
       group = colname) +
-  geom_density()
+  geom_density() +
+  theme_bw()
 ```
 
 Even in this clean synthetic data set (same background with a small
@@ -610,34 +643,37 @@ effect will increase the noise and reduce the statistical power of the
 experiment, and may also, in case of unbalanced designs, introduce
 confounding effects that will bias the results.
 
-Therefore, normalisation will transform the data to make the intensities of the different samples comparable, e.g. by centering the distributions using the median, so that the distributions better coincide and overlap.
+Therefore, normalisation will transform the data to make the intensities of the 
+different samples comparable, e.g. by centering the distributions using the 
+median, so that the distributions better coincide and overlap.
 
-Here, we will use the Median of Ratios method of DESeq2, which was originally developed for RNA-seq data analysis and can also correct for differences in composition of the proteomes in the different samples:
+Subtracting the sample median at the log scale from each precursor 
+log2 intensity, basically boils down to calculating log-ratio's between 
+the precursor intensity and its sample median. 
 
-1. We first create a pseudo-reference sample (row-wise mean of log2 
-intensities, which corresponds to the log2 transformed geometric 
-mean). 
-2. Calculate the log2 ratios of each sample w.r.t. the 
-pseudo-reference 
-3. Subsequently take the column wise median of these log2 ratios to 
-obtain the sample based normalisation factor on the log2 scale.
-4. Subtract these log2-norm factors from the intensities of each 
-corresponding column of the assay data and store the result in the
-new assay peptides_norm. (We adopt the sweep function to the
-`peptides_log` assay of the spikein QFeatures object with as
-statistic the log2 normfactor `STATS=nf` the default function `FUN
-= "-"`, `MARGIN = 2` to substract the column wise log2 norm factor
-from each entry of the corresponding assay data)
+Here, we will use the Median of Ratios method of DESeq2, which was originally 
+developed for RNA-seq data analysis and can also correct for differences in 
+composition of the proteomes in the different samples. 
+The method first calculates pseudo-reference sample (row-wise mean of log2 
+intensities, which corresponds to the log2 transformed geometric mean).
+THen calculates log2 ratios of each sample w.r.t. the pseudo-reference.
+Finally the column wise median of these log2 ratios is taken to obtain 
+the sample based normalisation factor on the log2 scale.
+This procedure is implemented in the `msqrob2` function `nfLogMedianOfRatios`.
 
-```{r}
-pseudoRef <- assay(spikein[["peptides_log"]]) |> 
-  rowMeans(na.rm = TRUE) #1. Calculate the row means 
-nfLog <- sweep(
-  assay(spikein[["peptides_log"]]), 
-  MARGIN = 1, 
-  pseudoRef) |> #2. Subtract the row means row-by-row (MARGIN = 1)
-  colMedians(na.rm = TRUE)  #3. Calculate the column median 
-spikein <- sweep( #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
+1. We calculate the log transformed normalisation factor from the Median of 
+Ratios method
+2.  Subtract these log2-norm factors from the intensities of each corresponding 
+column of the assay data and store the result in the new assay peptides_norm. 
+(We adopt the sweep function to the `peptides_log` assay of the spikein 
+QFeatures object with as statistic the log2 normfactor `STATS = nfLog` the 
+default function `FUN = "-"`, `MARGIN = 2` to substract the column wise log2 
+norm factor from each entry of the corresponding assay data).
+
+
+```{r normalize_peptides}
+nfLog <- nfLogMedianOfRatios(spikein, "peptides_log") #1.
+spikein <- sweep( #Subtract log2 norm factor column-by-column (MARGIN = 2) #2.
   spikein,
   MARGIN = 2,
   STATS = nfLog,
@@ -646,6 +682,9 @@ spikein <- sweep( #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
 )
 ```
 
+Note that users can also use all normalisation functions that are provided in 
+QFeatures, i.e. by replacing the sweep function by `QFeatures::normalize`.
+
 Formally, the function applies the following operation on each sample
 $i$ across all PSMs $p$:
 
@@ -653,8 +692,10 @@ $$
 y_{ip}^{\text{norm}} = y_{ip} - \hat{\mu}_i
 $$
 
-with $y_ip$ the log2-transformed intensities and $\hat{\mu}_i$ the log2-transformed norm factor. Upon normalisation, we can see
-that the distribution of the $y_{ip}^{\text{norm}}$ nicely overlap (using the same code as above)
+with $y_ip$ the log2-transformed intensities and $\hat{\mu}_i$ the 
+log2-transformed norm factor. Upon normalisation, we can see that the 
+distribution of the $y_{ip}^{\text{norm}}$ nicely overlap 
+(using the same code as above).
 
 ```{r basics_after_norm, fig.cap="Intensity distribution for all samples after normalisation."}
 spikein[, , "peptides_norm"] |> ## 1.
@@ -708,7 +749,8 @@ spikein[, , "peptides_norm"] |>
   geom_point(aes(fill = condition), size = 3, shape = 21) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjus = 0.5),
         legend.position = "top") + 
-  labs(x = "Peptide", y = "log2(norm Intensity)")
+  labs(x = "Peptide", y = "log2(norm Intensity)") +
+  theme_bw()
 ```
 
 1. We can see that data for a protein can consist of many peptides, 
@@ -824,7 +866,8 @@ spikein["P0AEE5", , c("peptides_norm", "proteins")] |> ## 1.
   geom_line(linewidth = 0.1) +
   geom_point(aes(colour = condition)) +
   facet_grid(~ assay) +
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank()) +
+  theme_bw()
 ```
 
 The data processing is complete.
@@ -947,19 +990,23 @@ We estimate the model with `msqrob()`. The function takes the
 linear model with `condition` as covariate, which are
 automatically retrieved from `colData(spikein)`.
 
-```{r run_msqrob_protein, cache=TRUE, warning=FALSE}
+```{r run_msqrob_protein, cache = TRUE, warning = FALSE, message = FALSE}
 spikein <- msqrob(
   spikein,  i = "proteins",
   formula = model,
-  ridge = TRUE, robust = TRUE
+  robust = TRUE
 )
 ```
 
 We enable M-estimation (`robust = TRUE`) for improved robustness
-against outliers. We also enable ridge regression (`ridge = TRUE`).
-Ridge regression stabilises the parameter estimation of fixed effects. 
-However, this is **only possible if there are more than two slope terms** in the model, e.g. designs with more than two groups or designs involving multiple covariates.** The next chapter provides more details on [robust
-regression](#sec-robust) and [ridge regression](#sec-ridge).
+against outliers. 
+We can also enable ridge regression (`ridge = TRUE`), which can stabilise 
+the parameter estimation of fixed effects. 
+However, this is numerically more complex and is **only possible with msqrob2 
+if there are more than two slope terms** in the model, e.g. designs with more 
+than two groups or designs involving multiple covariates. The next chapter 
+provides more details on [robust regression](#sec-robust) and 
+[ridge regression](#sec-ridge).
 
 The fitting results are available in the `msqrobModels` column of the
 `rowData`. More specifically, the modelling output is stored in the
@@ -1007,10 +1054,7 @@ params <- getCoef(models[[1]])
 head(params)
 ```
 
-Note the `"ridge"` tag in front of the parameter names that indicates
-the parameters have been estimated using ridge penalisation. The model
-estimated `r length(params)` parameters to model the fixed and random
-effects. However, we are interested, for this data set, in the
+We are interested, for this data set, in the
 parameters that model the effect of `condition`.
 
 ```{r}
@@ -1019,7 +1063,6 @@ params[grep("condition", names(params))]
 
 For this protein we can see that the effects of condition are small, as
 expected since the protein is part of the human constant background.
-Note that because of the ridge penalisation they are shrunken to zero.
 We now explore the parameters for one of the E. coli
 proteins.
 
@@ -1030,9 +1073,9 @@ params[grep("condition", names(params))]
 
 Since this is a benchmark study and we know the concentration of A
 (0.25 fmol/µL) and B (0.74 fmol/µL), the obvious answer is
-$log_2(0.74) - log_2(0.25) = 1.566$. The average log2 difference in
+$log_2(4.5) - log_2(3) = 0.585$. The average log2 difference in
 intensity between condition B and condition A that has been estimated
-by the model is `r params[["ridgeconditionb"]]`, rather close. Now,
+by the model is `r params[["conditionb"]]`, rather close. Now,
 the question is if we can conclude that the fold change between
 condition B and condition A is statistically significant for this protein based on the
 model output.
@@ -1042,12 +1085,12 @@ model output.
 
 As shown above, the average difference in log2 intensity between
 condition b and a after correcting for the lab effect is
-`ridgeconditionb`. This combination of parameters is also called a
+`conditionb`. This combination of parameters is also called a
 contrast. Thus, we assess the following null hypothesis for this
-contrast: `ridgeconditionb = 0` with our statistical test.
+contrast: `conditionb = 0` with our statistical test.
 
 ```{r}
-contrast <- "ridgeconditionb = 0"
+contrast <- "conditionb = 0"
 ```
 
 `makeContrast()` converts the hypothesis into a formal contrast matrix
@@ -1058,8 +1101,8 @@ columns, with one column for each contrast].
 
 ```{r}
 (L <- makeContrast(
-  "ridgeconditionb = 0",
-  "ridgeconditionb"
+  "conditionb = 0",
+  "conditionb"
 ))
 ```
 
@@ -1078,7 +1121,8 @@ Note, that for this spike-in study we know the ground truth, so we also add vari
 (from E. coli).
 
 ```{r}
-inference <- rowData(spikein[["proteins"]])$ridgeconditionb
+#inference <- rowData(spikein[["proteins"]])$ridgeconditionb
+inference <- rowData(spikein[["proteins"]])$conditionb
 inference$Protein <- rownames(inference)
 inference$isEcoli <- inference$Protein %in% ecoli
 head(inference)
@@ -1099,30 +1143,43 @@ that include protein $j$.
 ### Volcano plots
 
 A volcano plot is a common visualisation that provides an overview of
-the hypothesis testing results, plotting the $-\log_{10}$ p-value^[Note, that upon this transformation a value of 1 represents a p-value of 0.1, 2 a p-value of 0.01, 3 a p-value of 0.001, etc.] as a function of
-the estimated log fold change. Volcano plots can be used to highlight
-the most interesting proteins that have large fold changes and/or are
-highly significant. We can use the table above directly to build a
-volcano plot using `ggplot2` functionality. We also highlight which
-proteins are UPS standards, known to be differentially abundant by
-experimental design.
+the hypothesis testing results, plotting the $-\log_{10}$ p-value^[Note, that 
+upon this transformation a value of 1 represents a p-value of 0.1, 2 a p-value 
+of 0.01, 3 a p-value of 0.001, etc.] as a function of the estimated log fold 
+change. Volcano plots can be used to highlight the most interesting proteins 
+that have large fold changes and/or are highly significant. We can use the table 
+above directly to build a volcano plot using the `plotVolcano` function of 
+msqrob2. 
 
-```{r basics_volcano, fig.cap="Volcano plot of the statistical inference of the average difference between condition b and condition a."}
+```{r}
 inference |> 
-  na.exclude() |>
-  ggplot(
-    aes(x = logFC,
-        y = -log10(pval),
-        color = isEcoli,
-        shape = adjPval < 0.05)) +
-  geom_point() +
-  geom_vline(xintercept = log2(4.5) - log2(3), linetype = "dashed") +
-  scale_color_manual(
-    values = c("grey20", "firebrick"), name = "",
-    labels = c("Human proteins", "Ecoli spikein")
-  ) +
+  plotVolcano() +
   ggtitle("Statistical inference results",
           paste0("H0: ", colnames(L), " = 0"))
+```
+
+
+Note, that we also know the ground truth for this dataset because it is a 
+spike-in study. So we will color the dots according to the ground truth in 
+`isEcoli` and will use a different shape according to the significance (FDR 
+above or below $\alpha = 0.05$).
+We also add a vertical line according to the real logFC. 
+
+
+```{r}
+alpha <- 0.05
+inference |> 
+  plotVolcano() +
+  ggtitle("Statistical inference results",
+          paste0("H0: ", colnames(L), " = 0")) + 
+  aes(color = isEcoli, shape = adjPval < alpha) + 
+    scale_color_manual(
+      values = c("grey20", "firebrick"), 
+      name = "species",
+      labels = c("human", "ecoli")
+      ) +
+  labs(shape = paste0("FDR < ",alpha)) + 
+  geom_vline(xintercept = log2(4.5) - log2(3), linetype = "dashed")
 ```
 
 We retrieve the proteins that are significantly differentially
@@ -1130,7 +1187,7 @@ abundant based on the FDR-adjusted p-value (`adjPval`). Note that the
 majority of the differentially abundant proteins are E. coli proteins.
 
 ```{r}
-table(is_significant = inference$adjPval < 0.05, 
+table(is_significant = inference$adjPval < alpha, 
       is_ecoli = inference$isEcoli)
 ```
 
@@ -1140,7 +1197,7 @@ false positives, true positives and the false discovery proprotion
 
 ```{r}
 inference |> 
-  filter(adjPval < 0.05) |>
+  filter(adjPval < alpha) |>
   summarise(
     fp = sum(!isEcoli), 
     tp = sum(isEcoli), 
@@ -1155,7 +1212,7 @@ declared significant between condition A and condition B and extract
 their quantitative data.
 
 ```{r}
-sigNames <- inference$Protein[!is.na(inference$adjPval) & inference$adjPval < 0.05]
+sigNames <- inference$Protein[!is.na(inference$adjPval) & inference$adjPval < alpha]
 se <- getWithColData(spikein, "proteins")
 se <- se[sigNames, se$condition %in% c("a", "b")]
 ```
@@ -1272,11 +1329,11 @@ specification that has been estimated and the sample annotation from
 the data. We also specify that we estimated the model using ridge
 regression, which influences parameter names.
 
-**TODO**: add automatic pairwise comparisons function to msqrob2 
-
 ```{r}
 (allHypotheses <- createPairwiseContrasts(
-  model, colData(spikein), "condition", ridge = TRUE
+  model, 
+  colData(spikein), 
+  "condition"
 ))
 ```
 
@@ -1286,7 +1343,7 @@ that here `allHypotheses` is a vector of contrasts.
 ```{r}
 (L <- makeContrast(
   allHypotheses,
-  parameterNames = paste0("ridgecondition", c("b", "c", "d", "e"))
+  parameterNames = paste0("condition", c("b", "c", "d", "e"))
 ))
 ```
 
@@ -1302,47 +1359,48 @@ results with the argument `overwrite = TRUE`.
 spikein <- hypothesisTest(spikein, i = "proteins", L, overwrite = TRUE)
 ```
 
-We retrieve the inference tables from the `rowData` to generate the
-volcano plots.
+The results tables for the contrast are stored in the row data of the 
+`proteins` assay in `spikein` under the colomnames of the contrast matrix `L`.
+
+Users can directly access the results tables via de colData. However, `msqrob2` 
+also provides the `msqrobCollect` function. This function will automatically 
+retrieve the results tables for all contrasts in contrast matrix `L` and combine 
+them by default in one  table. This table contains two additional columns: 
+`contrast` with the name of the contrast and `feature` with the name of the 
+modelled `feature`, here protein. 
 
 ```{r}
-inferences <- rowData(spikein[["proteins"]])[, colnames(L)]
+inferences <- 
+  msqrobCollect(spikein[["proteins"]], L) 
+head(inferences)
 ```
 
-We here use a `lapply()` loop to generate additional information, and
-then combine all the tables in a single table.
+We rename the contrasts by removing the string 'ridgecondition'.  
 
 ```{r}
-inferences <- lapply(colnames(inferences), function(i) {
-  inference <- inferences[[i]]
-  inference$Protein <- rownames(inference)
-  inference$isEcoli <- inference$Protein %in% ecoli
-  inference$Comparison <- i
-  inference
-})
-inferences <- do.call(rbind, inferences) ## combine in a single table
-inferences$Comparison <- gsub("ridgecondition","", inferences$Comparison)
+inferences$contrast <- gsub("condition","", inferences$contrast)
 ```
 
-**TODO** I created a function `msqrobCollect()` to streamline the 
-table extraction above.
+We add the ground truth as we know that E. coli is spiked in: 
 
-We plot the volcano plots with each comparison in a separate facet.
+```{r}
+inferences$isEcoli <- inferences$feature %in% ecoli
+```
+
+We plot the volcano plots with each comparison in a separate facet and again
+color the dots according to the ground truth. 
 
 ```{r basics_volcano_multiple, fig.width=9, fig.height=8, fig.cap="Volcano plot of the statistical inference results for all pairwise comparisons."}
-inferences |>
-  na.exclude() |> 
-  ggplot(
-    aes(x = logFC,
-        y = -log10(pval),
-        shape = adjPval < 0.05,
-        color = isEcoli)) +
-  geom_point() +
-  scale_color_manual(
-    values = c("grey20", "firebrick"), name = "",
-    labels = c("Human proteins", "Ecoli spikein")
-  ) +
-  facet_wrap(~ Comparison)
+inferences |> 
+  plotVolcano() +
+    aes(color = isEcoli, shape = adjPval < alpha) + 
+    scale_color_manual(
+      values = c("grey20", "firebrick"), 
+      name = "species",
+      labels = c("human", "ecoli")
+      ) +
+  labs(shape = paste0("FDR < ",alpha)) + 
+  facet_wrap(~ contrast) 
 ```
 
 Since we know the ground truth we can again evaluate the number of
@@ -1351,14 +1409,26 @@ true positives, false positives and false discovery proportion.
 ```{r}
 inferences |> 
   filter(adjPval < 0.05) |> 
-  group_by(Comparison) |> 
+  group_by(contrast) |> 
   summarise(
     fp = sum(!isEcoli), 
     tp = sum(isEcoli), 
     fdp = round(mean(!isEcoli)*100,2))
 ```
 
-We observe that the FDPs for the different contrasts nicely fluctuate around the nominal FDR that was set at 5%. 
+If the FDR is well controlled, we expect the FDPs to fluctuate around the 
+nominal FDR level of 5%. 
+We observe, however,that the FDPs for the contrasts envolving larger fold 
+changes e.g e (e vs a) and (e vs b) are much larger than 5%, indicating that 
+the results might be too liberal for these comparisons. 
+Note, that this is often seen in spike-in studies where all proteins that are 
+spiked in are regulated in the same direction, which can lead to ion suppression
+for the non-DA proteins in high spike-in samples and puts a burden on the 
+normalisation assumptions. 
+We will illustrate in later chapters [Benchmarking workflows](#sec-benchmarking) 
+and [Optimisation of a data analysis workflow](#sec-workflow-optimisation) that 
+more robust inference for this dataset can be provided with ridge regression. 
+However, this comes at a considerable computational cost.  
 
 We can also assess the fold changes, but we first create a small table
 with the real values.
@@ -1367,7 +1437,7 @@ with the real values.
 realLogFC <- data.frame(
   logFC = t(L) %*% lm(log2(concentration) ~ condition, colData(spikein))$coef[-1]
 )
-realLogFC$Comparison <- gsub("ridgecondition","",colnames(L))
+realLogFC$contrast <- gsub("condition","",colnames(L))
 ```
 
 We can now create the boxplots with the estimated log2-fold changes,
@@ -1385,12 +1455,13 @@ inferences |>
     values = c("grey20", "firebrick"), name = "",
     labels = c("Human proteins", "E. coli proteins")
   ) +
-  facet_wrap(~Comparison) +
+  facet_wrap(~contrast) +
   geom_hline(data = realLogFC, aes(yintercept = logFC), 
              colour = "firebrick") +
   geom_hline(yintercept = 0)
 ```
-We again observe that the log2 fold change estimates are close to the real spike-in fold changes induced by the experimental design.
+We again observe that the log2 fold change estimates are close to the 
+real spike-in fold changes induced by the experimental design.
 
 ### Model the spike-in concentration as a numeric
 
@@ -1408,7 +1479,7 @@ then expect the slope to be close to 1 for E. coli proteins.
 3. We setup a contrast for the slope term.
 4. We conduct the hypothesis test for all proteins.
 
-```{r}
+```{r warning = FALSE, message = FALSE}
 spikein$concentration_log2 <- log2(spikein$concentration) #1.
 spikein <- msqrob( #2.
   spikein, i = "proteins",
@@ -1429,29 +1500,23 @@ spikein <- hypothesisTest( #4.
 We plot the results using the volcano plot as in the previous section.
 
 ```{r basics_volcano_continuous, fig.width=9, fig.height=8, fig.cap="Volcano plot of the statistical inference results when modelling the spike-in concentration as a continuous variable. `logFC` actually stands for the slope parameter."}
-inference <- rowData(spikein[["proteins"]])[, colnames(L)]
-inference$Protein <- rownames(inference)
-inference$isEcoli <- inference$Protein %in% ecoli
-inference |>
-  na.exclude() |>
-  ggplot(
-    aes(x = logFC,
-        y = -log10(adjPval),
-        color = isEcoli)) +
-  geom_point() +
-  geom_hline(yintercept = -log10(0.05)) +
-  geom_vline(xintercept = 1) +
+inferenceLin <- msqrobCollect(spikein[["proteins"]], L)
+inferenceLin$isEcoli <- inferenceLin$feature %in% ecoli
+plotVolcano(inferenceLin) + 
+  aes(color = isEcoli, shape = adjPval < alpha) + 
   scale_color_manual(
-    values = c("grey20", "firebrick"), name = "",
-    labels = c("Human proteins", "Ecoli spikein")
-  )
+    values = c("grey20", "firebrick"), 
+    name = "species",
+    labels = c("human", "ecoli")
+    ) + 
+  geom_vline(xintercept = 1, linetype = "dashed")
 ```
 
 Similarly, we plot the estimated log2 concentration slope against the 
 expected value.
 
 ```{r basics_boxplots_continuous, fig.cap="Distribution of the log2 fold changes for the slope parameter. The red line is the expected value for spike-in proteins while the black line is the expected value for constant proteins."}
-inference |>
+inferenceLin |>
   na.exclude() |>
   ggplot(
     aes(y = logFC,
