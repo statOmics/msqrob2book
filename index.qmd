@@ -96,6 +96,7 @@ for a range of experimental designs and technological setups.
 - @sec-heart 
 - @sec-mouse-diet 
 - @sec-staes-spectronaut
+- @sec-staes-diann
 
 **TODO** make table with dataset descriptions to let users easily find
 their relevant use case.

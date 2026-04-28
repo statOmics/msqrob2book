@@ -32,7 +32,6 @@ If you prefer to start from the `FG_MS2Quantity` intensities, you can skip the
 normalisation step as the normalisation already has been done by Spectronaut 
 internally.  
 
-
 ## Load packages
 
 We load the `msqrob2` package, along with additional packages for

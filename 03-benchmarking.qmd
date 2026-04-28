@@ -1,4 +1,4 @@
-# Benchmarking workflows {#sec-benchmarking}
+# Benchmarking workflows (DDA) {#sec-benchmarking}
 
 ## Refit function
 

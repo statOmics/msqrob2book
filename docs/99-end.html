@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Additional information – Statistical analysis of mass spectrometry-based proteomics data</title>
+<title>11&nbsp; Additional information – Statistical analysis of mass spectrometry-based proteomics data</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -87,7 +87,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./08-staes-spectronaut.html" rel="prev">
+<link href="./08-staes-diann.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -138,7 +138,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./99-end.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Additional information</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./99-end.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Additional information</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -188,19 +188,19 @@ div.csl-indent {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-advanced.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Advanced statistical analysis with msqrob2</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Advanced statistical analysis with msqrob2 (TMT-DDA)</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./03-benchmarking.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Benchmarking workflows</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Benchmarking workflows (DDA)</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-workflow_optimisation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Optimisation of a data analysis workflow</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Data analysis workflow optimisation (DDA)</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -229,8 +229,14 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./08-staes-diann.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Staes Spike-in Study: a DIA-NN DIA spike-in study</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./99-end.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Additional information</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Additional information</span></span></a>
   </div>
 </li>
     </ul>
@@ -239,18 +245,18 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#citation" id="toc-citation" class="nav-link active" data-scroll-target="#citation"><span class="header-section-number">10.1</span> Citation</a></li>
+  <li><a href="#citation" id="toc-citation" class="nav-link active" data-scroll-target="#citation"><span class="header-section-number">11.1</span> Citation</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
-  <li><a href="#data-sets" id="toc-data-sets" class="nav-link" data-scroll-target="#data-sets"><span class="header-section-number">10.2</span> Data sets</a>
+  <li><a href="#data-sets" id="toc-data-sets" class="nav-link" data-scroll-target="#data-sets"><span class="header-section-number">11.2</span> Data sets</a>
   <ul class="collapse">
-  <li><a href="#e.-coli-lfq-spike-in-data-set" id="toc-e.-coli-lfq-spike-in-data-set" class="nav-link" data-scroll-target="#e.-coli-lfq-spike-in-data-set"><span class="header-section-number">10.2.1</span> E. Coli LFQ spike-in data set</a></li>
-  <li><a href="#tmt-spike-in-data-set" id="toc-tmt-spike-in-data-set" class="nav-link" data-scroll-target="#tmt-spike-in-data-set"><span class="header-section-number">10.2.2</span> TMT spike-in data set</a></li>
-  <li><a href="#francisella-data-set" id="toc-francisella-data-set" class="nav-link" data-scroll-target="#francisella-data-set"><span class="header-section-number">10.2.3</span> Francisella data set</a></li>
-  <li><a href="#heart-data-set" id="toc-heart-data-set" class="nav-link" data-scroll-target="#heart-data-set"><span class="header-section-number">10.2.4</span> Heart data set</a></li>
-  <li><a href="#mouse-diet-data-set" id="toc-mouse-diet-data-set" class="nav-link" data-scroll-target="#mouse-diet-data-set"><span class="header-section-number">10.2.5</span> Mouse diet data set</a></li>
+  <li><a href="#e.-coli-lfq-spike-in-data-set" id="toc-e.-coli-lfq-spike-in-data-set" class="nav-link" data-scroll-target="#e.-coli-lfq-spike-in-data-set"><span class="header-section-number">11.2.1</span> E. Coli LFQ spike-in data set</a></li>
+  <li><a href="#tmt-spike-in-data-set" id="toc-tmt-spike-in-data-set" class="nav-link" data-scroll-target="#tmt-spike-in-data-set"><span class="header-section-number">11.2.2</span> TMT spike-in data set</a></li>
+  <li><a href="#francisella-data-set" id="toc-francisella-data-set" class="nav-link" data-scroll-target="#francisella-data-set"><span class="header-section-number">11.2.3</span> Francisella data set</a></li>
+  <li><a href="#heart-data-set" id="toc-heart-data-set" class="nav-link" data-scroll-target="#heart-data-set"><span class="header-section-number">11.2.4</span> Heart data set</a></li>
+  <li><a href="#mouse-diet-data-set" id="toc-mouse-diet-data-set" class="nav-link" data-scroll-target="#mouse-diet-data-set"><span class="header-section-number">11.2.5</span> Mouse diet data set</a></li>
   </ul></li>
-  <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license"><span class="header-section-number">10.3</span> License</a></li>
-  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">10.4</span> Session Info</a></li>
+  <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license"><span class="header-section-number">11.3</span> License</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">11.4</span> Session Info</a></li>
   </ul>
 </nav>
 </nav>
@@ -263,7 +269,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-end" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Additional information</span></span></h1>
+<h1 class="title"><span id="sec-end" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Additional information</span></span></h1>
 </div>
 
 
@@ -280,8 +286,8 @@ div.csl-indent {
 </header>
 
 
-<section id="citation" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="citation"><span class="header-section-number">10.1</span> Citation</h2>
+<section id="citation" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="citation"><span class="header-section-number">11.1</span> Citation</h2>
 <p>Please cite this book as:</p>
 <p><strong>TODO</strong>: add citation once published</p>
 <p>Please cite the <code>msqrob2</code> package as:</p>
@@ -379,43 +385,43 @@ Proteomics</em> 24 (7): 101002.
 </div>
 </div>
 </section>
-<section id="data-sets" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="data-sets"><span class="header-section-number">10.2</span> Data sets</h2>
+<section id="data-sets" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="data-sets"><span class="header-section-number">11.2</span> Data sets</h2>
 <p>We refer here the data sources used in the book:</p>
-<section id="e.-coli-lfq-spike-in-data-set" class="level3" data-number="10.2.1">
-<h3 data-number="10.2.1" class="anchored" data-anchor-id="e.-coli-lfq-spike-in-data-set"><span class="header-section-number">10.2.1</span> E. Coli LFQ spike-in data set</h3>
+<section id="e.-coli-lfq-spike-in-data-set" class="level3" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="e.-coli-lfq-spike-in-data-set"><span class="header-section-number">11.2.1</span> E. Coli LFQ spike-in data set</h3>
 <p>Original study: Shen X, Shen S, Li J, Hu Q, Nie L, Tu C, et al.&nbsp;(2018) Ionstar enables high-precision, low-missing-data proteomics quantification in large bio- logical cohorts. Proc. Natl. Acad. Sci. U.S.A. 115, E4767–E4776</p>
 <p>Reanalysis study: Sticker A, Goeminne L, Martens L, Clement L. Robust Summarization and Inference in Proteome-wide Label-free Quantification. Mol Cell Proteomics. 2020;19(7):1209-1219.</p>
 <p>Link to data: <a href="https://github.com/statOmics/msqrob2data/dda/">https://github.com/statOmics/msqrob2data/dda/</a></p>
 <p>Used in <a href="01-basics.html" class="quarto-xref"><span>Chapter 1</span></a> and <a href="03-benchmarking.html" class="quarto-xref"><span>Chapter 4</span></a>.</p>
 </section>
-<section id="tmt-spike-in-data-set" class="level3" data-number="10.2.2">
-<h3 data-number="10.2.2" class="anchored" data-anchor-id="tmt-spike-in-data-set"><span class="header-section-number">10.2.2</span> TMT spike-in data set</h3>
+<section id="tmt-spike-in-data-set" class="level3" data-number="11.2.2">
+<h3 data-number="11.2.2" class="anchored" data-anchor-id="tmt-spike-in-data-set"><span class="header-section-number">11.2.2</span> TMT spike-in data set</h3>
 <p>Original study: Huang T, Choi M, Tzouros M, Golling S, Pandya NJ, Banfai B, et al.&nbsp;MSstatsTMT: Statistical Detection of Differentially Abundant Proteins in Experiments with Isobaric Labeling and Multiple Mixtures. Mol Cell Proteomics. 2020;19(10):1706-1723.</p>
 <p>Reanalysis study: Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L. Msqrob2TMT: Robust linear mixed models for inferring differential abundant proteins in labeled experiments with arbitrarily complex design. Mol Cell Proteomics. 2025;24(7):101002.</p>
 <p>Data source: MassIVE repository (RMSV000000265)</p>
 <p>Link to data from archive: https://zenodo.org/records/14767905</p>
 <p>Used in <a href="02-advanced.html" class="quarto-xref"><span>Chapter 3</span></a>.</p>
 </section>
-<section id="francisella-data-set" class="level3" data-number="10.2.3">
-<h3 data-number="10.2.3" class="anchored" data-anchor-id="francisella-data-set"><span class="header-section-number">10.2.3</span> Francisella data set</h3>
+<section id="francisella-data-set" class="level3" data-number="11.2.3">
+<h3 data-number="11.2.3" class="anchored" data-anchor-id="francisella-data-set"><span class="header-section-number">11.2.3</span> Francisella data set</h3>
 <p>Link to data: <a href="https://github.com/statOmics/msqrob2data/">https://github.com/statOmics/msqrob2data/</a></p>
 </section>
-<section id="heart-data-set" class="level3" data-number="10.2.4">
-<h3 data-number="10.2.4" class="anchored" data-anchor-id="heart-data-set"><span class="header-section-number">10.2.4</span> Heart data set</h3>
+<section id="heart-data-set" class="level3" data-number="11.2.4">
+<h3 data-number="11.2.4" class="anchored" data-anchor-id="heart-data-set"><span class="header-section-number">11.2.4</span> Heart data set</h3>
 <p>Link to data: <a href="https://github.com/statOmics/msqrob2data/">https://github.com/statOmics/msqrob2data/</a></p>
 </section>
-<section id="mouse-diet-data-set" class="level3" data-number="10.2.5">
-<h3 data-number="10.2.5" class="anchored" data-anchor-id="mouse-diet-data-set"><span class="header-section-number">10.2.5</span> Mouse diet data set</h3>
+<section id="mouse-diet-data-set" class="level3" data-number="11.2.5">
+<h3 data-number="11.2.5" class="anchored" data-anchor-id="mouse-diet-data-set"><span class="header-section-number">11.2.5</span> Mouse diet data set</h3>
 <p><strong>TODO</strong></p>
 </section>
 </section>
-<section id="license" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="license"><span class="header-section-number">10.3</span> License</h2>
+<section id="license" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="license"><span class="header-section-number">11.3</span> License</h2>
 <p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"></a><br>This material is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>. You are free to <strong>share</strong> (copy and redistribute the material in any medium or format) and <strong>adapt</strong> (remix, transform, and build upon the material) for any purpose, even commercially, as long as you give appropriate credit and distribute your contributions under the same license as the original.</p>
 </section>
-<section id="session-info" class="level2" data-number="10.4">
-<h2 data-number="10.4" class="anchored" data-anchor-id="session-info"><span class="header-section-number">10.4</span> Session Info</h2>
+<section id="session-info" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="session-info"><span class="header-section-number">11.4</span> Session Info</h2>
 <p>The following packages have been used to generate this document.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -897,8 +903,8 @@ loaded via a namespace (and not attached):
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./08-staes-spectronaut.html" class="pagination-link" aria-label="Staes Spike-in Study: a Spectronaut DIA spike-in study">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Staes Spike-in Study: a Spectronaut DIA spike-in study</span></span>
+      <a href="./08-staes-diann.html" class="pagination-link" aria-label="Staes Spike-in Study: a DIA-NN DIA spike-in study">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Staes Spike-in Study: a DIA-NN DIA spike-in study</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

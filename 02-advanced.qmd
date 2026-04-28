@@ -1,4 +1,4 @@
-# Advanced statistical analysis with msqrob2 {#sec-advanced}
+# Advanced statistical analysis with msqrob2 (TMT-DDA) {#sec-advanced}
 
 ```{r, echo = FALSE}
 #source("R/knitr_setup.R")

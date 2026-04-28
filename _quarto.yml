@@ -23,6 +23,7 @@ book:
     - 06-heart.qmd
     - 07-mouse_diet.qmd
     - 08-staes-spectronaut.qmd
+    - 08-staes-diann.qmd
     - 99-end.qmd
 
 website:

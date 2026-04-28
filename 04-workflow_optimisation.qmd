@@ -1,4 +1,4 @@
-# Optimisation of a data analysis workflow {#sec-workflow-optimisation}
+# Data analysis workflow optimisation (DDA) {#sec-workflow-optimisation}
 
 In the previous chapter we have seen how to benchmark the data
 analysis performance when starting from different types of data. This
