@@ -15,12 +15,14 @@ book:
   chapters:
     - index.qmd
     - 01-basics.qmd
+    - 01-basics-DIA.qmd
     - 02-advanced.qmd
     - 03-benchmarking.qmd
     - 04-workflow_optimisation.qmd
     - 05-francisella.qmd
     - 06-heart.qmd
     - 07-mouse_diet.qmd
+    - 08-staes-spectronaut.qmd
     - 99-end.qmd
 
 website:

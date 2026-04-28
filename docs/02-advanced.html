@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Advanced statistical analysis with msqrob2 – Statistical analysis of mass spectrometry-based proteomics data</title>
+<title>3&nbsp; Advanced statistical analysis with msqrob2 – Statistical analysis of mass spectrometry-based proteomics data</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -88,7 +88,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./03-benchmarking.html" rel="next">
-<link href="./01-basics.html" rel="prev">
+<link href="./01-basics-DIA.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -168,7 +168,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-advanced.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Advanced statistical analysis with msqrob2</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-advanced.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Advanced statistical analysis with msqrob2</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -206,49 +206,61 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-basics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Dependent Dependent Acquisition, DDA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-basics-DIA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA)</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-advanced.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Advanced statistical analysis with msqrob2</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Advanced statistical analysis with msqrob2</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./03-benchmarking.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Benchmarking workflows</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Benchmarking workflows</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-workflow_optimisation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Optimisation of a data analysis workflow</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Optimisation of a data analysis workflow</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-francisella.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./06-heart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./07-mouse_diet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">The mouse diet use case: a Skyline TMT DDA dataset</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The mouse diet use case: a Skyline TMT DDA dataset</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-staes-spectronaut.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Staes Spike-in Study: a Spectronaut DIA spike-in study</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./99-end.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Additional information</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Additional information</span></span></a>
   </div>
 </li>
     </ul>
@@ -257,55 +269,55 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">2.1</span> Background</a>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">3.1</span> Background</a>
   <ul class="collapse">
-  <li><a href="#sec-tmt_workflow" id="toc-sec-tmt_workflow" class="nav-link" data-scroll-target="#sec-tmt_workflow"><span class="header-section-number">2.1.1</span> TMT workflow</a></li>
-  <li><a href="#challenges" id="toc-challenges" class="nav-link" data-scroll-target="#challenges"><span class="header-section-number">2.1.2</span> Challenges</a></li>
-  <li><a href="#experimental-context" id="toc-experimental-context" class="nav-link" data-scroll-target="#experimental-context"><span class="header-section-number">2.1.3</span> Experimental context</a></li>
+  <li><a href="#sec-tmt_workflow" id="toc-sec-tmt_workflow" class="nav-link" data-scroll-target="#sec-tmt_workflow"><span class="header-section-number">3.1.1</span> TMT workflow</a></li>
+  <li><a href="#challenges" id="toc-challenges" class="nav-link" data-scroll-target="#challenges"><span class="header-section-number">3.1.2</span> Challenges</a></li>
+  <li><a href="#experimental-context" id="toc-experimental-context" class="nav-link" data-scroll-target="#experimental-context"><span class="header-section-number">3.1.3</span> Experimental context</a></li>
   </ul></li>
-  <li><a href="#load-packages" id="toc-load-packages" class="nav-link" data-scroll-target="#load-packages"><span class="header-section-number">2.2</span> Load packages</a></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">2.3</span> Data</a>
+  <li><a href="#load-packages" id="toc-load-packages" class="nav-link" data-scroll-target="#load-packages"><span class="header-section-number">3.2</span> Load packages</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">3.3</span> Data</a>
   <ul class="collapse">
-  <li><a href="#sec-caching" id="toc-sec-caching" class="nav-link" data-scroll-target="#sec-caching"><span class="header-section-number">2.3.1</span> File caching</a></li>
-  <li><a href="#sec-psm_table" id="toc-sec-psm_table" class="nav-link" data-scroll-target="#sec-psm_table"><span class="header-section-number">2.3.2</span> PSM table</a></li>
-  <li><a href="#sample-annotation-table" id="toc-sample-annotation-table" class="nav-link" data-scroll-target="#sample-annotation-table"><span class="header-section-number">2.3.3</span> Sample annotation table</a></li>
-  <li><a href="#sec_advanced_readqf" id="toc-sec_advanced_readqf" class="nav-link" data-scroll-target="#sec_advanced_readqf"><span class="header-section-number">2.3.4</span> Convert to QFeatures</a></li>
+  <li><a href="#sec-caching" id="toc-sec-caching" class="nav-link" data-scroll-target="#sec-caching"><span class="header-section-number">3.3.1</span> File caching</a></li>
+  <li><a href="#sec-psm_table" id="toc-sec-psm_table" class="nav-link" data-scroll-target="#sec-psm_table"><span class="header-section-number">3.3.2</span> PSM table</a></li>
+  <li><a href="#sample-annotation-table" id="toc-sample-annotation-table" class="nav-link" data-scroll-target="#sample-annotation-table"><span class="header-section-number">3.3.3</span> Sample annotation table</a></li>
+  <li><a href="#sec_advanced_readqf" id="toc-sec_advanced_readqf" class="nav-link" data-scroll-target="#sec_advanced_readqf"><span class="header-section-number">3.3.4</span> Convert to QFeatures</a></li>
   </ul></li>
-  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing"><span class="header-section-number">2.4</span> Data preprocessing</a>
+  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing"><span class="header-section-number">3.4</span> Data preprocessing</a>
   <ul class="collapse">
-  <li><a href="#encoding-missing-values" id="toc-encoding-missing-values" class="nav-link" data-scroll-target="#encoding-missing-values"><span class="header-section-number">2.4.1</span> Encoding missing values</a></li>
-  <li><a href="#log2-transformation" id="toc-log2-transformation" class="nav-link" data-scroll-target="#log2-transformation"><span class="header-section-number">2.4.2</span> Log2 transformation</a></li>
-  <li><a href="#sample-filtering" id="toc-sample-filtering" class="nav-link" data-scroll-target="#sample-filtering"><span class="header-section-number">2.4.3</span> Sample filtering</a></li>
-  <li><a href="#psm-filtering" id="toc-psm-filtering" class="nav-link" data-scroll-target="#psm-filtering"><span class="header-section-number">2.4.4</span> PSM filtering</a></li>
-  <li><a href="#normalisation" id="toc-normalisation" class="nav-link" data-scroll-target="#normalisation"><span class="header-section-number">2.4.5</span> Normalisation</a></li>
-  <li><a href="#summarisation" id="toc-summarisation" class="nav-link" data-scroll-target="#summarisation"><span class="header-section-number">2.4.6</span> Summarisation</a></li>
+  <li><a href="#encoding-missing-values" id="toc-encoding-missing-values" class="nav-link" data-scroll-target="#encoding-missing-values"><span class="header-section-number">3.4.1</span> Encoding missing values</a></li>
+  <li><a href="#log2-transformation" id="toc-log2-transformation" class="nav-link" data-scroll-target="#log2-transformation"><span class="header-section-number">3.4.2</span> Log2 transformation</a></li>
+  <li><a href="#sample-filtering" id="toc-sample-filtering" class="nav-link" data-scroll-target="#sample-filtering"><span class="header-section-number">3.4.3</span> Sample filtering</a></li>
+  <li><a href="#psm-filtering" id="toc-psm-filtering" class="nav-link" data-scroll-target="#psm-filtering"><span class="header-section-number">3.4.4</span> PSM filtering</a></li>
+  <li><a href="#normalisation" id="toc-normalisation" class="nav-link" data-scroll-target="#normalisation"><span class="header-section-number">3.4.5</span> Normalisation</a></li>
+  <li><a href="#summarisation" id="toc-summarisation" class="nav-link" data-scroll-target="#summarisation"><span class="header-section-number">3.4.6</span> Summarisation</a></li>
   </ul></li>
-  <li><a href="#data-exploration" id="toc-data-exploration" class="nav-link" data-scroll-target="#data-exploration"><span class="header-section-number">2.5</span> Data exploration</a></li>
-  <li><a href="#sec-run_model" id="toc-sec-run_model" class="nav-link" data-scroll-target="#sec-run_model"><span class="header-section-number">2.6</span> Data modelling</a>
+  <li><a href="#data-exploration" id="toc-data-exploration" class="nav-link" data-scroll-target="#data-exploration"><span class="header-section-number">3.5</span> Data exploration</a></li>
+  <li><a href="#sec-run_model" id="toc-sec-run_model" class="nav-link" data-scroll-target="#sec-run_model"><span class="header-section-number">3.6</span> Data modelling</a>
   <ul class="collapse">
-  <li><a href="#sec-fixed_effect" id="toc-sec-fixed_effect" class="nav-link" data-scroll-target="#sec-fixed_effect"><span class="header-section-number">2.6.1</span> Effect of treatment of interest</a></li>
-  <li><a href="#sec-random_effect" id="toc-sec-random_effect" class="nav-link" data-scroll-target="#sec-random_effect"><span class="header-section-number">2.6.2</span> Effect of run</a></li>
-  <li><a href="#effect-of-tmt-label" id="toc-effect-of-tmt-label" class="nav-link" data-scroll-target="#effect-of-tmt-label"><span class="header-section-number">2.6.3</span> Effect of TMT label</a></li>
-  <li><a href="#sec-tmt_protein_model" id="toc-sec-tmt_protein_model" class="nav-link" data-scroll-target="#sec-tmt_protein_model"><span class="header-section-number">2.6.4</span> Effect of replication</a></li>
-  <li><a href="#sec-tmt_ion_model" id="toc-sec-tmt_ion_model" class="nav-link" data-scroll-target="#sec-tmt_ion_model"><span class="header-section-number">2.6.5</span> Ion-level modelling</a></li>
-  <li><a href="#sec-robust" id="toc-sec-robust" class="nav-link" data-scroll-target="#sec-robust"><span class="header-section-number">2.6.6</span> Why robust regression?</a></li>
-  <li><a href="#sec-ridge" id="toc-sec-ridge" class="nav-link" data-scroll-target="#sec-ridge"><span class="header-section-number">2.6.7</span> Why ridge regression?</a></li>
+  <li><a href="#sec-fixed_effect" id="toc-sec-fixed_effect" class="nav-link" data-scroll-target="#sec-fixed_effect"><span class="header-section-number">3.6.1</span> Effect of treatment of interest</a></li>
+  <li><a href="#sec-random_effect" id="toc-sec-random_effect" class="nav-link" data-scroll-target="#sec-random_effect"><span class="header-section-number">3.6.2</span> Effect of run</a></li>
+  <li><a href="#effect-of-tmt-label" id="toc-effect-of-tmt-label" class="nav-link" data-scroll-target="#effect-of-tmt-label"><span class="header-section-number">3.6.3</span> Effect of TMT label</a></li>
+  <li><a href="#sec-tmt_protein_model" id="toc-sec-tmt_protein_model" class="nav-link" data-scroll-target="#sec-tmt_protein_model"><span class="header-section-number">3.6.4</span> Effect of replication</a></li>
+  <li><a href="#sec-tmt_ion_model" id="toc-sec-tmt_ion_model" class="nav-link" data-scroll-target="#sec-tmt_ion_model"><span class="header-section-number">3.6.5</span> Ion-level modelling</a></li>
+  <li><a href="#sec-robust" id="toc-sec-robust" class="nav-link" data-scroll-target="#sec-robust"><span class="header-section-number">3.6.6</span> Why robust regression?</a></li>
+  <li><a href="#sec-ridge" id="toc-sec-ridge" class="nav-link" data-scroll-target="#sec-ridge"><span class="header-section-number">3.6.7</span> Why ridge regression?</a></li>
   </ul></li>
-  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><span class="header-section-number">2.7</span> Statistical inference</a>
+  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference"><span class="header-section-number">3.7</span> Statistical inference</a>
   <ul class="collapse">
-  <li><a href="#hypothesis-testing" id="toc-hypothesis-testing" class="nav-link" data-scroll-target="#hypothesis-testing"><span class="header-section-number">2.7.1</span> Hypothesis testing</a></li>
-  <li><a href="#volcano-plots" id="toc-volcano-plots" class="nav-link" data-scroll-target="#volcano-plots"><span class="header-section-number">2.7.2</span> Volcano plots</a></li>
-  <li><a href="#fold-change-distributions" id="toc-fold-change-distributions" class="nav-link" data-scroll-target="#fold-change-distributions"><span class="header-section-number">2.7.3</span> Fold change distributions</a></li>
-  <li><a href="#detail-plots" id="toc-detail-plots" class="nav-link" data-scroll-target="#detail-plots"><span class="header-section-number">2.7.4</span> Detail plots</a></li>
+  <li><a href="#hypothesis-testing" id="toc-hypothesis-testing" class="nav-link" data-scroll-target="#hypothesis-testing"><span class="header-section-number">3.7.1</span> Hypothesis testing</a></li>
+  <li><a href="#volcano-plots" id="toc-volcano-plots" class="nav-link" data-scroll-target="#volcano-plots"><span class="header-section-number">3.7.2</span> Volcano plots</a></li>
+  <li><a href="#fold-change-distributions" id="toc-fold-change-distributions" class="nav-link" data-scroll-target="#fold-change-distributions"><span class="header-section-number">3.7.3</span> Fold change distributions</a></li>
+  <li><a href="#detail-plots" id="toc-detail-plots" class="nav-link" data-scroll-target="#detail-plots"><span class="header-section-number">3.7.4</span> Detail plots</a></li>
   </ul></li>
-  <li><a href="#protein-level-inference" id="toc-protein-level-inference" class="nav-link" data-scroll-target="#protein-level-inference"><span class="header-section-number">2.8</span> Protein-level inference</a></li>
-  <li><a href="#dealing-with-fiterrors" id="toc-dealing-with-fiterrors" class="nav-link" data-scroll-target="#dealing-with-fiterrors"><span class="header-section-number">2.9</span> Dealing with <code id="sec-fiterror">fitErrors</code></a>
+  <li><a href="#protein-level-inference" id="toc-protein-level-inference" class="nav-link" data-scroll-target="#protein-level-inference"><span class="header-section-number">3.8</span> Protein-level inference</a></li>
+  <li><a href="#dealing-with-fiterrors" id="toc-dealing-with-fiterrors" class="nav-link" data-scroll-target="#dealing-with-fiterrors"><span class="header-section-number">3.9</span> Dealing with <code id="sec-fiterror">fitErrors</code></a>
   <ul class="collapse">
-  <li><a href="#sec-msqrob_refit" id="toc-sec-msqrob_refit" class="nav-link" data-scroll-target="#sec-msqrob_refit"><span class="header-section-number">2.9.1</span> Removing the random effect of sample</a></li>
-  <li><a href="#manual-inspection" id="toc-manual-inspection" class="nav-link" data-scroll-target="#manual-inspection"><span class="header-section-number">2.9.2</span> Manual inspection</a></li>
-  <li><a href="#imputation" id="toc-imputation" class="nav-link" data-scroll-target="#imputation"><span class="header-section-number">2.9.3</span> Imputation</a></li>
+  <li><a href="#sec-msqrob_refit" id="toc-sec-msqrob_refit" class="nav-link" data-scroll-target="#sec-msqrob_refit"><span class="header-section-number">3.9.1</span> Removing the random effect of sample</a></li>
+  <li><a href="#manual-inspection" id="toc-manual-inspection" class="nav-link" data-scroll-target="#manual-inspection"><span class="header-section-number">3.9.2</span> Manual inspection</a></li>
+  <li><a href="#imputation" id="toc-imputation" class="nav-link" data-scroll-target="#imputation"><span class="header-section-number">3.9.3</span> Imputation</a></li>
   </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">2.10</span> Conclusion</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">3.10</span> Conclusion</a></li>
   </ul>
 </nav>
 </nav>
@@ -318,7 +330,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-advanced" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Advanced statistical analysis with msqrob2</span></span></h1>
+<h1 class="title"><span id="sec-advanced" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Advanced statistical analysis with msqrob2</span></span></h1>
 </div>
 
 
@@ -340,11 +352,11 @@ window.Quarto = {
 <li>Spike-in data contain ground truth information about which proteins are differentially abundant, enabling us to show the impact of different analysis strategies.</li>
 <li>It has been acquired with a TMT-labelling strategy that require a complex experimental design. This provides an excellent example to explain different sources of variability in an MS experiment and demonstrate the flexibility of <code>msqrob2</code> to model these sources of variability.</li>
 </ol>
-<section id="background" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="background"><span class="header-section-number">2.1</span> Background</h2>
+<section id="background" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="background"><span class="header-section-number">3.1</span> Background</h2>
 <p>Labelling strategies in mass spectrometry (MS)-based proteomics enhance sample throughput by enabling the acquisition of multiple samples within a single run. The labelling strategy that allows the highest multiplexing is the tandem mass tag (TMT) labelling and will be the focus of the current tutorial.</p>
-<section id="sec-tmt_workflow" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="sec-tmt_workflow"><span class="header-section-number">2.1.1</span> TMT workflow</h3>
+<section id="sec-tmt_workflow" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="sec-tmt_workflow"><span class="header-section-number">3.1.1</span> TMT workflow</h3>
 <p>TMT-based workflow highly overlap with <a href="01-basics.html#sec-lfq_workflow">label-free workflows</a>. However, TMT-based workflows have an additional sample preparation step, where the digested peptides from each sample are labelled with a TMT reagent and samples with different TMT reagents are pooled in a single TMT mixture<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. The signal processing is also slightly affected since the quantification no longer occurs in the MS1 space but at the MS2 level. It is important to understand that TMT reagent are isobaric, meaning that the same peptide with different TMT labels will have the same mass for the intact ion, as recorded during MS1. However, the TMT fragments that are released upon fragmentation during MS2, also called TMT reporter ions, have label-specific masses. The TMT fragments have an expected mass and are distributed in a low-mass range of the MS2 space. The intensity of each TMT fragment is directly proportional to the peptide quantity in the original sample before pooling. The TMT fragment intensities measured during MS2 are used as quantitative data. The higher mass range contains the peptide fragments that compose the peptide fingerprint, similarly to LFQ. This data range is therefore used for peptide identification. Interestingly, the peptide fingerprint originates from the same peptide across multiple samples. This leads to a signal boost for low abundant peptides and hence should improve data sensitivity and consistency.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -357,22 +369,22 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="challenges" class="level3" data-number="2.1.2">
-<h3 data-number="2.1.2" class="anchored" data-anchor-id="challenges"><span class="header-section-number">2.1.2</span> Challenges</h3>
+<section id="challenges" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="challenges"><span class="header-section-number">3.1.2</span> Challenges</h3>
 <p>The analysis of TMT-based proteomics data shares the same challenges as the <a href="01-basics.html#sec-lfq_challenges">data analysis challenges for LFQ</a>. However, TMT workflows impose additional challenges:</p>
 <ul>
 <li>Contemporary experiments often involve increasingly complex designs, where the number of samples exceeds the capacity of a single TMT mixture, resulting in a complex correlation structure that must be addressed for accurate statistical inference. We will describe in the modelling section the different sources of variation.</li>
 <li>We also recommend modelling TMT data at the lowest level, that is at the peptide ion level, for optimal performance <span class="citation" data-cites="Vandenbulcke2025-sj">(<a href="99-end.html#ref-Vandenbulcke2025-sj" role="doc-biblioref">Vandenbulcke et al. 2025</a>)</span>. These ion-level models are more complex and include additional sources of variation instead of relying on the summarised protein values. We have shown for LFQ data that a two-step approach where data are first summarised (using a <a href="01-basics.html#sec-summarisation">model-based method</a>) and then modelled with <code>msqrob2</code> leads to similar results, and hence provides more accessible models for non-specialised data analysts <span class="citation" data-cites="Sticker2020-rl">(<a href="99-end.html#ref-Sticker2020-rl" role="doc-biblioref">Sticker et al. 2020</a>)</span>.</li>
 </ul>
 </section>
-<section id="experimental-context" class="level3" data-number="2.1.3">
-<h3 data-number="2.1.3" class="anchored" data-anchor-id="experimental-context"><span class="header-section-number">2.1.3</span> Experimental context</h3>
+<section id="experimental-context" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="experimental-context"><span class="header-section-number">3.1.3</span> Experimental context</h3>
 <p>The data set used in this chapter is a spike-in experiment (PXD0015258) published by <span class="citation" data-cites="Huang2020-lu">Huang et al. (<a href="99-end.html#ref-Huang2020-lu" role="doc-biblioref">2020</a>)</span>. It consists of controlled mixtures with known ground truth. UPS1 peptides at concentrations of 500, 333, 250, and 62.5 fmol were spiked into 50 g of SILAC HeLa peptides, each in duplicate. These concentrations form a dilution series of 1, 0.667, 0.5, and 0.125 relative to the highest UPS1 peptide amount (500 fmol). A reference sample was created by combining the diluted UPS1 peptide samples with 50g of SILAC HeLa peptides. All dilutions and the reference sample were prepared in duplicate, resulting in a total of ten samples. These samples were then treated with TMT10-plex reagents and combined before LC-MS/MS analysis. This protocol was repeated five times, each with three technical replicates, totaling 15 MS runs.</p>
 <p>We will start from the PSM data generated by Skyline and infer protein-level differences between samples. To achieve this goal, we will apply an msqrob2TMT workflow, a data processing and modelling workflow dedicated to the analysis of TMT-based proteomics datasets. We will demonstrate how the workflow can highlight the spiked-in proteins. Before delving into the analysis, let us prepare our computational environment.</p>
 </section>
 </section>
-<section id="load-packages" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="load-packages"><span class="header-section-number">2.2</span> Load packages</h2>
+<section id="load-packages" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="load-packages"><span class="header-section-number">3.2</span> Load packages</h2>
 <p>We load the <code>msqrob2</code> package, along with additional packages for data manipulation and visualisation.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>({</span>
@@ -388,10 +400,10 @@ window.Quarto = {
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">register</span>(<span class="fu">SerialParam</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="data" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="data"><span class="header-section-number">2.3</span> Data</h2>
-<section id="sec-caching" class="level3" data-number="2.3.1">
-<h3 data-number="2.3.1" class="anchored" data-anchor-id="sec-caching"><span class="header-section-number">2.3.1</span> File caching</h3>
+<section id="data" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="data"><span class="header-section-number">3.3</span> Data</h2>
+<section id="sec-caching" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="sec-caching"><span class="header-section-number">3.3.1</span> File caching</h3>
 <p>The data have been deposited by the authors in the <code>MSV000084264</code> MASSiVE repository, but we will retrieve the time stamped data from our <a href="https://zenodo.org/records/14767905">Zenodo repository</a>. We need 2 files: the Skyline identification and quantification table generated by the authors and the sample annotation files.</p>
 <p>To facilitate management of the files, we download the required files using the <code>BiocFileCache</code> package. The package will set up a local database in a cache directory<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. <code>BiocFileCache()</code> creates a connection to that database and <code>bfcrpath()</code> will query the database for the required URL. If that URL is not present in the database, the function will automatically download the URL target file and store it in the cache directory. If the URL is already present in the database, the function will retrieve the associated file from the local cache directory. This procedure ensures that the files are downloaded only once while providing a direct link to its source link. When these links point to permanent archives (like Zenodo) or large public databases (like PRIDE or MASSiVE), this approach promotes reproducible analyses.</p>
 <p>The chunk below will take some time to complete the first time you run it as it needs to download the (large) file locally, but will fetch the local copy the following times.</p>
@@ -415,8 +427,8 @@ Attaching package: 'dbplyr'</code></pre>
 </div>
 <p>Now the files are downloaded, we can load the two tables.</p>
 </section>
-<section id="sec-psm_table" class="level3" data-number="2.3.2">
-<h3 data-number="2.3.2" class="anchored" data-anchor-id="sec-psm_table"><span class="header-section-number">2.3.2</span> PSM table</h3>
+<section id="sec-psm_table" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="sec-psm_table"><span class="header-section-number">3.3.2</span> PSM table</h3>
 <p>An MS experiment generates spectra. Each MS2 spectrum is used to infer the peptide identity using a search engine. When an observed spectrum is matched to a theoretical peptide spectrum, we have a peptide-to-spectrum match (PSM). The identification software compiles all the PSMs inside a table. Hence, the PSM data is the lowest possible level to perform data modelling.</p>
 <p>Each row in the PSM data table contains information for one PSM (the table below shows the first 6 rows). The columns contains various information about the PSM, such as the peptide sequence and charge, the quantified value, the inferred protein group, the measured and predicted retention time and precursor mass, the score of the match, … In the case of Skyline TMT data, the quantification values are provides in multiple columns (start with <code>"Abundance."</code>), one for each TMT label. Regardless of TMT or LFQ experiments, the PSM table stacks the quantitative values from samples in different runs below each other. We must therefore split the table by run to ensure that every quantitative column contains data from a single sample. This is performed during the conversion to a <code>QFeatures</code> object.</p>
 <div class="cell">
@@ -864,8 +876,8 @@ Attaching package: 'dbplyr'</code></pre>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>psms <span class="ot">&lt;-</span> psms[psms<span class="sc">$</span>Protein.Accessions <span class="sc">%in%</span> keepProteins, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="sample-annotation-table" class="level3" data-number="2.3.3">
-<h3 data-number="2.3.3" class="anchored" data-anchor-id="sample-annotation-table"><span class="header-section-number">2.3.3</span> Sample annotation table</h3>
+<section id="sample-annotation-table" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="sample-annotation-table"><span class="header-section-number">3.3.3</span> Sample annotation table</h3>
 <p>The purpose and structure of the sample annotation table is identical across proteomics experiments (see introduction to the <a href="01-basics.html#sec-annotation_table">sample annotation table</a>). The annotation table used in this tutorial has been generated by the authors.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>coldata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(annotFile)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -960,8 +972,8 @@ Attaching package: 'dbplyr'</code></pre>
 </div>
 </div>
 </section>
-<section id="sec_advanced_readqf" class="level3" data-number="2.3.4">
-<h3 data-number="2.3.4" class="anchored" data-anchor-id="sec_advanced_readqf"><span class="header-section-number">2.3.4</span> Convert to QFeatures</h3>
+<section id="sec_advanced_readqf" class="level3" data-number="3.3.4">
+<h3 data-number="3.3.4" class="anchored" data-anchor-id="sec_advanced_readqf"><span class="header-section-number">3.3.4</span> Convert to QFeatures</h3>
 <p>We use <code>readQFeatures()</code> to create a <a href="01-basics.html#sec-qfeatures"><code>QFeatures</code> object</a>. Since we start from the PSM-level data, the approach is somewhat more elaborate<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. First, recall that every quantitative column in the PSM table contains information for multiple runs. Therefore, the function split the table based on the run identifier, given by the <code>runCol</code> argument (for Skyline, that identifier is contained in <code>Spectrum.File</code>). So, the <code>QFeatures</code> object after import will contain as many sets as there are runs. Next, the function links the annotation table with the PSM data. To achieve this, the annotation table must contain a <code>runCol</code> column that provides the run identifier in which each sample has been acquired, and this information will be used to match the identifiers in the <code>Spectrum.File</code> column of the PSM table. The annotation table must also contain a <code>quantCols</code> column that tells the function which column in the PSM table contains the quantitative information for a given sample. In this case, the <code>quantCols</code> depend on</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>coldata<span class="sc">$</span>runCol <span class="ot">&lt;-</span> coldata<span class="sc">$</span>File.Name</span>
@@ -1011,18 +1023,18 @@ Attaching package: 'dbplyr'</code></pre>
 </div>
 </section>
 </section>
-<section id="data-preprocessing" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="data-preprocessing"><span class="header-section-number">2.4</span> Data preprocessing</h2>
+<section id="data-preprocessing" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="data-preprocessing"><span class="header-section-number">3.4</span> Data preprocessing</h2>
 <p>Similar to the <a href="01-basics.html#sec-basic_preprocess">basic concepts chapter</a>, we will use the <code>QFeatures</code>’ data preprocessing functionality. The data preprocessing workflow for TMT data is similar to the workflow for LFQ data, but there are subtle differences associated with the fact that we start from PSM-level data, namely the PSM filtering is mode complex and the data preprocessing will be applied for each run separately to remove part of the run effect.</p>
-<section id="encoding-missing-values" class="level3" data-number="2.4.1">
-<h3 data-number="2.4.1" class="anchored" data-anchor-id="encoding-missing-values"><span class="header-section-number">2.4.1</span> Encoding missing values</h3>
+<section id="encoding-missing-values" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="encoding-missing-values"><span class="header-section-number">3.4.1</span> Encoding missing values</h3>
 <p>Any zero value needs to be <a href="01-basics.html#sec-encode_missing">encoded by a missing value</a>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">zeroIsNA</span>(spikein, inputNames)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="log2-transformation" class="level3" data-number="2.4.2">
-<h3 data-number="2.4.2" class="anchored" data-anchor-id="log2-transformation"><span class="header-section-number">2.4.2</span> Log2 transformation</h3>
+<section id="log2-transformation" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="log2-transformation"><span class="header-section-number">3.4.2</span> Log2 transformation</h3>
 <p>Similar to any MS-based proteomics data, TMT data are heteroskedastic, with a strong mean-variance relationship. This is illustrated by the intensities and log2-intensities for one of the peptide ions, the triply charged DLLHVLAFSK, in function of the UPS spike-in dilution factor.</p>
 <div class="cell">
 <div class="cell-output cell-output-stderr">
@@ -1063,15 +1075,15 @@ Attaching package: 'dbplyr'</code></pre>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="sample-filtering" class="level3" data-number="2.4.3">
-<h3 data-number="2.4.3" class="anchored" data-anchor-id="sample-filtering"><span class="header-section-number">2.4.3</span> Sample filtering</h3>
+<section id="sample-filtering" class="level3" data-number="3.4.3">
+<h3 data-number="3.4.3" class="anchored" data-anchor-id="sample-filtering"><span class="header-section-number">3.4.3</span> Sample filtering</h3>
 <p>We first remove the reference samples. These samples were used by the MSstatsTMT authors to obtain normalisation factors <span class="citation" data-cites="Huang2020-lu">(<a href="99-end.html#ref-Huang2020-lu" role="doc-biblioref">Huang et al. 2020</a>)</span>. However, this approach ignores the uncertainty associated with the measurement with these reference samples, potentially inflating the noise in the samples of interest. Hence, <code>msqrob2</code> workflows do not use reference normalisation. In practice, we found no impact on model performance <span class="citation" data-cites="Vandenbulcke2025-sj">(<a href="99-end.html#ref-Vandenbulcke2025-sj" role="doc-biblioref">Vandenbulcke et al. 2025</a>)</span>, hence we favor a more parsimonious approach. The information is available from the <code>colData</code>, under the <code>Condition</code> column. We remove any sample that is marked as <code>Norm</code> using <code>subsetByColData()</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">subsetByColData</span>(spikein, spikein<span class="sc">$</span>Condition <span class="sc">!=</span> <span class="st">"Norm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="psm-filtering" class="level3" data-number="2.4.4">
-<h3 data-number="2.4.4" class="anchored" data-anchor-id="psm-filtering"><span class="header-section-number">2.4.4</span> PSM filtering</h3>
+<section id="psm-filtering" class="level3" data-number="3.4.4">
+<h3 data-number="3.4.4" class="anchored" data-anchor-id="psm-filtering"><span class="header-section-number">3.4.4</span> PSM filtering</h3>
 <p>Filtering removes low-quality and unreliable PSMs that would otherwise introduce noise and artefacts in the data. Conceptually, PSM filtering is identical to <a href="01-basics.html#sec-filter">peptide filtering</a>, but we will here apply filtering criteria for which some are not readily available in the data. Therefore, we will add custom filtering variable to the <code>rowData</code> that will then be used with <code>filterFeatures()</code>. This provides an ideal use case to demonstrate the customisation of a filtering workflow.</p>
 <section id="remove-ambiguous-identifications" class="level4">
 <h4 class="anchored" data-anchor-id="remove-ambiguous-identifications">Remove ambiguous identifications</h4>
@@ -1214,8 +1226,8 @@ Attaching package: 'dbplyr'</code></pre>
 <p>These standard and custom filtering procedures have been demonstrated on PSM-level data, but the same procedures can be performed at any data level, e.g.&nbsp;also at peptide or protein level.</p>
 </section>
 </section>
-<section id="normalisation" class="level3" data-number="2.4.5">
-<h3 data-number="2.4.5" class="anchored" data-anchor-id="normalisation"><span class="header-section-number">2.4.5</span> Normalisation</h3>
+<section id="normalisation" class="level3" data-number="3.4.5">
+<h3 data-number="3.4.5" class="anchored" data-anchor-id="normalisation"><span class="header-section-number">3.4.5</span> Normalisation</h3>
 <p>Before performing normalisation, we explore the systematic shifts across the samples (using the pipeline described in the <a href="01-basics.html#sec-norm">previous chapter</a>). To facilitate interpretation, we facet the data by TMT mixture.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>spikein[, , logNames] <span class="sc">|&gt;</span></span>
@@ -1311,8 +1323,8 @@ Attaching package: 'dbplyr'</code></pre>
 <p>We have a new set contain 15 runs <span class="math inline">\(\times\)</span> 8 labelled sample = 120 data columns. Note that the 15 sets have 4066 ions in common, leading to a joined set with <code>r nrows(spikein)[["ions"]]</code> rows.</p>
 <p>If we want to use protein-level data for modelling, we will need a summarisation step. Note that this last step is optional.</p>
 </section>
-<section id="summarisation" class="level3" data-number="2.4.6">
-<h3 data-number="2.4.6" class="anchored" data-anchor-id="summarisation"><span class="header-section-number">2.4.6</span> Summarisation</h3>
+<section id="summarisation" class="level3" data-number="3.4.6">
+<h3 data-number="3.4.6" class="anchored" data-anchor-id="summarisation"><span class="header-section-number">3.4.6</span> Summarisation</h3>
 <p>While this chapter will focus on ion-level data modelling, modelling of protein-level data is possible upon summarisation. Below, we illustrate the challenges of <a href="01-basics.html#sec-summarisation">summarising</a> TMT data using one of the UPS proteins in Mixture 1 (separating the data for each technical replicate). We also focus on the 0.125x and the 1x spike-in conditions. We illustrate the different peptide ions on the x axis and plot the log2 normalised intensities across samples on y axis. All the points belonging to the same sample are linked through a grey line.</p>
 <div class="cell">
 <div class="cell-output cell-output-stderr">
@@ -1504,8 +1516,8 @@ Aggregated: 15/15</code></pre>
 </div>
 </section>
 </section>
-<section id="data-exploration" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="data-exploration"><span class="header-section-number">2.5</span> Data exploration</h2>
+<section id="data-exploration" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="data-exploration"><span class="header-section-number">3.5</span> Data exploration</h2>
 <p>We perform data exploration using MDS, using the same pipeline as in <a href="01-basics.html#sec_data_exploration">the previous chapter</a>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"scater"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1552,8 +1564,8 @@ Aggregated: 15/15</code></pre>
 </div>
 <p>While the run effects are smaller (i.e.&nbsp;points within a run are more scattered than on the previous plots) on the protein-level MDS compared to the ion-level MDS (the samples are less clustered per run), we can see that normalisation and summarisation alone are not sufficient to correct for these unwanted effects. We will take care of these effects during the data modelling.</p>
 </section>
-<section id="sec-run_model" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="sec-run_model"><span class="header-section-number">2.6</span> Data modelling</h2>
+<section id="sec-run_model" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="sec-run_model"><span class="header-section-number">3.6</span> Data modelling</h2>
 <p>Proteomics data contain several sources of variation that need to be accounted for by the model. Before delving into these sources of variation, we here show how to run the model that accounts for all relevant sources of variation in the spike-in experiment, which we have shown performs best <span class="citation" data-cites="Vandenbulcke2025-sj">(<a href="99-end.html#ref-Vandenbulcke2025-sj" role="doc-biblioref">Vandenbulcke et al. 2025</a>)</span>.</p>
 <p>Note, that we will not fit the model, yet.</p>
 <pre><code>spikein &lt;- msqrobAggregate(
@@ -1570,8 +1582,8 @@ Aggregated: 15/15</code></pre>
     ridge = TRUE
 )</code></pre>
 <p>We will now build the model by progressively adding the different sources of variation.</p>
-<section id="sec-fixed_effect" class="level3" data-number="2.6.1">
-<h3 data-number="2.6.1" class="anchored" data-anchor-id="sec-fixed_effect"><span class="header-section-number">2.6.1</span> Effect of treatment of interest</h3>
+<section id="sec-fixed_effect" class="level3" data-number="3.6.1">
+<h3 data-number="3.6.1" class="anchored" data-anchor-id="sec-fixed_effect"><span class="header-section-number">3.6.1</span> Effect of treatment of interest</h3>
 <p>We model the source of variation induced by the experimental treatment of interest as a <strong>fixed effect</strong>, which we consider non-random, i.e.&nbsp;the treatment effect is assumed to be the same in repeated experiments, but it is unknown and has to be estimated. When modelling a typical label-free experiment at the protein level, the model boils down to a linear model, again we suppress the index for protein:</p>
 <p><span class="math display">\[
 y_i = \mathbf{x}^T_i \boldsymbol{\beta} + \epsilon_i,
@@ -1587,8 +1599,8 @@ y_i = \mathbf{x}^T_i \boldsymbol{\beta} + \epsilon_i,
 </div>
 <p>This model, however, does not model all sources of variation in the experiment and relying on its results would lead to incorrect conclusions. We therefore did not run the modelling command and will expand the model.</p>
 </section>
-<section id="sec-random_effect" class="level3" data-number="2.6.2">
-<h3 data-number="2.6.2" class="anchored" data-anchor-id="sec-random_effect"><span class="header-section-number">2.6.2</span> Effect of run</h3>
+<section id="sec-random_effect" class="level3" data-number="3.6.2">
+<h3 data-number="3.6.2" class="anchored" data-anchor-id="sec-random_effect"><span class="header-section-number">3.6.2</span> Effect of run</h3>
 <p>As label-free experiments contain only a single sample per run, run-specific effects will be absorbed in the residuals. However, the data analysis of multiplexed experiments involving multiple MS runs has to account for run-specific effects, explicitly. If all treatments are present in each run, then the model parameters can be estimated using fixed run effects. Indeed, for these designs run acts as a blocking variable as all treatment effects can be estimated within each run.</p>
 <p>However, for more complex designs this is no longer possible and the uncertainty in the estimation of the mean model parameters can involve both within and between run variability. For these designs we can resort to mixed models where the run effect is modelled using <strong>random effects</strong>, i.e.&nbsp;they are considered as a random sample from the population of all possible runs, which are assumed to be i.i.d normally distributed with mean 0 and constant variance, <span class="math inline">\(u_{run} \sim N(0,\sigma^2_\text{run})\)</span>. The use of random effects thus models the correlation in the data, explicitly. Indeed, protein intensities that are measured within the same run will be more similar than protein intensities between runs.</p>
 <p>Hence, the model is extended to:</p>
@@ -1657,8 +1669,8 @@ y_{i} =
 </div>
 <p>This model is still incomplete and is not executed as we still need to account that multiple samples are acquired within the same run thanks to TMT labelling.</p>
 </section>
-<section id="effect-of-tmt-label" class="level3" data-number="2.6.3">
-<h3 data-number="2.6.3" class="anchored" data-anchor-id="effect-of-tmt-label"><span class="header-section-number">2.6.3</span> Effect of TMT label</h3>
+<section id="effect-of-tmt-label" class="level3" data-number="3.6.3">
+<h3 data-number="3.6.3" class="anchored" data-anchor-id="effect-of-tmt-label"><span class="header-section-number">3.6.3</span> Effect of TMT label</h3>
 <p>Acquiring multiple samples in a single run is possible because the peptides from each samples are labelled with chemical tags<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>. Peptide labelling can introduce label-specific effects that also need to be modelled. In principle, the effect of adding a chemical label to a peptide should be reproducible from experiment to experiment, and hence could be modelled using a fixed effect (given that TMT label swaps are performed so as to avoid confounding between label and treatment). However, TMT aliquotes contain impurities during production and these impurities may lead to unreproducible effects. Hence, we also include a random effect to account for labelling effects, i.e. <span class="math inline">\(u^\text{label}_l \sim N(0, \sigma^{2,\text{label}})\)</span>. The model thus extends to:</p>
 <p><span class="math display">\[
 y_{rl} =
@@ -1677,8 +1689,8 @@ u_r^\text{run} + u_l^\text{label} + \epsilon_{rlm}
 </div>
 <p>This model is still incomplete and is not executed as we still need to account that each mixture has been replicated three times.</p>
 </section>
-<section id="sec-tmt_protein_model" class="level3" data-number="2.6.4">
-<h3 data-number="2.6.4" class="anchored" data-anchor-id="sec-tmt_protein_model"><span class="header-section-number">2.6.4</span> Effect of replication</h3>
+<section id="sec-tmt_protein_model" class="level3" data-number="3.6.4">
+<h3 data-number="3.6.4" class="anchored" data-anchor-id="sec-tmt_protein_model"><span class="header-section-number">3.6.4</span> Effect of replication</h3>
 <p>Some experiments also include technical replication where a TMT mixture can be acquired multiple times. This again will induce correlation. Indeed, protein intensities from the same mixture will be more alike than those of different mixtures. Hence, we also include a random effect to account for this pseudo-replication, i.e. <span class="math inline">\(u^\text{mix}_m \sim N(0, \sigma^{2,\text{mix}})\)</span>. The model thus extends to:</p>
 <p><span class="math display">\[
 y_{rlm} =
@@ -1700,8 +1712,8 @@ u_r^\text{run} + u_l^\text{label} + u_m^\text{mix} + \epsilon_{rlm}
 </div>
 <p>This model provides a sensible representation of the sources of variation in the data if we were to model the data at the protein level. This time, we executed the code and will use the result in a later section. However, we found that modelling protein-level effects from ion-level data leads to improved performance <span class="citation" data-cites="Vandenbulcke2025-sj">(<a href="99-end.html#ref-Vandenbulcke2025-sj" role="doc-biblioref">Vandenbulcke et al. 2025</a>)</span>. This will require an additional model expansion.</p>
 </section>
-<section id="sec-tmt_ion_model" class="level3" data-number="2.6.5">
-<h3 data-number="2.6.5" class="anchored" data-anchor-id="sec-tmt_ion_model"><span class="header-section-number">2.6.5</span> Ion-level modelling</h3>
+<section id="sec-tmt_ion_model" class="level3" data-number="3.6.5">
+<h3 data-number="3.6.5" class="anchored" data-anchor-id="sec-tmt_ion_model"><span class="header-section-number">3.6.5</span> Ion-level modelling</h3>
 <p>Estimating the treatment effect from ion-level data will again induce additional levels of correlation. Indeed, the intensities for the different reporter ions in a TMT run within the same spectrum (PSM) will be more similar than the intensities between PSMs. We therefore need to add a random effect term to account for the within PSM correlation structure, i.e.&nbsp;<span class="math inline">\(u^\text{PSM}_{rp} \sim
 N(0,\sigma^{2,\text{PSM}})\)</span>. Moreover, in each label of a run multiple PSM intensities are picked up for each protein. Hence, intensities from different PSMs for a protein in the same label of a run will be more alike than intensities of different PSMs for the same protein between labels of runs, and we will address this correlation with a label-specific random effect nested in run, i.e.&nbsp;<span class="math inline">\(u_{rl}^{label} \sim
 N(0,\sigma^{2,\text{label}})\)</span>. The model then becomes:</p>
@@ -1728,8 +1740,8 @@ u_{rl}^\text{label} + u_{rp}^\text{PSM} + \epsilon_{rlmp}
 </div>
 <p>So, we built the model shown at the beginning of this section, effectively accounting for all sources of variation in TMT-based proteomics data.</p>
 </section>
-<section id="sec-robust" class="level3" data-number="2.6.6">
-<h3 data-number="2.6.6" class="anchored" data-anchor-id="sec-robust"><span class="header-section-number">2.6.6</span> Why robust regression?</h3>
+<section id="sec-robust" class="level3" data-number="3.6.6">
+<h3 data-number="3.6.6" class="anchored" data-anchor-id="sec-robust"><span class="header-section-number">3.6.6</span> Why robust regression?</h3>
 <p>Throughout this book, we estimate the model parameters using robust regression through M-estimation (<code>robust = TRUE</code>). This class of estimation does not need the assumption that the residuals <span class="math inline">\(\epsilon\)</span> are normally distributed. However, if the residuals are normal, the M-estimators have a high efficiency.</p>
 <p>In ordinary least squares (OLS), the loss function that is minimised is:</p>
 <p><span class="math display">\[
@@ -1764,8 +1776,8 @@ w(e) = \left\{
 <p>Intuitively, observations for which the fitting error (absolute residual) is smaller than the constant <span class="math inline">\(k\)</span> will contribute contribute to the fitting as for the OLS, while the contribution of the remaining observations will decrease linearly as the error exceeds <span class="math inline">\(k\)</span>. This means that a strong <strong>outlier</strong>, i.e.&nbsp;an observation for which the fitting error is large, will barely contribute to the fit. Since the last iteration upon covergence is still a weighted least square estimation, we can use the same statistical testing framework as for OLS, although the tests and confidence intervals are based on asymptotic theory.</p>
 <p>Note, that robust regression also extends to linear mixed models, by adopting weighted maximum likelihood e.g.&nbsp;<strong>TODO</strong> ref https://www.tandfonline.com/doi/abs/10.1080/03610920802677216.</p>
 </section>
-<section id="sec-ridge" class="level3" data-number="2.6.7">
-<h3 data-number="2.6.7" class="anchored" data-anchor-id="sec-ridge"><span class="header-section-number">2.6.7</span> Why ridge regression?</h3>
+<section id="sec-ridge" class="level3" data-number="3.6.7">
+<h3 data-number="3.6.7" class="anchored" data-anchor-id="sec-ridge"><span class="header-section-number">3.6.7</span> Why ridge regression?</h3>
 <p><code>msqrob2</code> also allows for ridge regression (when <code>ridge = TRUE</code>). In ridge regression, model parameters are estimated by minimising a penalised version of the OLS loss:</p>
 <p><span class="math display">\[
 \sum\limits_{i = 1}^n \left(y_i - \mathbf{x}_i^T \boldsymbol{\beta}\right)^2 + \lambda \boldsymbol{\beta}^T\mathbf{D}\boldsymbol{\beta},
@@ -1803,8 +1815,8 @@ Error in (function (y, rowdata = NULL, formula, coldata, doQR, robust, : The mea
 <p>As the error message suggests, either the ridge argument has to be set at FALSE to obtain an unpenalised fit, or the intercept can be suppressed in order to obtain a fit with two slope terms (one for each group) so as to enable the estimation of the ridge penalty.</p>
 </section>
 </section>
-<section id="statistical-inference" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="statistical-inference"><span class="header-section-number">2.7</span> Statistical inference</h2>
+<section id="statistical-inference" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="statistical-inference"><span class="header-section-number">3.7</span> Statistical inference</h2>
 <p>We can now convert the biological question “does the spike-in condition affect the protein intensities?” into a statistical hypothesis. In other words, we need to translate this question in a null and alternative hypothesis on a single model parameter or a linear combination of model parameters, which is also referred to with a <a href="01-basics.html#sec-inference">contrast</a>. We plot an overview of the model parameters.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ExploreModelMatrix"</span>)</span>
@@ -1826,8 +1838,8 @@ Error in (function (y, rowdata = NULL, formula, coldata, doQR, robust, : The mea
 </div>
 </div>
 <p>Note that with ExploreModelMatrix we can only visualise fixed effects part of the model. This is fine as the mean protein abundances can only systematically differ from each other according to the <code>Condition</code> (fixed effect).</p>
-<section id="hypothesis-testing" class="level3" data-number="2.7.1">
-<h3 data-number="2.7.1" class="anchored" data-anchor-id="hypothesis-testing"><span class="header-section-number">2.7.1</span> Hypothesis testing</h3>
+<section id="hypothesis-testing" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="hypothesis-testing"><span class="header-section-number">3.7.1</span> Hypothesis testing</h3>
 <p>The average difference in the log2-intensity between the 1x and the 0.5x conditions is provided by the contrast <code>ridgeCondition1 - ridgeCondition0.5</code>. This is, however, not the only difference we could assess. As described in the <a href="01-basics.html#sec-multiple_contrasts">previous chapter</a>, we will generate a contrast matrix that assess all possible pairwise comparisons between spike-in conditions.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>allHypotheses <span class="ot">&lt;-</span> <span class="fu">createPairwiseContrasts</span>(</span>
@@ -1892,8 +1904,8 @@ ridgeCondition1 - ridgeCondition0.5.O00399  O00399</code></pre>
 <span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a>  inferences<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^([0-9.]*)$"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 - 0.125"</span>, inferences<span class="sc">$</span>contrast)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="volcano-plots" class="level3" data-number="2.7.2">
-<h3 data-number="2.7.2" class="anchored" data-anchor-id="volcano-plots"><span class="header-section-number">2.7.2</span> Volcano plots</h3>
+<section id="volcano-plots" class="level3" data-number="3.7.2">
+<h3 data-number="3.7.2" class="anchored" data-anchor-id="volcano-plots"><span class="header-section-number">3.7.2</span> Volcano plots</h3>
 <p>We generate volcano plots for all pairwise comparison between conditions and we plot the volcano plots with each comparison in a separate facet.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>inferences <span class="sc">|&gt;</span> </span>
@@ -1934,8 +1946,8 @@ Adding another scale for colour, which will replace the existing scale.</code></
 </div>
 </div>
 </section>
-<section id="fold-change-distributions" class="level3" data-number="2.7.3">
-<h3 data-number="2.7.3" class="anchored" data-anchor-id="fold-change-distributions"><span class="header-section-number">2.7.3</span> Fold change distributions</h3>
+<section id="fold-change-distributions" class="level3" data-number="3.7.3">
+<h3 data-number="3.7.3" class="anchored" data-anchor-id="fold-change-distributions"><span class="header-section-number">3.7.3</span> Fold change distributions</h3>
 <p>As this is a spike-in study with known ground truth, we can also plot the log2 fold change distributions against the expected values, in this case 0 for the HeLa proteins and the difference of the log concentration for the spiked-in UPS standards. We first create a small table with the real values.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a>realLogFC <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">contrast =</span> <span class="fu">unique</span>(inferences<span class="sc">$</span>contrast))</span>
@@ -1973,8 +1985,8 @@ Adding another scale for colour, which will replace the existing scale.</code></
 </div>
 <p>Estimated log2 fold change for HeLa proteins are closely distributed around 0, as expected. log2 fold changes for UPS standard proteins are biased towards zero probably due to ratio compression effects, as reported previously for labeled strategies <span class="citation" data-cites="Savitski2011-qi">(<a href="99-end.html#ref-Savitski2011-qi" role="doc-biblioref">Savitski et al. 2011</a>)</span>.</p>
 </section>
-<section id="detail-plots" class="level3" data-number="2.7.4">
-<h3 data-number="2.7.4" class="anchored" data-anchor-id="detail-plots"><span class="header-section-number">2.7.4</span> Detail plots</h3>
+<section id="detail-plots" class="level3" data-number="3.7.4">
+<h3 data-number="3.7.4" class="anchored" data-anchor-id="detail-plots"><span class="header-section-number">3.7.4</span> Detail plots</h3>
 <p>We can explore the PSM intensities for a protein to validate the statistical inference results. For example, let’s explore the intensities for the protein with the most significant difference.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a>(targetProtein <span class="ot">&lt;-</span> inferences<span class="sc">$</span>feature[<span class="fu">which.min</span>(inferences<span class="sc">$</span>adjPval)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2024,8 +2036,8 @@ Adding another scale for colour, which will replace the existing scale.</code></
 </div>
 </section>
 </section>
-<section id="protein-level-inference" class="level2" data-number="2.8">
-<h2 data-number="2.8" class="anchored" data-anchor-id="protein-level-inference"><span class="header-section-number">2.8</span> Protein-level inference</h2>
+<section id="protein-level-inference" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="protein-level-inference"><span class="header-section-number">3.8</span> Protein-level inference</h2>
 <p>We here show how to perform a two-step approach, where the data are first summarised then modelled. We perform the same statistical workflow as above, but starting from the protein level model estimated in <a href="#sec-tmt_protein_model">the section above</a><a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb132"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a>spikein <span class="ot">&lt;-</span> <span class="fu">hypothesisTest</span>(spikein, <span class="at">i =</span> <span class="st">"proteins"</span>, <span class="at">contrast =</span> L)</span>
@@ -2133,8 +2145,8 @@ Adding another scale for colour, which will replace the existing scale.</code></
 </div>
 <p>Notice how the summarisation-based approach hides the variation associated with the measurement of different peptide ions within the same protein, as well as discrepancies between peptide identification rates across mixtures.</p>
 </section>
-<section id="dealing-with-fiterrors" class="level2" data-number="2.9">
-<h2 data-number="2.9" class="anchored" data-anchor-id="dealing-with-fiterrors"><span class="header-section-number">2.9</span> Dealing with <code id="sec-fiterror">fitErrors</code></h2>
+<section id="dealing-with-fiterrors" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="dealing-with-fiterrors"><span class="header-section-number">3.9</span> Dealing with <code id="sec-fiterror">fitErrors</code></h2>
 <p>Missing value patterns in the data may lead to non-estimable parameters. This is recognised by <code>msqrob2</code> and will lead to <code>fitError</code>s which is a type of model output where the model could not be fit. This information is available from the <code>StatModel</code> objects.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb142"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb142-1"><a href="#cb142-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(spikein[[<span class="st">"proteins_msqrob"</span>]])[[<span class="st">"msqrobModels"</span>]] <span class="sc">|&gt;</span></span>
@@ -2147,8 +2159,8 @@ fitError     lmer
 </div>
 </div>
 <p>There are 3 possible strategies for dealing with these <code>fitErrors</code>.</p>
-<section id="sec-msqrob_refit" class="level3" data-number="2.9.1">
-<h3 data-number="2.9.1" class="anchored" data-anchor-id="sec-msqrob_refit"><span class="header-section-number">2.9.1</span> Removing the random effect of sample</h3>
+<section id="sec-msqrob_refit" class="level3" data-number="3.9.1">
+<h3 data-number="3.9.1" class="anchored" data-anchor-id="sec-msqrob_refit"><span class="header-section-number">3.9.1</span> Removing the random effect of sample</h3>
 <p>This strategy only applies for PSM-level models. Some proteins are difficult to detect and may be quantified by a single peptide ion species. In these cases, every sample contains a single observation for the protein and hence no random effect of <code>Run:Label</code> can be estimated. While the results for such one-hit wonders are questionable, we provide <code>msqrobRefit()</code> to refit a new model for a subset of proteins of interest.</p>
 <p>In this case, we want to refit a model without a sample effect for one-hit-wonder proteins. This information can be retrieved from the aggregation results, using <code>aggcounts()</code>. This getter function provides the number of features used when performing summarisation for each protein in each sample.</p>
 <div class="cell">
@@ -2432,8 +2444,8 @@ fitError     lmer
 </div>
 </div>
 </section>
-<section id="manual-inspection" class="level3" data-number="2.9.2">
-<h3 data-number="2.9.2" class="anchored" data-anchor-id="manual-inspection"><span class="header-section-number">2.9.2</span> Manual inspection</h3>
+<section id="manual-inspection" class="level3" data-number="3.9.2">
+<h3 data-number="3.9.2" class="anchored" data-anchor-id="manual-inspection"><span class="header-section-number">3.9.2</span> Manual inspection</h3>
 <p>One protein is still non-estimable upon refitting and requires additional data exploration to understand why the model cannot be estimated. Let us take the protein that cannot be fitted.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb183"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb183-1"><a href="#cb183-1" aria-hidden="true" tabindex="-1"></a>proteinError <span class="ot">&lt;-</span> <span class="fu">names</span>(fitTypes[fitTypes <span class="sc">==</span> <span class="st">"fitError"</span>])[[<span class="dv">1</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2474,8 +2486,8 @@ fitError     lmer
 </div>
 <p>We can immediately spot that PSM intensities are only present in mixture 3. Hence, the mixed model cannot be fitted with a random effect for mixture. However, we don’t want to rely on a result that has been measured in a single replicate and <code>msqrob2</code> flags these problematic proteins instead of defining ad-hoc heuristics, avoiding potentially misleading conclusions.</p>
 </section>
-<section id="imputation" class="level3" data-number="2.9.3">
-<h3 data-number="2.9.3" class="anchored" data-anchor-id="imputation"><span class="header-section-number">2.9.3</span> Imputation</h3>
+<section id="imputation" class="level3" data-number="3.9.3">
+<h3 data-number="3.9.3" class="anchored" data-anchor-id="imputation"><span class="header-section-number">3.9.3</span> Imputation</h3>
 <p>The last popular strategy to deal with fit errors is to impute missing values so that all models can be estimated. Note, that our general advice is to avoid imputation as this typically comes at the expense of additional and often unrealistic assumptions<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>.</p>
 <p><code>QFeatures</code> provides a large panel of imputation strategies through <code>impute()</code>. Identifying which imputation strategy is most suited for this data set is outside the scope of this book. For illustration purposes, we here arbitrarily use KNN imputation.</p>
 <div class="cell">
@@ -2562,8 +2574,8 @@ lmer
 <p>Upon refit, no <code>fitError</code>s were generated for any proteins, as expected. Be mindful that the results upon imputation will be highly depended on the suitability of the imputation approach.</p>
 </section>
 </section>
-<section id="conclusion" class="level2" data-number="2.10">
-<h2 data-number="2.10" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">2.10</span> Conclusion</h2>
+<section id="conclusion" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">3.10</span> Conclusion</h2>
 <p>In this chapter, we expanded upon the basic concepts with a more complex analysis. First, we started our analysis from PSM-level data, showing that our tools are amenable to read different levels of input format such as the <a href="01-basics.html#sec-peptide_table">peptides table</a> or the <a href="#sec-psm_table">PSM table</a>. Starting from the PSM level data also enabled better control of the PSM filtering compared to starting with peptide-level data. We demonstrated how to conduct a comprehensive feature filtering workflow, with different level of customisation to enable filtering based on any criterion.</p>
 <p>The complexity of the analysis is the reflection of the complexity of the experimental designs, as TMT-labelling includes the modelling of several additional sources of variation compared to LFQ experiments: effect of treatment of interest, effect of TMT labelling, effect of the MS acquisition run, and the effect of replication. We built protein-level models, but we have also shown that we can build PSM-level models if we also include a spectrum effect and an effect for TMT label nested within run.</p>
 <p>Finally, we have demonstrated how to deal with proteins that cannot be modelled due to missing values. For PSM-level models, we can remove the random effects for TMT label within run that cannot be estimated for one-hit-wonder proteins. We can also manually inspect how missing values can influence the model design, and refit a simplified model upon expert’s intervention. Finally, we can impute missing values, which unlocks model fitting, but imposes strong assumption on the validity of the imputation approach and the reliability of the predicted values.</p>
@@ -3000,13 +3012,13 @@ Vandenbulcke, Stijn, Christophe Vanderaa, Oliver Crook, Lennart Martens, and Lie
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./01-basics.html" class="pagination-link" aria-label="Statistical analysis with msqrob2">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2</span></span>
+      <a href="./01-basics-DIA.html" class="pagination-link" aria-label="Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA)</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./03-benchmarking.html" class="pagination-link" aria-label="Benchmarking workflows">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Benchmarking workflows</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Benchmarking workflows</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

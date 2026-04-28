@@ -1,5 +1,4 @@
-# Statistical analysis with msqrob2 {#sec-basics}
-
+# Statistical analysis with msqrob2 (Dependent Dependent Acquisition, DDA) {#sec-basics}
 
 This chapter explains the main concepts for statistical analysis of
 proteomics data using `msqrob2`. To illustrate these concepts, we will
