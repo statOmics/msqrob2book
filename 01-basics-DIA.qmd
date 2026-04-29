@@ -1,12 +1,34 @@
 # Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA) {#sec-basics-dia}
 
-This chapter explains the main concepts for data-processing and statistical analysis of
-(DIA) proteomics data using `msqrob2`. To illustrate these concepts, we will
-use using a publicly available spike-in study published by Staes et al. [@Staes2024]. 
-They spiked digested UPS proteins in a yeast digested background at the following ratio's (yeast:ups ratio 10:1, 10:2, 10:4, 10:8, 10:10).
+This chapter explains the main concepts for data-processing and statistical 
+analysis of proteomics data using `msqrob2`. Here, these concepts are 
+introduced using a spike-in study acquired with Data Independent Acquisition. 
+
+The structure, rationale and code of this chapter is very similar to that of the 
+[previous chapter](#sec-basics). The chapters differ primarily in the data 
+importing and filtering steps, which are specific to the respective technologies 
+and search engines. So we refer users who will mainly work with DDA data to 
+[chapter 1](#sec-basics). 
+
+In this chapter, we are using a publicly available 
+DIA spike-in study published by Staes et al. [@Staes2024]. 
+They spiked digested UPS proteins in a yeast digested background at the 
+following ratio's (yeast:ups ratio 10:1, 10:2, 10:4, 10:8, 10:10).
 Here we will use a subset of the data, i.e. dilutions 10:2, 10:4 and 10:8. 
 We will use output of the search engine DIA-NN 2.2.0. 
-The main search output for this DIA-NN version was stored in the report.parquet file in the DIA-NN output directory, which can be found under data/spikein248-staesetal2024.parquet
+The main search output for this DIA-NN version was stored in the report.parquet 
+file in the DIA-NN output directory.
+
+Staes et al. [@Staes2024] also searched their data using Spectronaut. These data 
+are analysed in @sec-staes-spectronaut. We recommend that Spectronaut 
+users first familiarize themselves with the core concepts presented in this 
+chapter and then refer to @sec-staes-spectronaut for code specific to 
+Spectronaut. The code differs due to other variable naming conventions in DIA-NN 
+and Spectronaut, which primarily impacts the data importing and filtering steps.
+
+We recommend that Spectronaut users first familiarize themselves with the core 
+concepts presented in this chapter, and then refer to @sec-staes-spectronaut for 
+Spectronaut-specific code.
 
 ## Background 
 ### Conventional MS-based workflow
@@ -291,7 +313,7 @@ precursors |>
 
 ### Sample annotation table
 
-The [sample annotation table](#sec-annotation_table)) is not available
+The [sample annotation table](#sec-annotation_table) is not available
 and can be generated from the run labels, as the researchers included information on the design in the filenames.
 
 We will make a new data frame with the annotation. 

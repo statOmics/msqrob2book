@@ -53,10 +53,13 @@ The book is divided in three parts.
 
 This parts introduces the user to the key concepts in differential proteomics data analysis and provides extensive description of the code. While this part is conceptual, the concepts are illustrated using a real spike-in study.
 
-- @sec-basics and @sec-basics-dia introduce the basic concepts for MS-based 
-  proteomics data analysis from data dependent acquistion (DDA) and data 
-  independent acquisition (DIA), respectively. We **recommend** our users to 
-  first read one of these chapter before reading any other chapter. 
+- Chapters @sec-basics and @sec-basics-dia introduce the fundamental concepts of 
+  MS-based proteomics data analysis, illustrated through spike-in studies 
+  acquired using data-dependent acquisition (DDA) and data-independent 
+  acquisition (DIA), respectively. The two chapters are largely similar; they 
+  differ primarily in the data importing and filtering steps, which are specific 
+  to the respective technologies and search engines. We recommend that readers 
+  consult at least one of these chapters before proceeding to the others. 
 - @sec-advanced builds upon the previous chapter and 
   introduces more advanced concepts that will be used in later chapters
   that involve complex designs and analyses. These concepts are introduced using
@@ -90,7 +93,7 @@ recommendations to their analyses.
 ### Use cases{#sec-overview_use_cases}
 
 This part contains a set of chapter that illustrate the data analysis
-for a range of experimental designs and technological setups.
+for a range of experimental designs, technologies and search engines.
 
 - @sec-francisella 
 - @sec-heart 

@@ -1,9 +1,19 @@
 # Statistical analysis with msqrob2 (Dependent Dependent Acquisition, DDA) {#sec-basics}
 
-This chapter explains the main concepts for statistical analysis of
-proteomics data using `msqrob2`. To illustrate these concepts, we will
-use using a publicly available spike-in study with PRIDE identifier
-PXD003881 [@Shen2018-gw]. This dataset contains ground truth information about which proteins are differentially abundant, enabling us to objectively demonstrate the key aspects of differential proteomics data analysis and their implementation in `msqrob2`. This dataset has a relatively simple
+This chapter explains the main concepts for data-processing and statistical 
+analysis of proteomics data using `msqrob2`. Here, these concepts are 
+introduced using a spike-in study acquired with Data Dependent Acquisition (DDA). 
+The structure, rationale and code of this chapter is very similar to that of the 
+[next chapter](#sec-basics-DIA). The chapters differ primarily in the data 
+importing and filtering steps, which are specific to the respective technologies 
+and search engines. So we refer users who will mainly work with DIA data to 
+[chapter 2](#sec-basics-DIA). 
+
+In this chapter, we are using a publicly available spike-in study with 
+PRIDE identifierPXD003881 [@Shen2018-gw]. This dataset contains ground truth 
+information about which proteins are differentially abundant, enabling us to 
+objectively demonstrate the key aspects of differential proteomics data analysis 
+and their implementation in `msqrob2`. This dataset has a relatively simple
 experimental design (which does not imply that the analysis is easy),
 allowing us to assess differential abundance using a data analysis
 workflow with a single factor for the spike-in condition. For more
