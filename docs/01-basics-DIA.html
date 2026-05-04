@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA) – Statistical analysis of mass spectrometry-based proteomics data</title>
+<title>2&nbsp; Statistical analysis with msqrob2 (Data Independent Acquisition, DIA) – Statistical analysis of mass spectrometry-based proteomics data</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -168,7 +168,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-basics-DIA.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA)</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-basics-DIA.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Data Independent Acquisition, DIA)</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -206,13 +206,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-basics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Dependent Dependent Acquisition, DDA)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Data Dependent Acquisition, DDA)</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-basics-DIA.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Data Independent Acquisition, DIA)</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -279,7 +279,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#conventional-ms-based-workflow" id="toc-conventional-ms-based-workflow" class="nav-link" data-scroll-target="#conventional-ms-based-workflow"><span class="header-section-number">2.1.1</span> Conventional MS-based workflow</a></li>
   </ul></li>
-  <li><a href="#data-dependent-acquisition" id="toc-data-dependent-acquisition" class="nav-link" data-scroll-target="#data-dependent-acquisition"><span class="header-section-number">2.2</span> Data Dependent Acquisition</a></li>
+  <li><a href="#data-independent-acquisition" id="toc-data-independent-acquisition" class="nav-link" data-scroll-target="#data-independent-acquisition"><span class="header-section-number">2.2</span> Data Independent Acquisition</a></li>
   <li><a href="#level-of-quantification" id="toc-level-of-quantification" class="nav-link" data-scroll-target="#level-of-quantification"><span class="header-section-number">2.3</span> Level of quantification</a></li>
   <li><a href="#sec-dia_challenges" id="toc-sec-dia_challenges" class="nav-link" data-scroll-target="#sec-dia_challenges"><span class="header-section-number">2.4</span> Challenges</a></li>
   <li><a href="#dia-workflow" id="toc-dia-workflow" class="nav-link" data-scroll-target="#dia-workflow"><span class="header-section-number">2.5</span> DIA workflow</a></li>
@@ -339,7 +339,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-basics-dia" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA)</span></span></h1>
+<h1 class="title"><span id="sec-basics-dia" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Data Independent Acquisition, DIA)</span></span></h1>
 </div>
 
 
@@ -393,8 +393,8 @@ window.Quarto = {
 <p><span class="math inline">\(\rightarrow\)</span> Unbalanced pepide identifications across samples and messy data</p>
 </section>
 </section>
-<section id="data-dependent-acquisition" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="data-dependent-acquisition"><span class="header-section-number">2.2</span> Data Dependent Acquisition</h2>
+<section id="data-independent-acquisition" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="data-independent-acquisition"><span class="header-section-number">2.2</span> Data Independent Acquisition</h2>
 <p>With data independent acquisition, however, the second round of MS (MS2) does not record fragmented ions for selected ions. Instead the instrument divides the m/z range into sequential windows (e.g., 400–425, 425–450 m/z) and all ions within each window are fragmented together. This continues across the full mass range resulting in a systematic fragmentation of all peptides. Hence, the MS2 spectra are complex as many peptides mixed. So search engines and quantification software, such as DIA-NN and Spectronaut, have to deconvolute the complex MS2 spectra so as to identify and quantify individual precursors (MS1) in the m/z window using their MS2 fragments. Hence, the quantification can be done using either MS1 or MS2.</p>
 <p><img src="https://www.creative-proteomics.com/blog/wp-content/uploads/2024/01/principles-applications-and-comparative-workflow-of-dia-and-dda.jpg" class="img-fluid"></p>
 <ul>
@@ -4533,8 +4533,8 @@ Staes, An, Teresa Mendes Maia, Sara Dufour, et al. 2024. <span>“Benefit of in 
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./01-basics.html" class="pagination-link" aria-label="Statistical analysis with msqrob2 (Dependent Dependent Acquisition, DDA)">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Dependent Dependent Acquisition, DDA)</span></span>
+      <a href="./01-basics.html" class="pagination-link" aria-label="Statistical analysis with msqrob2 (Data Dependent Acquisition, DDA)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Statistical analysis with msqrob2 (Data Dependent Acquisition, DDA)</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

@@ -1,4 +1,4 @@
-# Statistical analysis with msqrob2 (Dependent Independent Acquisition, DIA) {#sec-basics-dia}
+# Statistical analysis with msqrob2 (Data Independent Acquisition, DIA) {#sec-basics-dia}
 
 This chapter explains the main concepts for data-processing and statistical 
 analysis of proteomics data using `msqrob2`. Here, these concepts are 
@@ -82,7 +82,7 @@ knitr::include_graphics("figs/lfq_workflow.png")
 
 $\rightarrow$ Unbalanced pepide identifications across samples and messy data
 
-## Data Dependent Acquisition 
+## Data Independent Acquisition 
 
 With data independent acquisition, however, the second round
 of MS (MS2) does not record fragmented ions for selected ions. 
