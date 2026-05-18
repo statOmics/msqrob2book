@@ -28,7 +28,27 @@ $grid-gutter-width: 2em;
 
 /*-- scss:rules --*/
 
-// Customizing the active link in the sidebar to match your Gitbook style
+main.content {
+  /* Force the content to span from the 2nd grid line (after sidebar) 
+     to the very end of the screen (-1) */
+  grid-column: 2 / -1 !important;
+  
+  /* center */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 950px !important;
+}
+
+.sidebar-logo {
+  width: 60%;  
+  height: auto;  
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important; /* center logo*/
+  max-width: 200px;     
+}
+
+
 .sidebar-item-container .active > .sidebar-item-text {
   color: $brand-green !important;
   background-color: $bg-green-light;
