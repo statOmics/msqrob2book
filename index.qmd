@@ -95,14 +95,17 @@ recommendations to their analyses.
 This part contains a set of chapter that illustrate the data analysis
 for a range of experimental designs, technologies and search engines.
 
-- @sec-francisella 
-- @sec-heart 
-- @sec-mouse-diet 
-- @sec-staes-spectronaut
-- @sec-staes-diann
+| Type | Engine      | Characteristics        | Chapter                  |
+| ---- | ----------- | ---------------------- | ------------------------ |
+| DDA  | MaxQuant    | Tech. Reps             | @sec-francisella         |
+| DDA  | MaxQuant    | Multi-factor           | @sec-heart               |
+| DDA  | Skyline     | TMT-labeled            | @sec-mouse-diet          |
+| DIA  | Spectronaut | Spike-in               | @sec-staes-spectronaut   |
+| DIA  | DIA-NN      | Spike-in               | @sec-staes-diann         |
+| DIA  | DIA-NN      | Phospho-PTM (paired)   | @sec-msqrob2PTM-paired   |
+| DIA  | DIA-NN      | Phospho-PTM (unpaired) | @sec-msqrob2PTM-unpaired |
 
-**TODO** make table with dataset descriptions to let users easily find
-their relevant use case.
+
 
 ## Targeted audience and assumed background
 

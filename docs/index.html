@@ -9,7 +9,7 @@
 <meta name="author" content="Christophe Vanderaa">
 <meta name="author" content="Stijn Vandenbulcke">
 <meta name="author" content="Lieven Clement">
-<meta name="dcterms.date" content="2026-05-04">
+<meta name="dcterms.date" content="2026-06-01">
 
 <title>Statistical analysis of mass spectrometry-based proteomics data</title>
 <style>
@@ -239,8 +239,26 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./09-msqrob2PTM_diann_study_paired.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">msqrob2PTM: DIA-NN case study - Paired phospho-enriched and non-enriched samples</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-msqrob2PTM_diann_study_unpaired.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">msqrob2PTM: DIA-NN case study - Unpaired phospho-enriched and non-enriched samples</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-msqrob2PTM_diann_study_paired_3samp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">msqrob2PTM: DIA-NN case study - Paired phospho-enriched and non-enriched samples (three bioreps)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./99-end.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Additional information</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Additional information</span></span></a>
   </div>
 </li>
     </ul>
@@ -296,7 +314,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 4, 2026</p>
+      <p class="date">June 1, 2026</p>
     </div>
   </div>
   
@@ -352,14 +370,66 @@ div.csl-indent {
 <section id="sec-overview_use_cases" class="level3">
 <h3 class="anchored" data-anchor-id="sec-overview_use_cases">Use cases</h3>
 <p>This part contains a set of chapter that illustrate the data analysis for a range of experimental designs, technologies and search engines.</p>
-<ul>
-<li><a href="05-francisella.html" class="quarto-xref"><span>6&nbsp; The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</span></a></li>
-<li><a href="06-heart.html" class="quarto-xref"><span>7&nbsp; Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</span></a></li>
-<li><a href="07-mouse_diet.html" class="quarto-xref"><span>8&nbsp; The mouse diet use case: a Skyline TMT DDA dataset</span></a></li>
-<li><a href="08-staes-spectronaut.html" class="quarto-xref"><span>9&nbsp; Staes Spike-in Study: a Spectronaut DIA spike-in study</span></a></li>
-<li><a href="08-staes-diann.html" class="quarto-xref"><span>10&nbsp; Staes Spike-in Study: a DIA-NN DIA spike-in study</span></a></li>
-</ul>
-<p><strong>TODO</strong> make table with dataset descriptions to let users easily find their relevant use case.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 18%">
+<col style="width: 36%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Engine</th>
+<th>Characteristics</th>
+<th>Chapter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DDA</td>
+<td>MaxQuant</td>
+<td>Tech. Reps</td>
+<td><a href="05-francisella.html" class="quarto-xref"><span>6&nbsp; The francisella use case: a MaxQuant LFQ DDA dataset with technical replication</span></a></td>
+</tr>
+<tr class="even">
+<td>DDA</td>
+<td>MaxQuant</td>
+<td>Multi-factor</td>
+<td><a href="06-heart.html" class="quarto-xref"><span>7&nbsp; Heart use case: a MaxQuant LFQ DDA dataset with a more complex design</span></a></td>
+</tr>
+<tr class="odd">
+<td>DDA</td>
+<td>Skyline</td>
+<td>TMT-labeled</td>
+<td><a href="07-mouse_diet.html" class="quarto-xref"><span>8&nbsp; The mouse diet use case: a Skyline TMT DDA dataset</span></a></td>
+</tr>
+<tr class="even">
+<td>DIA</td>
+<td>Spectronaut</td>
+<td>Spike-in</td>
+<td><a href="08-staes-spectronaut.html" class="quarto-xref"><span>9&nbsp; Staes Spike-in Study: a Spectronaut DIA spike-in study</span></a></td>
+</tr>
+<tr class="odd">
+<td>DIA</td>
+<td>DIA-NN</td>
+<td>Spike-in</td>
+<td><a href="08-staes-diann.html" class="quarto-xref"><span>10&nbsp; Staes Spike-in Study: a DIA-NN DIA spike-in study</span></a></td>
+</tr>
+<tr class="even">
+<td>DIA</td>
+<td>DIA-NN</td>
+<td>Phospho-PTM (paired)</td>
+<td><a href="09-msqrob2PTM_diann_study_paired.html" class="quarto-xref"><span>11&nbsp; msqrob2PTM: DIA-NN case study - Paired phospho-enriched and non-enriched samples</span></a></td>
+</tr>
+<tr class="odd">
+<td>DIA</td>
+<td>DIA-NN</td>
+<td>Phospho-PTM (unpaired)</td>
+<td><a href="09-msqrob2PTM_diann_study_unpaired.html" class="quarto-xref"><span>12&nbsp; msqrob2PTM: DIA-NN case study - Unpaired phospho-enriched and non-enriched samples</span></a></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 <section id="targeted-audience-and-assumed-background" class="level2">
@@ -391,7 +461,7 @@ div.csl-indent {
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>   <span class="st">"bookdown"</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>All software versions used to generate this document are recorded at the end of the book in <a href="99-end.html" class="quarto-xref"><span>11&nbsp; Additional information</span></a>.</p>
+<p>All software versions used to generate this document are recorded at the end of the book in <a href="99-end.html" class="quarto-xref"><span>14&nbsp; Additional information</span></a>.</p>
 </section>
 <section id="citation" class="level2">
 <h2 class="anchored" data-anchor-id="citation">Citation</h2>

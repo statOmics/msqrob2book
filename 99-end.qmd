@@ -14,7 +14,7 @@ Please cite the `msqrob2` package as:
   _Molecular & Cellular Proteomics_, *15*(2), 657-668.
   doi:[10.1074/mcp.m115.055897](https://doi.org/10.1074/mcp.m115.055897).
 
-If you opt for a summarisation-based workflow, you can also cite: 
+If you opt for a summarisation-based workflow, please also cite: 
 
 > Sticker A, Goeminne L, Martens L, Clement L (2020). "Robust 
   Summarization and Inference in Proteome-wide Label-free
@@ -22,12 +22,21 @@ If you opt for a summarisation-based workflow, you can also cite:
   1209-1219.
   doi:[10.1074/mcp.ra119.001624](https://doi.org/10.1074/mcp.ra119.001624).
 
-If you use TMT-based workflows, please cite
+If you use  a TMT-based workflows, please  also cite:
 
-> Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L. 
-Msqrob2TMT: Robust linear mixed models for inferring differential 
-abundant proteins in labeled experiments with arbitrarily complex 
-design. Mol Cell Proteomics. 2025;24(7):101002.
+> Vandenbulcke S, Vanderaa C, Crook O, Martens L, Clement L (2025). 
+  "msqrob2TMT: Robust linear mixed models for inferring differential 
+  abundant proteins in labeled experiments with arbitrarily complex 
+  design." _Molecular & Cellular Proteomics_, *24*(7):101002.
+  doi:[doi: 10.1016/j.mcpro.2025.101002](https://doi.org/10.1016/j.mcpro.2025.101002).
+
+
+If you use a PTM-based workflows, please also cite:
+
+> Demeulemeester N, Gébelin M, Caldi Gomes L, Lingor P, Carapito C, Martens L, Clement L (2024).
+  "msqrob2PTM: Differential Abundance and Differential Usage Analysis of MS-Based Proteomics Data at the Posttranslational Modification and       
+  Peptidoform Level." _Molecular & Cellular Proteomics_, *23*(2): 100708.
+  doi: [10.1016/j.mcpro.2023.100708](https://doi.org/10.1016/j.mcpro.2023.100708) 
 
 ## References {.unnumbered}
 

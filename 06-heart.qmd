@@ -56,7 +56,7 @@ deposited on the PRIDE repository
 [PXD006675](https://www.ebi.ac.uk/pride/archive/projects/PXD006675).
 
 In this chapter we use a small subset of the data that is available on
-**TODO** put on Zenodo and use BiocFileCache.
+msqrob2data.
 
 ```{r}
 library("BiocFileCache")

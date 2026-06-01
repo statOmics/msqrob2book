@@ -24,6 +24,9 @@ book:
     - 07-mouse_diet.qmd
     - 08-staes-spectronaut.qmd
     - 08-staes-diann.qmd
+    - 09-msqrob2PTM_diann_study_paired.qmd 
+    - 09-msqrob2PTM_diann_study_unpaired.qmd 
+    - 09-msqrob2PTM_diann_study_paired_3samp.qmd    
     - 99-end.qmd
 
 website:
