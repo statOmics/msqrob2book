@@ -122,8 +122,7 @@ time that the script is knit.
   uncomment second line. 
 
 ```{r data_path}
-bfc <- BiocFileCache("/opt/fileCache") # for usage with docker
-#bfc <- BiocFileCache() # for usage in local rstudio session on local machine
+bfc <- BiocFileCache()
 precursorFile <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/WholeProteome_DIANNreport.parquet?download=1")
 precursorFilePTM <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1")
 ```

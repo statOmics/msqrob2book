@@ -110,7 +110,7 @@ time that the script is knit.
 
 
 ```{r data_path}
-bfc <- BiocFileCache() # for usage with docker
+bfc <- BiocFileCache()
 precursorFile <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/WholeProteome_DIANNreport.parquet?download=1")
 precursorFilePTM <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1")
 ```
