@@ -414,7 +414,16 @@ window.Quarto = {
 <section id="data-independent-acquisition" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="data-independent-acquisition"><span class="header-section-number">2.2</span> Data Independent Acquisition</h2>
 <p>With data independent acquisition, however, the second round of MS (MS2) does not record fragmented ions for selected ions. Instead the instrument divides the m/z range into sequential windows (e.g., 400–425, 425–450 m/z) and all ions within each window are fragmented together. This continues across the full mass range resulting in a systematic fragmentation of all peptides. Hence, the MS2 spectra are complex as many peptides mixed. So search engines and quantification software, such as DIA-NN and Spectronaut, have to deconvolute the complex MS2 spectra so as to identify and quantify individual precursors (MS1) in the m/z window using their MS2 fragments. Hence, the quantification can be done using either MS1 or MS2.</p>
-<p><img src="https://www.creative-proteomics.com/blog/wp-content/uploads/2024/01/principles-applications-and-comparative-workflow-of-dia-and-dda.jpg" class="img-fluid"></p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/statOmics/msqrob2book/main/figs/dia.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Data-independent acquisition.</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <ul>
 <li><p>m/z range into sequential windows (e.g., 400–425, 425–450 m/z)</p></li>
 <li><p>MS2 spectra are complex as many peptides mixed</p></li>
@@ -1795,7 +1804,7 @@ colData names(5): runCol sampleId condition rep ratio</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1915,7 +1924,7 @@ colData names(5): runCol sampleId condition rep ratio</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1970,7 +1979,7 @@ y_{ip}^{\text{norm}} = y_{ip} - \log_2(nf_i)
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2018,7 +2027,7 @@ y_{ip}^{\text{norm}} = y_{ip} - \log_2(nf_i)
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2105,7 +2114,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2116,7 +2125,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2150,7 +2159,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2179,7 +2188,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2208,7 +2217,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2235,7 +2244,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2266,7 +2275,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2318,7 +2327,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2344,7 +2353,7 @@ Aggregated: 1/1</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" width="768"></p>
 <figcaption>MDS visualisation of the spike-in data set. Each point represents a sample and is coloured by the spike-in condiion.</figcaption>
 </figure>
 </div>
@@ -2381,7 +2390,7 @@ Adding another scale for fill, which will replace the existing scale.</code></pr
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2456,7 +2465,7 @@ There number of elements is 5 </code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-50-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2535,7 +2544,7 @@ condition4.O13585 0.9921097 condition4  O13585</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-55-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-56-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2900,7 +2909,7 @@ condition4.O13585 0.9921097 condition4  O13585</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-59-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-60-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -3857,7 +3866,7 @@ condition8           0          1                       1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-64-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-65-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -3907,7 +3916,7 @@ condition8           0          1                       1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-65-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-66-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -3918,7 +3927,7 @@ condition8           0          1                       1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-65-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-66-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -3929,7 +3938,7 @@ condition8           0          1                       1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-65-3.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-66-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -4024,7 +4033,7 @@ condition8           0          1                       1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-68-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-69-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -4062,7 +4071,7 @@ Adding another scale for colour, which will replace the existing scale.</code></
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-69-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-70-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -4115,7 +4124,7 @@ Adding another scale for colour, which will replace the existing scale.</code></
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-73-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-basics-DIA_files/figure-html/unnamed-chunk-74-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

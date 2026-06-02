@@ -435,8 +435,6 @@ window.Quarto = {
 <li>We load the output from DIA-NN parquet files.</li>
 <li>Can be file path to local file or url to file that lives on the web.</li>
 <li>Here we use BiocFileCache so that we do not need to download the files again each time that the script is knit.</li>
-<li>Typically we do not specify the path to the cache file in local sessions.</li>
-<li>If you run the vignette(or code-chunk below) on your local machine in your local R session (without using the docker) comment first line and uncomment second line.</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bfc <span class="ot">&lt;-</span> <span class="fu">BiocFileCache</span>()</span>
@@ -511,13 +509,13 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10152192 542.2   17413385  930.0         NA  14171178  756.9
-Vcells 61019193 465.6  251097648 1915.8      24576 311604151 2377.4</code></pre>
+Ncells 10152188 542.2   17413380  930.0         NA  14170896  756.9
+Vcells 61019040 465.6  251097502 1915.8      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10152555 542.3   17413385  930.0         NA  14171178  756.9
-Vcells 61020047 465.6  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10152551 542.3   17413380  930.0         NA  14170896  756.9
+Vcells 61019894 465.6  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -534,13 +532,13 @@ Vcells 61020047 465.6  200878119 1532.6      24576 311604151 2377.4</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10149000 542.1   17413385  930.0         NA  14171178  756.9
-Vcells 59369244 453.0  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10148996 542.1   17413380  930.0         NA  14170896  756.9
+Vcells 59369091 453.0  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10148999 542.1   17413385  930.0         NA  14171178  756.9
-Vcells 59369275 453.0  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10148995 542.1   17413380  930.0         NA  14170896  756.9
+Vcells 59369122 453.0  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -573,13 +571,13 @@ Vcells 59369275 453.0  200878119 1532.6      24576 311604151 2377.4</code></pre>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10387995 554.8   17413385  930.0         NA  14413344  769.8
-Vcells 99878420 762.1  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10387991 554.8   17413380  930.0         NA  14413340  769.8
+Vcells 99878267 762.1  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10387976 554.8   17413385  930.0         NA  14413344  769.8
-Vcells 99878422 762.1  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10387972 554.8   17413380  930.0         NA  14413340  769.8
+Vcells 99878269 762.1  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -602,13 +600,13 @@ Vcells 99878422 762.1  200878119 1532.6      24576 311604151 2377.4</code></pre>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10388155 554.8   17413385  930.0         NA  14413344  769.8
-Vcells 79997948 610.4  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10388151 554.8   17413380  930.0         NA  14413340  769.8
+Vcells 79997795 610.4  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10388148 554.8   17413385  930.0         NA  14413344  769.8
-Vcells 79997970 610.4  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10388144 554.8   17413380  930.0         NA  14413340  769.8
+Vcells 79997817 610.4  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -680,13 +678,13 @@ Vcells 79997970 610.4  200878119 1532.6      24576 311604151 2377.4</code></pre>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10428121 557.0   17413385  930.0         NA  14413344  769.8
-Vcells 80087578 611.1  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10428117 557.0   17413380  930.0         NA  14413340  769.8
+Vcells 80087425 611.1  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10428045 557.0   17413385  930.0         NA  14413344  769.8
-Vcells 80087485 611.1  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10428041 557.0   17413380  930.0         NA  14413340  769.8
+Vcells 80087332 611.1  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -770,13 +768,13 @@ Vcells 80087485 611.1  200878119 1532.6      24576 311604151 2377.4</code></pre>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10464424 558.9   17413385  930.0         NA  17413385  930.0
-Vcells 81154737 619.2  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10464420 558.9   17413380  930.0         NA  17413380  930.0
+Vcells 81154584 619.2  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10464420 558.9   17413385  930.0         NA  17413385  930.0
-Vcells 81154764 619.2  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10464416 558.9   17413380  930.0         NA  17413380  930.0
+Vcells 81154611 619.2  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -831,13 +829,13 @@ Vcells 81154764 619.2  200878119 1532.6      24576 311604151 2377.4</code></pre>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10470391 559.2   17413385  930.0         NA  17413385  930.0
-Vcells 81823432 624.3  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10470387 559.2   17413380  930.0         NA  17413380  930.0
+Vcells 81823279 624.3  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10470393 559.2   17413385  930.0         NA  17413385  930.0
-Vcells 81823469 624.3  200878119 1532.6      24576 311604151 2377.4</code></pre>
+Ncells 10470389 559.2   17413380  930.0         NA  17413380  930.0
+Vcells 81823316 624.3  200878002 1532.6      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -897,13 +895,13 @@ Vcells 81823469 624.3  200878119 1532.6      24576 311604151 2377.4</code></pre>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10475660 559.5   17413385  930.0         NA  17413385  930.0
-Vcells 63710324 486.1  200907467 1532.9      24576 311604151 2377.4</code></pre>
+Ncells 10475656 559.5   17413380  930.0         NA  17413380  930.0
+Vcells 63710171 486.1  200907314 1532.9      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10475656 559.5   17413385  930.0         NA  17413385  930.0
-Vcells 63710351 486.1  200907467 1532.9      24576 311604151 2377.4</code></pre>
+Ncells 10475652 559.5   17413380  930.0         NA  17413380  930.0
+Vcells 63710198 486.1  200907314 1532.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -927,13 +925,13 @@ Vcells 63710351 486.1  200907467 1532.9      24576 311604151 2377.4</code></pre>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10475827 559.5   17413385  930.0         NA  17413385  930.0
-Vcells 63053911 481.1  200907467 1532.9      24576 311604151 2377.4</code></pre>
+Ncells 10475823 559.5   17413380  930.0         NA  17413380  930.0
+Vcells 63053758 481.1  200907314 1532.9      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10475826 559.5   17413385  930.0         NA  17413385  930.0
-Vcells 63053943 481.1  200907467 1532.9      24576 311604151 2377.4</code></pre>
+Ncells 10475822 559.5   17413380  930.0         NA  17413380  930.0
+Vcells 63053790 481.1  200907314 1532.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -969,13 +967,13 @@ Vcells 63053943 481.1  200907467 1532.9      24576 311604151 2377.4</code></pre>
 <span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10475829 559.5   17413385  930.0         NA  17413385  930.0
-Vcells 63054057 481.1  200907467 1532.9      24576 311604151 2377.4</code></pre>
+Ncells 10475825 559.5   17413380  930.0         NA  17413380  930.0
+Vcells 63053904 481.1  200907314 1532.9      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10475828 559.5   17413385  930.0         NA  17413385  930.0
-Vcells 63054089 481.1  200907467 1532.9      24576 311604151 2377.4</code></pre>
+Ncells 10475824 559.5   17413380  930.0         NA  17413380  930.0
+Vcells 63053936 481.1  200907314 1532.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1208,13 +1206,13 @@ y_{ip}^{\text{norm}} = y_{ip} - \log_2(nf_i)
 <span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 10405661 555.8   17413385  930.0         NA  17413385  930.0
-Vcells 26725179 203.9  160725974 1226.3      24576 311604151 2377.4</code></pre>
+Ncells 10405657 555.8   17413380  930.0         NA  17413380  930.0
+Vcells 26725026 203.9  160725852 1226.3      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger (Mb) limit (Mb)  max used   (Mb)
-Ncells 10405651 555.8   17413385  930         NA  17413385  930.0
-Vcells 26725196 203.9  128580780  981      24576 311604151 2377.4</code></pre>
+Ncells 10405647 555.8   17413380  930         NA  17413380  930.0
+Vcells 26725043 203.9  128580682  981      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 <p>Note, that normalisation could have been avoided by using Precursor.Normalised which is already internally normalised by DIA-NN. However, we do not know the exact procedure for this.</p>
@@ -1270,13 +1268,13 @@ Aggregated: 1/1</code></pre>
 <span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10421894 556.6   17413385 930.0         NA  17413385  930.0
-Vcells 27115798 206.9  102864624 784.8      24576 311604151 2377.4</code></pre>
+Ncells 10421890 556.6   17413380 930.0         NA  17413380  930.0
+Vcells 27115645 206.9  102864546 784.8      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10421896 556.6   17413385 930.0         NA  17413385  930.0
-Vcells 27115835 206.9   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10421892 556.6   17413380 930.0         NA  17413380  930.0
+Vcells 27115682 206.9   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1346,13 +1344,13 @@ Vcells 27115835 206.9   82291700 627.9      24576 311604151 2377.4</code></pre>
 <span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10451181 558.2   17413385 930.0         NA  17413385  930.0
-Vcells 28849288 220.2   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10451177 558.2   17413380 930.0         NA  17413380  930.0
+Vcells 28849135 220.2   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10451183 558.2   17413385 930.0         NA  17413385  930.0
-Vcells 28849325 220.2   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10451179 558.2   17413380 930.0         NA  17413380  930.0
+Vcells 28849172 220.2   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1390,13 +1388,13 @@ Vcells 28849325 220.2   82291700 627.9      24576 311604151 2377.4</code></pre>
 <span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10458692 558.6   17413385 930.0         NA  17413385  930.0
-Vcells 28955402 221.0   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10458688 558.6   17413380 930.0         NA  17413380  930.0
+Vcells 28955249 221.0   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10458691 558.6   17413385 930.0         NA  17413385  930.0
-Vcells 28955434 221.0   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10458687 558.6   17413380 930.0         NA  17413380  930.0
+Vcells 28955281 221.0   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1452,13 +1450,13 @@ Vcells 28955434 221.0   82291700 627.9      24576 311604151 2377.4</code></pre>
 <span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10515102 561.6   17413385 930.0         NA  17413385  930.0
-Vcells 25735714 196.4   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10515098 561.6   17413380 930.0         NA  17413380  930.0
+Vcells 25735561 196.4   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10515074 561.6   17413385 930.0         NA  17413385  930.0
-Vcells 25735701 196.4   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10515070 561.6   17413380 930.0         NA  17413380  930.0
+Vcells 25735548 196.4   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1483,13 +1481,13 @@ Vcells 25735701 196.4   82291700 627.9      24576 311604151 2377.4</code></pre>
 <span id="cb126-2"><a href="#cb126-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537169 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 25801281 196.9   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10537165 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 25801128 196.9   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537150 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 25801283 196.9   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10537146 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 25801130 196.9   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1607,13 +1605,13 @@ Vcells 25801283 196.9   82291700 627.9      24576 311604151 2377.4</code></pre>
 <span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537643 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 26357364 201.1   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10537639 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 26357211 201.1   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537642 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 26357396 201.1   82291700 627.9      24576 311604151 2377.4</code></pre>
+Ncells 10537638 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 26357243 201.1   82291637 627.9      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1651,13 +1649,13 @@ Vcells 26357396 201.1   82291700 627.9      24576 311604151 2377.4</code></pre>
 <span id="cb142-2"><a href="#cb142-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537639 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 35092190 267.8   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 10537635 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 35092037 267.8   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537644 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 35092232 267.8   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 10537640 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 35092079 267.8   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1712,13 +1710,13 @@ Vcells 35092232 267.8   82335129 628.2      24576 311604151 2377.4</code></pre>
 <span id="cb148-2"><a href="#cb148-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537778 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 25786631 196.8   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 10537774 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 25786478 196.8   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537756 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 25786628 196.8   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 10537752 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 25786475 196.8   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1742,13 +1740,13 @@ Vcells 25786628 196.8   82335129 628.2      24576 311604151 2377.4</code></pre>
 <span id="cb152-2"><a href="#cb152-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537344 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 25787829 196.8   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 10537340 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 25787676 196.8   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 10537325 562.8   17413385 930.0         NA  17413385  930.0
-Vcells 25787831 196.8   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 10537321 562.8   17413380 930.0         NA  17413380  930.0
+Vcells 25787678 196.8   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1776,13 +1774,13 @@ Vcells 25787831 196.8   82335129 628.2      24576 311604151 2377.4</code></pre>
 <span id="cb156-2"><a href="#cb156-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11193369 597.8   17413385 930.0         NA  17413385  930.0
-Vcells 27488046 209.8   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11193368 597.8   17413380 930.0         NA  17413380  930.0
+Vcells 27487898 209.8   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11193374 597.8   17413385 930.0         NA  17413385  930.0
-Vcells 27488088 209.8   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11193370 597.8   17413380 930.0         NA  17413380  930.0
+Vcells 27487935 209.8   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -1860,13 +1858,13 @@ strainProAla          0            1                         1</code></pre>
 <span id="cb168-2"><a href="#cb168-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11353721 606.4   17413385 930.0         NA  17413385  930.0
-Vcells 30146071 230.0   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11353717 606.4   17413380 930.0         NA  17413380  930.0
+Vcells 30145918 230.0   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11353717 606.4   17413385 930.0         NA  17413385  930.0
-Vcells 30146098 230.0   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11353713 606.4   17413380 930.0         NA  17413380  930.0
+Vcells 30145945 230.0   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -2338,13 +2336,13 @@ Vcells 30146098 230.0   82335129 628.2      24576 311604151 2377.4</code></pre>
 <span id="cb179-2"><a href="#cb179-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11578807 618.4   17413385 930.0         NA  17413385  930.0
-Vcells 30605897 233.6   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11578827 618.4   17413380 930.0         NA  17413380  930.0
+Vcells 30605677 233.6   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11578809 618.4   17413385 930.0         NA  17413385  930.0
-Vcells 30605934 233.6   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11578832 618.4   17413380 930.0         NA  17413380  930.0
+Vcells 30605719 233.6   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -2464,13 +2462,13 @@ strainProAla - strainCtrl.IGDS(UniMod:21)LQGSPQR2 IGDS(UniMod:21)LQGSPQR2</code>
 <span id="cb193-2"><a href="#cb193-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11585223 618.8   17413385 930.0         NA  17413385  930.0
-Vcells 30617388 233.6   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11585265 618.8   17413380 930.0         NA  17413380  930.0
+Vcells 30617173 233.6   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11585222 618.8   17413385 930.0         NA  17413385  930.0
-Vcells 30617420 233.6   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11585264 618.8   17413380 930.0         NA  17413380  930.0
+Vcells 30617205 233.6   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -2494,13 +2492,13 @@ Vcells 30617420 233.6   82335129 628.2      24576 311604151 2377.4</code></pre>
 <span id="cb197-2"><a href="#cb197-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11686724 624.2   17413385 930.0         NA  17413385  930.0
-Vcells 30915273 235.9   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11686766 624.2   17413380 930.0         NA  17413380  930.0
+Vcells 30915058 235.9   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11686726 624.2   17413385 930.0         NA  17413385  930.0
-Vcells 30915310 235.9   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11686768 624.2   17413380 930.0         NA  17413380  930.0
+Vcells 30915095 235.9   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -2520,13 +2518,13 @@ Vcells 30915310 235.9   82335129 628.2      24576 311604151 2377.4</code></pre>
 <span id="cb202-2"><a href="#cb202-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11700860 624.9   17413385 930.0         NA  17413385  930.0
-Vcells 31203759 238.1   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11700902 624.9   17413380 930.0         NA  17413380  930.0
+Vcells 31203544 238.1   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11700856 624.9   17413385 930.0         NA  17413385  930.0
-Vcells 31203786 238.1   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11700898 624.9   17413380 930.0         NA  17413380  930.0
+Vcells 31203571 238.1   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -4739,13 +4737,13 @@ strainProAla - strainCtrl.Q12068 strainProAla - strainCtrl  Q12068</code></pre>
 <span id="cb224-2"><a href="#cb224-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11711322 625.5   17413385 930.0         NA  17413385  930.0
-Vcells 31227895 238.3   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11711367 625.5   17413380 930.0         NA  17413380  930.0
+Vcells 31227685 238.3   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11711327 625.5   17413385 930.0         NA  17413385  930.0
-Vcells 31227937 238.3   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11711369 625.5   17413380 930.0         NA  17413380  930.0
+Vcells 31227722 238.3   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -5706,13 +5704,13 @@ strainProAla - strainCtrl.IGDS(UniMod:21)LQGSPQR2 IGDS(UniMod:21)LQGSPQR2</code>
 <span id="cb250-2"><a href="#cb250-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11727973 626.4   17413385 930.0         NA  17413385  930.0
-Vcells 34641124 264.3   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11728015 626.4   17413380 930.0         NA  17413380  930.0
+Vcells 34640909 264.3   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11727963 626.4   17413385 930.0         NA  17413385  930.0
-Vcells 34641141 264.3   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11728005 626.4   17413380 930.0         NA  17413380  930.0
+Vcells 34640926 264.3   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -5839,13 +5837,13 @@ Aggregated: 1/1</code></pre>
 <span id="cb260-2"><a href="#cb260-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11923975 636.9   17413385 930.0         NA  17413385  930.0
-Vcells 39441387 301.0   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11924044 636.9   17413380 930.0         NA  17413380  930.0
+Vcells 39441244 301.0   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger  (Mb) limit (Mb)  max used   (Mb)
-Ncells 11923974 636.9   17413385 930.0         NA  17413385  930.0
-Vcells 39441419 301.0   82335129 628.2      24576 311604151 2377.4</code></pre>
+Ncells 11924037 636.9   17413380 930.0         NA  17413380  930.0
+Vcells 39441266 301.0   82334976 628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -5865,13 +5863,13 @@ Vcells 39441419 301.0   82335129 628.2      24576 311604151 2377.4</code></pre>
 <span id="cb264-2"><a href="#cb264-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 12361074 660.2   22300402 1191.0         NA  17413385  930.0
-Vcells 40614955 309.9   82335129  628.2      24576 311604151 2377.4</code></pre>
+Ncells 12361137 660.2   22300588 1191.0         NA  17413380  930.0
+Vcells 40614802 309.9   82334976  628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 12361076 660.2   22300402 1191.0         NA  17413385  930.0
-Vcells 40614992 309.9   82335129  628.2      24576 311604151 2377.4</code></pre>
+Ncells 12361139 660.2   22300588 1191.0         NA  17413380  930.0
+Vcells 40614839 309.9   82334976  628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -5896,13 +5894,13 @@ Vcells 40614992 309.9   82335129  628.2      24576 311604151 2377.4</code></pre>
 <span id="cb270-2"><a href="#cb270-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 12428158 663.8   22300402 1191.0         NA  22300402 1191.0
-Vcells 43582031 332.6   82335129  628.2      24576 311604151 2377.4</code></pre>
+Ncells 12428221 663.8   22300588 1191.0         NA  22300588 1191.0
+Vcells 43581878 332.6   82334976  628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 12428148 663.8   22300402 1191.0         NA  22300402 1191.0
-Vcells 43582048 332.6   82335129  628.2      24576 311604151 2377.4</code></pre>
+Ncells 12428211 663.8   22300588 1191.0         NA  22300588 1191.0
+Vcells 43581895 332.6   82334976  628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>
@@ -6295,13 +6293,13 @@ strainProAla - strainCtrl.P32324_763 strainProAla - strainCtrl P32324_763</code>
 <span id="cb290-2"><a href="#cb290-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>(); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 12428879 663.8   22300402 1191.0         NA  22300402 1191.0
-Vcells 41316487 315.3   82335129  628.2      24576 311604151 2377.4</code></pre>
+Ncells 12428942 663.8   22300588 1191.0         NA  22300588 1191.0
+Vcells 41316334 315.3   82334976  628.2      24576 311603998 2377.4</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb) limit (Mb)  max used   (Mb)
-Ncells 12428875 663.8   22300402 1191.0         NA  22300402 1191.0
-Vcells 41316514 315.3   82335129  628.2      24576 311604151 2377.4</code></pre>
+Ncells 12428938 663.8   22300588 1191.0         NA  22300588 1191.0
+Vcells 41316361 315.3   82334976  628.2      24576 311603998 2377.4</code></pre>
 </div>
 </div>
 </section>

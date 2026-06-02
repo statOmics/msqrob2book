@@ -116,10 +116,7 @@ library("BiocFileCache")
 - Can be file path to local file or url to file that lives on the web.
 - Here we use BiocFileCache so that we do not need to download the files again each 
 time that the script is knit. 
-- Typically we do not specify the path to the cache file in local sessions. 
-- If you run the vignette(or code-chunk below) on your local machine in your 
-  local R session (without using the docker) comment first line and 
-  uncomment second line. 
+
 
 ```{r data_path}
 bfc <- BiocFileCache()
