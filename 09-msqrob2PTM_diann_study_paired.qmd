@@ -30,6 +30,7 @@ In this vignette we start from quantified precursor level data to infer
 using the msqrob2PTM workflow in the bioconductor package [msqrob2](https://www.bioconductor.org/packages/release/bioc/html/msqrob2.html). 
 
 You can read more about 
+
 - `msqrob2` on [https://statomics.github.io/msqrob2book/](https://statomics.github.io/msqrob2book/) 
 - `msqrob2PTM` in msqrob2PTM: Differential Abundance and Differential Usage 
   Analysis of MS-Based Proteomics Data at the Posttranslational Modification and 
@@ -188,6 +189,12 @@ precursorsPTM <- precursorsPTM |>
          RT)
 ```
 
+```{r}
+precursorsPTM |> 
+  select(Protein.Sites, Modified.Sequence, Stripped.Sequence) |> 
+  head(20)
+```
+
 Garbage collection to free space 
 
 ```{r}
@@ -200,11 +207,12 @@ In DIA-NN phosphorylation is indicated with (UniMod:21) in the sequence stored i
 variable `Modified.Sequence`. This variable contains the precursor sequence 
 along with its modifications. 
 
-Here, we only keep precursors that are phosphorylated. 
+Here, we only keep precursors that are phosphorylated, i.e. with pattern 
+`(UniMod:21)` in the variable `Modified.Sequence`. 
 
 ```{r}
 precursorsPTM <- precursorsPTM |>
-  filter(grepl(pattern = "\\(UniMod:21\\)", Modified.Sequence))
+  filter(grepl(pattern = "\\(UniMod:21\\)", Modified.Sequence)) 
 ```
 
 Garbage collection to free space 
@@ -415,7 +423,7 @@ gc(); gc()
 #### Assay joining
 
 - Up to now, the data from different runs were kept in separate assays. 
-- We can now join the normalised sets into an precursor set using joinAssays(). 
+- We can now join the filtered sets into an precursor set using joinAssays(). 
 - Sets are joined by stacking the columns (samples) in a matrix and rows 
 (features) are matched according to a row identifier, here the `Precursor.Id`.
 - We do this for the non-enriched and phospho samples, which we store in assays 
@@ -450,8 +458,8 @@ gc(); gc()
 
 #### Filtering: Remove highly missing precursors
 
-We keep peptides that were observed at last 6 times out of the 
-$n= 24$ samples, so that we can estimate the peptide characteristics. 
+We keep peptides that were observed at least 6 times out of the 
+$n = 18$ samples, so that we can estimate the peptide characteristics. 
 
 ```{r remove_precursors_with_missingness}
 nObs <- 6
@@ -470,7 +478,7 @@ We normally remove proteins that can only be found by one peptide, as such prote
 may not be trustworthy. 
 
 Here, we opt not to do this because we prefer a protein-level summary based on 
-on precursor so that we can estimate usages later on. 
+one precursor so that we can estimate usages later on. 
 
 We leave the code here for your reference. 
 But commented it out. 
@@ -528,31 +536,51 @@ qf <- logTransform(qf,
 ### Normalisation {#sec-norm}
 
 We first evaluate the distributions of the non-normalised precursors per sample.
+For this, we perform a short data
+manipulation pipeline:
+
+1. We select an assay from the `QFeatures` object, `qf`.  
+2. We use `longForm()` to convert the `QFeatures` object into a long
+table, where each row contains the quantitative information about
+one observation, in which column, row and set it was found. Long
+tables are particularly useful for manipulating data with the
+`tidyverse` ecosystem, namely with `ggplot2` for visualisation.
+`longForm()` also allows to include annotations, and we here
+include all variables from the colData for filtering and colouring.
+3. `longForm()` returns a `DataFrame` which we convert to a
+`data.frame`.
+4. We filter out the missing values. 
+5. We make a plot with ggplot.
+6. We add aesthetics, we select the log2-intensities (`value`) as x, and color 
+   according to the strain and group according to the colname.
+7. We add a geom_dens layer to add a density plot. 
+8. We add a title.
+9. Use a minimal theme.
 
 ```{r}
 qf[, , "precursors_log"] |> #1.
   longForm(colvars = colnames(colData(qf))) |>  #2. 
-  data.frame() |> 
-  filter(!is.na(value)) |>
-  ggplot() + #3.
+  data.frame() |> #3.
+  filter(!is.na(value)) |> #4.
+  ggplot() + #5.
   aes(x = value,
       colour = strain,
-      group = colname) +
-  geom_density() +
-  labs(subtitle = "precursors") +
-  theme_minimal()
+      group = colname) + #6.
+  geom_density() + #7. 
+  labs(subtitle = "precursors") + #8.
+  theme_minimal() #9.
   
 qf[, , "precursorsPTM_log"] |> #1.
-  longForm(colvars = colnames(colData(qf))) |>  #2. 
-  data.frame() |> 
-  filter(!is.na(value)) |>
-  ggplot() + #3.
-  aes(x = value,
+  longForm(colvars = colnames(colData(qf))) |>  #2.
+  data.frame() |> #3.
+  filter(!is.na(value)) |> #4.
+  ggplot() + #5.
+  aes(x = value, 
       colour = strain,
-      group = colname) +
-  geom_density() +
-  labs(subtitle = "PTM - precursors") +
-  theme_minimal()
+      group = colname) + #6.
+  geom_density() + #7. 
+  labs(subtitle = "PTM - precursors") + #8. 
+  theme_minimal() #9. 
 ```
 
 
@@ -698,7 +726,7 @@ their shared precursors.
 - It then estimates the summaries by solving 
 
 $$
-\sum_i\sum_j(y^{prot}_j - y^{prot}_i - r_ij)^2
+\sum_i\sum_j(y^{prot}_j - y^{prot}_i - r_{ij})^2
 $$
 
 It is implemented in the `maxLFQ` function of the `iq` package. 
@@ -1441,7 +1469,7 @@ qf[target_feature, , c("precursors_log","precursors_norm", "proteins")] |> #1
   longForm(colvars = colnames(colData(qf))) |> #2
   data.frame() |> 
   ggplot() +
-  aes(x = colname,
+  aes(x = sampleId,
       y = value) +
   geom_line(aes(group = rowname), linewidth = 0.1) +
   geom_point(aes(colour = strain)) +
@@ -1553,16 +1581,35 @@ abundances for corresponding changes at the protein level.
 
 ### Background 
 
-- Differential abundant PTMs can be due protein abundance
+- Differentially abundant PTMs can arise either from changes in PTM regulation 
+  or simply from changes in the abundance of the underlying protein.
 
-- Port concept of differential usage towards PTMs: 
+- To distinguish PTM-specific regulation from protein-level changes, 
+  we extend the concept of *differential usage* (DU) to PTMs:
 
-$$\log_2 DU = \log_2 FC^\text{PTM} - log_2 FC^\text{protein}$$
+$$
+\log_2 DU = \log_2 FC^\text{PTM} - \log_2 FC^\text{protein},
+$$
 
-Two designs: PTM and protein level quantification be done 
+where $log_2 FC^\text{PTM}$ is the fold change of the modified precursor/PTM 
+and $log_2 FC^\text{protein}$ is the fold change of the corresponding protein.
 
-- on same sample: paired design 
-- using independent samples
+- In other words, differential usage represents the differential abundance (DA) 
+  of a PTM after correcting for changes in protein abundance.
+
+- This metric highlights PTMs whose abundance changes cannot be explained solely 
+  by changes in the total protein level, thereby prioritising PTMs that may be 
+  under specific regulatory control.
+
+Two experimental designs are commonly used to quantify precursor-level 
+  (PTM-level) and protein-level abundances:
+
+  - **Paired design:** PTM and protein abundances are measured in the same 
+    biological replicate (sample).
+  
+  - **Unpaired design:** PTM and protein abundances are measured in independent 
+    biological replicates (different samples).
+
 
 
 #### Paired samples 
@@ -1581,9 +1628,13 @@ peptidoform level. $\rightarrow$ Immediately gives us diferential usages!
     
 4. Optionally 
     
-  a. aggregate relative log2 transformed abundances at peptidoform level at 
+  a. aggregate relative log2 transformed abundances at peptidoform level to 
      PTM-level
   b. perform a differential msqrob2 analysis at PTM-level
+
+5. The paired design has the advantage that both metrics are estimated on the same
+   biorepeat/sample, which enables a better estimation of the standard error on 
+   the usages.
 
 
 #### Unpaired PTM-level and protein samples 
@@ -1628,7 +1679,7 @@ It has following inputs:
 
 The function 
 
-1. initiates the matrix with log2 tranformed correction factors at NA. 
+1. Initiates the matrix with log2 tranformed correction factors at NA. 
 2. Matches the rows of se with these of seNE using the annotation columns
 3. Extracts the protein abundance values for the precursors from the matching 
   rows and columns in the protein level assay.
@@ -1653,10 +1704,10 @@ calculate_usage_nfLog <- function(se,
 
 Here we 
 
-1. match the samples of the phosho enriched samples to these of the 
+1. Match the samples of the phosho enriched samples to these of the 
 non-enriched assay. 
-2. calculate the correction factors 
-3. make a new assay with usages by sweeping out the log2 protein abundances from 
+2. Calculate the correction factors 
+3. Make a new assay with usages by sweeping out the log2 protein abundances from 
    from the log2 precursor abundances.   
    
 ```{r}
@@ -1847,8 +1898,8 @@ lapply(colnames(L),
 
 We can explore the data for a protein to validate the statistical inference 
 results. For example, let’s explore the normalised precursor abundance, usages 
-as well as the summarised protein intensities for the protein with the most 
-significant log2 fold change.
+as well as the summarised protein intensities for the precursor with the most 
+significant log2 usage.
 
 ```{r}
 (target_feature <- inferencesUsage |> 
@@ -1880,7 +1931,7 @@ ylims <- ptm_protein |>
 
 outplot <- ptm_protein |>
   ggplot() +
-  aes(x = colname,
+  aes(x = sampleId,
       y = value) +
   geom_line(aes(group = rowname), linewidth = 0.1) +
   geom_point(aes(colour = strain)) +
@@ -2060,7 +2111,7 @@ We can aggregate them together.
 
 ### Data processing 
 
-The variable Protein.Sites in the DIA-NN parquet file contains information on the 
+The variable `Protein.Sites` in the DIA-NN parquet file contains information on the 
 exact modified residue position in the full protein sequence. 
 
 We first will make a new assay with duplicates for the precursors that contain 
@@ -2068,10 +2119,21 @@ multiple phospho sites.
 
 1. We extract the usage assay 
 2. We extract the row data with the original variables (drop msqrob2 colums)
-3. Add a new variable with the modification type (21 is phosho)
+3. Add a new variable with the modification type, which can derived from the 
+   variable `Modified.Sequence`. Indeed, all modifications start with string 
+   "UniMod:" followed by a number, i.e. 21 is a phoshorylation. So we extract 
+   all patterns "UniMod:[0-9]+" (`UniMod:` to match the literal text "UniMod:",
+   `[0-9]` to	match any digit (0–9) and `+` to	match one or more digits. We 
+   then replace pattern `Uniprot:` with an empty string.
 4. Add a new variable with the location of the modification on the original 
-   protein
-5. replace the rowData of se
+   protein, which can be extracted from the variable `Protein.Sites`. Indeed, 
+   this variables contains the residu and its position in the protein sequence. 
+   If the sequence contains multiple modifications, the sites are separated 
+   with a `,`. Regex `(?<=:)[^\]]+` extracts all characters immediately after 
+   the colon without returning the colon and ignores `]`, e.g. for 
+   "[P52871:A2,S4]" it will return "A2,S4". The resulting string is then 
+   splitted and subsequently the residue (first character) is removed.
+5. Replace the rowData of se
 6. Make vector of the row numbers with duplicates for the sequences containing 
    multiple PTMs
 7. Make a corresponding vector with the positions of the individual PTM sites
