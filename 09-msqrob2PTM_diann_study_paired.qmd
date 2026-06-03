@@ -1286,6 +1286,61 @@ qf[target_feature, , c("precursorsPTM_log","precursorsPTM_norm")] |> #1
   }
 ```
 
+
+We now compare the intensities for the top 5 DA phospo-precursors for the first 
+contrast to these of their corresponding protein in the non-enriched assay. 
+ 
+```{r detail_plots_top5, warning = FALSE, message = FALSE}
+contr = colnames(L)[1]
+top5 <- inferencesPTM |> 
+  filter(contrast == contr) |> 
+  arrange(pval) |> 
+  head(n = 5) |> 
+  pull(feature)
+
+for (feat in top5)
+{
+  ptm_data <- qf[,,c("precursorsPTM_norm")] |> 
+    longForm(colvars = colnames(colData(qf)), rowvars = "Protein.Group") |>
+    data.frame() |> 
+    filter(rowname==feat)
+  feature_protein <- ptm_data |> 
+    pull("Protein.Group") |> 
+    unique()
+  prot_data <- qf[,,"proteins"]|>
+    longForm(colvars = colnames(colData(qf)), rowvars = "Protein.Group") |>
+    data.frame() |> 
+    filter(Protein.Group==feature_protein) 
+  ptm_protein <- rbind(ptm_data, prot_data)
+  ylims <- ptm_protein |> 
+  group_by(assay) |> 
+  summarise(cent = mean(range(value,na.rm=TRUE)), ampl = diff(range(value,na.rm=TRUE))) |> 
+  mutate(lower = cent - max(ampl)/2, 
+         upper = cent + max(ampl)/2) |> 
+  select(-c(cent, ampl))
+  
+  comparison_plot <- ptm_protein |>
+    ggplot() +
+    aes(x = sampleId,
+        y = value) +
+    geom_line(aes(group = rowname), linewidth = 0.1) +
+    geom_point(aes(colour = strain)) +
+    facet_wrap(~ assay, scales = "free") +
+    labs(
+      title = paste0(feat," / ", feature_protein)
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_blank()) +
+    ggh4x::facetted_pos_scales(
+    y = list(
+      assay == ylims$assay[1] ~ scale_y_continuous(limits = unlist(ylims[1,c("lower","upper")])),
+      assay == ylims$assay[2] ~ scale_y_continuous(limits = unlist(ylims[2,c("lower","upper")]))
+    )
+    ) 
+ print(comparison_plot)
+}
+```
+
 We prioritised DA phospho-precursors. However, they might be DA due to the 
 parent proteins on which the PTMs occur that can also change in abundance 
 regardless of the modification, which is clearly illustrated for the top DA 
